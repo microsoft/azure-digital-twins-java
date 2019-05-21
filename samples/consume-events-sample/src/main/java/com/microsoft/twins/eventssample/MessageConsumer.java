@@ -1,6 +1,5 @@
 /**
- * Copyright (c) Microsoft Corporation.
- * Licensed under the MIT License.
+ * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
 package com.microsoft.twins.eventssample;
 
@@ -59,7 +58,7 @@ public class MessageConsumer {
 
     // Check for existing setup
     final List<SpaceRetrieveWithChildren> tenant =
-        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name("DSA"));
+        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name("TENANT"));
 
     return spacesApi
         .spacesRetrieve(new SpacesRetrieveQueryParams().types(PARKING_TYPE).useParentSpace(true)

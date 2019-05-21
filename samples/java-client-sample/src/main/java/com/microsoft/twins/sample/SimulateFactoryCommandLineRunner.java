@@ -1,6 +1,5 @@
 /**
- * Copyright (c) Microsoft Corporation.
- * Licensed under the MIT License.
+ * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
 package com.microsoft.twins.sample;
 
@@ -12,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.api.DevicesApi;
@@ -32,7 +30,7 @@ import com.microsoft.twins.model.SpaceRetrieveWithChildren;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+// @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
@@ -178,7 +176,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
 
     final SpaceCreate tenant = new SpaceCreate();
     tenant.setName("TENANT");
-    tenant.setFriendlyName("Diagnostics Systems Applications");
+    tenant.setFriendlyName("My friendly tenant");
     tenant.setDescription("Demo tenant");
     tenant.setType("Tenant");
 

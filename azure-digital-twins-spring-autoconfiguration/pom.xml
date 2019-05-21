@@ -1,7 +1,6 @@
 <!--
 
-    Copyright (c) Microsoft Corporation.
-    Licensed under the MIT License.
+    Copyright (c) Microsoft Corporation. Licensed under the MIT License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -28,9 +27,36 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
+         <groupId>com.microsoft.twins</groupId>
+         <artifactId>azure-digital-twins-telemetry-ingress</artifactId>
+         <version>${project.version}</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
          <groupId>org.projectlombok</groupId>
          <artifactId>lombok</artifactId>
          <scope>provided</scope>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-web</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.assertj</groupId>
+         <artifactId>assertj-core</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.hibernate.validator</groupId>
+         <artifactId>hibernate-validator</artifactId>
+         <scope>test</scope>
       </dependency>
 
    </dependencies>

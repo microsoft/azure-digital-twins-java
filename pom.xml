@@ -1,7 +1,6 @@
 <!--
 
-    Copyright (c) Microsoft Corporation.
-    Licensed under the MIT License.
+    Copyright (c) Microsoft Corporation. Licensed under the MIT License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -12,7 +11,7 @@
    <parent>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-parent</artifactId>
-      <version>2.1.4.RELEASE</version>
+      <version>2.1.5.RELEASE</version>
    </parent>
 
    <groupId>com.microsoft.twins</groupId>
@@ -50,6 +49,7 @@
 
    <properties>
       <java.version>11</java.version>
+      <spring-cloud-release.version>Greenwich.SR1</spring-cloud-release.version>
       <feign.version>10.1.0</feign.version>
       <lombok.version>1.16.22</lombok.version>
    </properties>
@@ -92,7 +92,16 @@
    </build>
 
    <dependencyManagement>
+      <!-- Spring -->
       <dependencies>
+         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud-release.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
+      
          <!-- HTTP client: Netflix Feign -->
          <dependency>
             <groupId>io.github.openfeign</groupId>

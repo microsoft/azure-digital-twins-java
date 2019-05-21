@@ -1,6 +1,5 @@
 /**
- * Copyright (c) Microsoft Corporation.
- * Licensed under the MIT License.
+ * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
 /*
  * Digital Twins Service Management APIs The Digital Twins Service allows for managing IoT devices
