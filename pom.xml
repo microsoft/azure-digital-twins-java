@@ -29,6 +29,13 @@
 
    <url>https://github.com/microsoft/azure-digital-twins-java</url>
 
+   <scm>
+      <connection>scm:git:https://github.com/microsoft/azure-digital-twins-java.git</connection>
+      <developerConnection>scm:git:https://github.com/microsoft/azure-digital-twins-java.git</developerConnection>
+      <url>https://github.com/microsoft/azure-digital-twins-java/tree/${project.scm.tag}</url>
+      <tag>master</tag>
+  </scm>
+
    <developers>
       <developer>
          <id>kaizimmerm</id>
