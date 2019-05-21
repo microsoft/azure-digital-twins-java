@@ -27,6 +27,20 @@
       <maven>3.5.0</maven>
    </prerequisites>
 
+   <url>https://github.com/microsoft/azure-digital-twins-java</url>
+
+   <developers>
+      <developer>
+         <id>kaizimmerm</id>
+         <email>kai.zimmermann@microsoft.com</email>
+         <organization>Microsoft</organization>
+         <organizationUrl>https://www.microsoft.com</organizationUrl>
+         <roles>
+            <role>Committer</role>
+         </roles>
+      </developer>
+   </developers>
+
    <properties>
       <java.version>11</java.version>
       <feign.version>10.1.0</feign.version>
