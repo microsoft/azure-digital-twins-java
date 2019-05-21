@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) Microsoft Corporation.
+    Licensed under the MIT License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>com.microsoft.twins</groupId>
+      <artifactId>samples</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>consume-events-sample</artifactId>
+
+   <name>Azure Digital Twins - Consume Events sample</name>
+   <description>Consume events from Azure Digital Twins by Spring-JMS</description>
+
+   <dependencies>
+      <dependency>
+         <groupId>com.microsoft.twins</groupId>
+         <artifactId>azure-digital-twins-spring-boot-starter</artifactId>
+         <version>0.1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.amqphub.spring</groupId>
+         <artifactId>amqp-10-jms-spring-boot-starter</artifactId>
+         <version>2.1.1</version>
+      </dependency>
+      <dependency>
+         <groupId>org.messaginghub</groupId>
+         <artifactId>pooled-jms</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>

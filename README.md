@@ -1,7 +1,12 @@
+# Azure Digital Twins - Java support collection
 
-# Contributing
+This projects aims to provide modules and samples for leveraging Azure Digital Twins service from Java based applications. The project is community maintained and will provide generic Java components as well as off-the-shelf Spring Boot integration and auto configuration.
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+[![Build Status](https://kaiatms.visualstudio.com/Twins-Event-Ingress/_apis/build/status/Twins%20Event%20Ingress-CI?branchName=master)](https://kaiatms.visualstudio.com/Twins-Event-Ingress/_build/latest?definitionId=16&branchName=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.microsoft.twins%3Aazure-digital-twins-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.microsoft.twins%3Aazure-digital-twins-java)
+
+## Contributing
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
