@@ -4,6 +4,17 @@ This projects aims to provide modules and samples for leveraging Azure Digital T
 
 [![Build Status](https://kaiatms.visualstudio.com/Twins-Event-Ingress/_apis/build/status/microsoft.azure-digital-twins-java?branchName=master)](https://kaiatms.visualstudio.com/Twins-Event-Ingress/_build/latest?definitionId=18&branchName=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.microsoft.twins%3Aazure-digital-twins-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.microsoft.twins%3Aazure-digital-twins-java)
 
+## Getting started
+
+### Prerequisites
+
+- OpenJDK >=11
+- Maven >=3.5
+
+### Build
+
+`mvn clean install`
+
 ## Contributing
 
 See [Contributing](CONTRIBUTING.md) guidance.
