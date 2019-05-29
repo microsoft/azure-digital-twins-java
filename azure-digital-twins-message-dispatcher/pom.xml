@@ -23,5 +23,21 @@
          <groupId>org.springframework.cloud</groupId>
          <artifactId>spring-cloud-starter-stream-kafka</artifactId>
       </dependency>
+      <dependency>
+         <groupId>com.microsoft.twins</groupId>
+         <artifactId>azure-digital-twins-management-client-spring-autoconfiguration</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.microsoft.twins</groupId>
+         <artifactId>azure-digital-twins-management-client</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.microsoft.twins</groupId>
+         <artifactId>azure-digital-twins-telemetry-ingress</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      
    </dependencies>
 </project>

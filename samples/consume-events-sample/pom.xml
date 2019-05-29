@@ -22,7 +22,7 @@
    <dependencies>
       <dependency>
          <groupId>com.microsoft.twins</groupId>
-         <artifactId>azure-digital-twins-spring-boot-starter</artifactId>
+         <artifactId>azure-digital-twins-management-client-starter</artifactId>
          <version>0.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>

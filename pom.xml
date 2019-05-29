@@ -101,7 +101,7 @@
             <type>pom</type>
             <scope>import</scope>
          </dependency>
-      
+
          <!-- HTTP client: Netflix Feign -->
          <dependency>
             <groupId>io.github.openfeign</groupId>
@@ -128,7 +128,7 @@
          <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>adal4j</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.4</version>
          </dependency>
 
          <!-- test dependencies -->
@@ -138,13 +138,21 @@
             <version>3.6.0</version>
             <scope>test</scope>
          </dependency>
+         <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>3.1.6</version>
+            <scope>test</scope>
+         </dependency>
       </dependencies>
    </dependencyManagement>
 
    <modules>
-      <module>azure-digital-twins-java-client</module>
-      <module>azure-digital-twins-spring-autoconfiguration</module>
-      <module>azure-digital-twins-spring-boot-starter</module>
+      <module>azure-digital-twins-management-client</module>
+      <module>azure-digital-twins-management-client-spring-autoconfiguration</module>
+      <module>azure-digital-twins-spring-boot-starters</module>
+      <module>azure-digital-twins-telemetry-ingress</module>
+      <module>azure-digital-twins-message-dispatcher</module>      
       <module>samples</module>
    </modules>
 </project>

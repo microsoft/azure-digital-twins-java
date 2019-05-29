@@ -54,7 +54,7 @@
 
 
    <modules>
-      <module>java-client-sample</module>
+      <module>management-client-sample</module>
       <module>consume-events-sample</module>
    </modules>
 </project>
