@@ -1,7 +1,6 @@
 <!--
 
-    Copyright (c) Microsoft Corporation.
-    Licensed under the MIT License.
+    Copyright (c) Microsoft Corporation. Licensed under the MIT License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -55,7 +54,7 @@
 
 
    <modules>
-      <module>java-client-sample</module>
+      <module>management-client-sample</module>
       <module>consume-events-sample</module>
    </modules>
 </project>

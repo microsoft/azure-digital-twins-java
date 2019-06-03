@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) Microsoft Corporation.
-    Licensed under the MIT License.
+    Copyright (c) Microsoft Corporation. Licensed under the MIT License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -23,7 +22,7 @@
    <dependencies>
       <dependency>
          <groupId>com.microsoft.twins</groupId>
-         <artifactId>azure-digital-twins-spring-boot-starter</artifactId>
+         <artifactId>azure-digital-twins-management-client-starter</artifactId>
          <version>0.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
