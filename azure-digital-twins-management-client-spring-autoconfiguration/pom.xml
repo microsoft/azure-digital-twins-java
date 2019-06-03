@@ -13,7 +13,7 @@
       <version>0.1.0-SNAPSHOT</version>
    </parent>
    <artifactId>azure-digital-twins-management-client-spring-autoconfiguration</artifactId>
-   <name>Azure Digital Twins - Management Client Spring Boot Autoconfiguration</name>
+   <name>Azure Digital Twins - Management Client Spring Boot auto-configuration</name>
 
    <dependencies>
       <dependency>
