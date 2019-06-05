@@ -25,8 +25,8 @@ public final class EncodingUtils {
    *
    * <p>
    * Of the various collection formats defined by Swagger ("csv", "tsv", etc), Feign only natively
-   * supports "multi". This utility generates the other format types so it will be properly
-   * processed by Feign.
+   * supports "multi". This utility generates the other format types so it will be properly processed
+   * by Feign.
    * </p>
    *
    * <p>
@@ -35,11 +35,11 @@ public final class EncodingUtils {
    *
    * @param parameters The collection object to be formatted. This object will not be changed.
    * @param collectionFormat The Swagger collection format (eg, "csv", "tsv", "pipes"). See the
-   *        <a href= "http://swagger.io/specification/#parameter-object-44"> Swagger Spec</a> for
-   *        more details.
+   *        <a href= "http://swagger.io/specification/#parameter-object-44"> Swagger Spec</a> for more
+   *        details.
    * @return An object that will be correctly formatted by Feign.
    */
-  public static Object encodeCollection(Collection<?> parameters, String collectionFormat) {
+  public static Object encodeCollection(final Collection<?> parameters, final String collectionFormat) {
     if (parameters == null) {
       return parameters;
     }
@@ -57,15 +57,15 @@ public final class EncodingUtils {
     // Otherwise return a formatted String
     final String[] stringArray = stringValues.toArray(new String[0]);
     switch (collectionFormat) {
-      case "csv":
-      default:
-        return StringUtil.join(stringArray, ",");
       case "ssv":
         return StringUtil.join(stringArray, " ");
       case "tsv":
         return StringUtil.join(stringArray, "\t");
       case "pipes":
         return StringUtil.join(stringArray, "|");
+      case "csv":
+      default:
+        return StringUtil.join(stringArray, ",");
     }
   }
 
@@ -73,10 +73,10 @@ public final class EncodingUtils {
    * URL encode a single query parameter.
    *
    * @param parameter The query parameter to encode. This object will not be changed.
-   * @return The URL encoded string representation of the parameter. If the parameter is null,
-   *         returns null.
+   * @return The URL encoded string representation of the parameter. If the parameter is null, returns
+   *         null.
    */
-  public static String encode(Object parameter) {
+  public static String encode(final Object parameter) {
     if (parameter == null) {
       return null;
     }
