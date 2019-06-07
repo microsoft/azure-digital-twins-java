@@ -1,0 +1,4 @@
+Copyright (c) Microsoft Corporation. Licensed under the MIT License.
+
+The client has originally been generated out of Digital Twins Service Management
+API definition leveraging Swagger Codegen (https://swagger.io/tools/swagger-codegen/).
