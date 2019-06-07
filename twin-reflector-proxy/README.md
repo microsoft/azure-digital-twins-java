@@ -1,10 +1,3 @@
 # DRAFT - Twin Reflector Proxy
 
-This module aims to provide a dispatcher application that consumes Kafka event streams which might contain topology changes as well as telemetry ingress.
-
-//TODO Docker,Helm
-
-
-
-
-twin-integration-tests
+This module aims to provide a dispatcher application that consumes Azure Event Hub event streams which contain topology changes and/or as telemetry ingress.
