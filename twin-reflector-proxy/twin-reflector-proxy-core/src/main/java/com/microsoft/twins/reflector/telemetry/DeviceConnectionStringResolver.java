@@ -6,6 +6,7 @@ package com.microsoft.twins.reflector.telemetry;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.cache.annotation.Cacheable;
 import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
@@ -17,6 +18,7 @@ public class DeviceConnectionStringResolver {
 
   private final TwinsApiClient twinsApiClient;
 
+  @Cacheable
   Optional<String> getConnectionStringByDeviceId(final UUID deviceId) {
 
     final DevicesApi devicesApi = twinsApiClient.getDevicesApi();

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.telemetry.ingress;
+package com.microsoft.twins.reflector.telemetry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
@@ -25,6 +25,8 @@ import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.EndpointsApi.EndpointsRetrieveQueryParams;
 import com.microsoft.twins.api.ResourcesApi;
 import com.microsoft.twins.api.ResourcesApi.ResourcesRetrieveQueryParams;
+import com.microsoft.twins.api.SensorsApi;
+import com.microsoft.twins.api.SensorsApi.SensorsRetrieveQueryParams;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.api.TypesApi;
@@ -36,21 +38,25 @@ import com.microsoft.twins.model.EndpointCreate.TypeEnum;
 import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.ExtendedTypeCreate;
 import com.microsoft.twins.model.ExtendedTypeCreate.CategoryEnum;
+import com.microsoft.twins.model.SensorCreate;
+import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
+import com.microsoft.twins.reflector.TwinReflectorProxyAutoConfiguration;
 import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfiguration;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class, TelemetryIngressAutoConfiguration.class,
+@ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class, TwinReflectorProxyAutoConfiguration.class,
     TestConfiguration.class})
 @TestPropertySource(locations = "classpath:/test.properties")
 @EnableBinding(Sink.class)
 public abstract class AbstractTest {
   private static final String TEST_SPACE_TYPE = "TestSpaces";
   private static final String TEST_DEVICE_TYPE = "TestDevices";
+  private static final String TEST_SENSOR_TYPE = "TestSensors";
 
   @Autowired
   protected TwinsApiClient twinsApiClient;
@@ -63,14 +69,16 @@ public abstract class AbstractTest {
   @Before
   public void setup() {
     createTestTenantSetup();
-    cleanTestSpaces();
+    cleanTestSensors();
     cleanTestDevices();
+    cleanTestSpaces();
   }
 
   @After
   public void cleanup() {
-    cleanTestSpaces();
+    cleanTestSensors();
     cleanTestDevices();
+    cleanTestSpaces();
   }
 
   private void cleanTestSpaces() {
@@ -89,6 +97,16 @@ public abstract class AbstractTest {
         devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().types(TEST_DEVICE_TYPE));
 
     existing.forEach(device -> devicesApi.devicesDelete(device.getId().toString()));
+
+  }
+
+  private void cleanTestSensors() {
+    final SensorsApi sensorsApi = twinsApiClient.getSensorsApi();
+
+    final List<SensorRetrieve> existing =
+        sensorsApi.sensorsRetrieve(new SensorsRetrieveQueryParams().types(TEST_SENSOR_TYPE));
+
+    existing.forEach(sensor -> sensorsApi.sensorsDelete(sensor.getId().toString()));
 
   }
 
@@ -140,8 +158,8 @@ public abstract class AbstractTest {
 
     final UUID created = endpoints.endpointsCreate(eventHub);
 
-    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
-        .pollInterval(1, TimeUnit.SECONDS).until(
+    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS)
+        .until(
             () -> endpoints.endpointsRetrieveById(created.toString()).getStatus() == EndpointRetrieve.StatusEnum.READY);
   }
 
@@ -156,6 +174,10 @@ public abstract class AbstractTest {
     type.setCategory(CategoryEnum.DEVICETYPE);
     type.setName(TEST_DEVICE_TYPE);
     typesApi.typesCreate(type);
+
+    type.setCategory(CategoryEnum.SENSORTYPE);
+    type.setName(TEST_SENSOR_TYPE);
+    typesApi.typesCreate(type);
   }
 
   private void createResources() {
@@ -165,37 +187,71 @@ public abstract class AbstractTest {
     iotHub.setType(SpaceResourceCreate.TypeEnum.IOTHUB);
     final UUID created = resourcesApi.resourcesCreate(iotHub);
 
-    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
-        .pollInterval(1, TimeUnit.SECONDS).until(() -> resourcesApi.resourcesRetrieveById(created.toString(), "")
+    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS)
+        .until(() -> resourcesApi.resourcesRetrieveById(created.toString())
             .getStatus() == SpaceResourceRetrieve.StatusEnum.RUNNING);
   }
 
-  protected UUID createDevice(final String deviceName) {
+  protected UUID createSpace(final String spaceName) {
     final SpacesApi spacesApi = twinsApiClient.getSpacesApi();
 
     final SpaceCreate deviceSpaceCreate = new SpaceCreate();
-    deviceSpaceCreate.setName(deviceName + "space");
-    deviceSpaceCreate.setFriendlyName("Space for " + deviceName);
-    deviceSpaceCreate.setDescription("Space for " + deviceName);
+    deviceSpaceCreate.setName(spaceName);
+    deviceSpaceCreate.setFriendlyName("Space " + spaceName);
+    deviceSpaceCreate.setDescription("Space " + spaceName);
     deviceSpaceCreate.setType(TEST_SPACE_TYPE);
     deviceSpaceCreate.setParentSpaceId(tenant);
 
-    return createDevice(deviceName, spacesApi.spacesCreate(deviceSpaceCreate));
+    return spacesApi.spacesCreate(deviceSpaceCreate);
   }
 
-  protected UUID createDevice(final String deviceName, final UUID spaceId) {
-    //TODO switch to sensors
+  protected UUID createGateway(final String deviceName, final UUID spaceId) {
+    // TODO switch to sensors
     final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
 
     // Add new vehicle to line
     final DeviceCreate device = new DeviceCreate();
     device.setName(deviceName);
-    device.setHardwareId(deviceName);
     device.setType(TEST_DEVICE_TYPE);
     device.setSpaceId(spaceId);
-    //TODO - switch to gateway device
-    //device.createIoTHubDevice(false);
+    device.setHardwareId(deviceName);
+    device.setGatewayId(deviceName);
+
     final UUID createdDevice = devicesApi.devicesCreate(device);
+    assertThat(createdDevice).isNotNull();
+
+    return createdDevice;
+  }
+
+  protected UUID createDevice(final String deviceName, final UUID gatewayId, final UUID spaceId) {
+    // TODO switch to sensors
+    final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
+
+    // Add new vehicle to line
+    final DeviceCreate device = new DeviceCreate();
+    device.setName(deviceName);
+    device.setType(TEST_DEVICE_TYPE);
+    device.setSpaceId(spaceId);
+    device.setHardwareId(deviceName);
+    device.setGatewayId(gatewayId.toString());
+    device.setCreateIoTHubDevice(false);
+
+    final UUID createdDevice = devicesApi.devicesCreate(device);
+    assertThat(createdDevice).isNotNull();
+
+    return createdDevice;
+  }
+
+  UUID createSensor(final String deviceName, final UUID deviceId, final UUID spaceId) {
+    final SensorsApi sensorsApi = twinsApiClient.getSensorsApi();
+
+    final SensorCreate device = new SensorCreate();
+    device.setType(TEST_SENSOR_TYPE);
+    device.setDeviceId(deviceId);
+    device.setHardwareId(deviceName);
+    device.setSpaceId(spaceId);
+
+    final UUID createdDevice = sensorsApi.sensorsCreate(device);
     assertThat(createdDevice).isNotNull();
 
     return createdDevice;

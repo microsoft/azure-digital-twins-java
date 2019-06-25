@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.telemetry.ingress;
+package com.microsoft.twins.reflector.telemetry;
 
 import javax.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
