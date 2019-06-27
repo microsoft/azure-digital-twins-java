@@ -20,7 +20,6 @@ import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.IotHubEventCallback;
 import com.microsoft.azure.sdk.iot.device.IotHubStatusCode;
 import com.microsoft.azure.sdk.iot.device.Message;
-import com.microsoft.azure.sdk.iot.device.TransportClient;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,9 +28,7 @@ public class TelemetryForwarder implements Closeable {
 
   private static final int D2C_MESSAGE_TIMEOUT = 2000; // 2 seconds
 
-  private TransportClient transportClient;
-
-  private final Map<String, DeviceClient> knownClients = new ConcurrentHashMap<>();
+  private final Map<UUID, DeviceClient> knownClients = new ConcurrentHashMap<>();
 
   private final DeviceConnectionStringResolver deviceConnectionStringResolver;
 
@@ -69,41 +66,34 @@ public class TelemetryForwarder implements Closeable {
     }
   }
 
+  public void sendMessage(final String message, final UUID hubDeviceId, final UUID correlationId,
+      final String hardwareId) {
 
-  public void sendMessage(final String message, final UUID deviceId, final String correlationId)
-      throws IOException, URISyntaxException {
 
-    final String connString = deviceConnectionStringResolver.getConnectionStringByDeviceId(deviceId)
-        .orElseThrow(() -> new IllegalArgumentException("Unkown device ID"));
-
-    final DeviceClient client;
-    if (knownClients.containsKey(connString)) {
-      client = knownClients.get(connString);
-    } else {
-      if (transportClient != null) {
-        transportClient.closeNow();
+    final DeviceClient client = knownClients.computeIfAbsent(hubDeviceId, key -> {
+      try {
+        final DeviceClient cl =
+            new DeviceClient(deviceConnectionStringResolver.getConnectionStringByDeviceId(key).orElseThrow(),
+                IotHubClientProtocol.AMQPS);
+        cl.open();
+        return cl;
+      } catch (IllegalArgumentException | URISyntaxException | IOException e) {
+        LOG.error("Could not create client", e);
+        return null;
       }
-      transportClient = new TransportClient(IotHubClientProtocol.AMQPS);
-      knownClients.replaceAll((key, val) -> {
-        try {
-          return new DeviceClient(key, transportClient);
-        } catch (final URISyntaxException e) {
-          LOG.error("Failed to create DeviceClient", e);
-          return null;
-        }
-      });
+    });
 
-      client = new DeviceClient(connString, transportClient);
-      knownClients.put(connString, client);
-
-      transportClient.open();
-    }
 
     final Message msg = new Message(message);
     msg.setContentTypeFinal("application/json");
-    msg.setMessageId(UUID.randomUUID().toString());
     msg.setExpiryTime(D2C_MESSAGE_TIMEOUT);
-    msg.setCorrelationId(correlationId);
+
+    if (correlationId != null) {
+      msg.setCorrelationId(correlationId.toString());
+    }
+
+    msg.setProperty("DigitalTwins-SensorHardwareId", hardwareId);
+    msg.setProperty("DigitalTwins-Telemetry", "yes");
 
     final EventCallback callback = new EventCallback();
     client.sendEventAsync(msg, callback, msg);
@@ -111,6 +101,12 @@ public class TelemetryForwarder implements Closeable {
 
   @Override
   public void close() throws IOException {
-    transportClient.closeNow();
+    knownClients.entrySet().forEach(entry -> {
+      try {
+        entry.getValue().closeNow();
+      } catch (final IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 }

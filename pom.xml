@@ -11,7 +11,7 @@
    <parent>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-parent</artifactId>
-      <version>2.1.5.RELEASE</version>
+      <version>2.1.6.RELEASE</version>
    </parent>
 
    <groupId>com.microsoft.twins</groupId>
@@ -50,8 +50,11 @@
    <properties>
       <java.version>11</java.version>
       <spring-cloud-release.version>Greenwich.SR1</spring-cloud-release.version>
-      <feign.version>10.1.0</feign.version>
-      <lombok.version>1.16.22</lombok.version>
+      <feign.version>10.2.3</feign.version>
+      <lombok.version>1.18.8</lombok.version>
+      <adal4j.version>1.6.4</adal4j.version>
+      <iot-device-client.version>1.17.3</iot-device-client.version>
+      <awaitility.version>3.1.6</awaitility.version>
    </properties>
 
    <build>
@@ -124,11 +127,16 @@
             <version>${feign.version}</version>
          </dependency>
 
-         <!-- Authentication: Java -->
+         <!-- Azure -->
          <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>adal4j</artifactId>
-            <version>1.6.4</version>
+            <version>${adal4j.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>com.microsoft.azure.sdk.iot</groupId>
+            <artifactId>iot-device-client</artifactId>
+            <version>${iot-device-client.version}</version>
          </dependency>
 
          <!-- test dependencies -->
@@ -141,7 +149,7 @@
          <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>3.1.6</version>
+            <version>${awaitility.version}</version>
             <scope>test</scope>
          </dependency>
       </dependencies>

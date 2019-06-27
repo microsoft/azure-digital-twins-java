@@ -181,6 +181,16 @@ public interface ResourcesApi extends TwinsApiClient.Api {
   /**
    * Retrieves the specified resource
    *
+   * @param id Resource Id (required)
+   * @return SpaceResourceRetrieve
+   */
+  @RequestLine("GET /api/v1.0/resources/{id}")
+  @Headers({"Accept: */*",})
+  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") String id);
+
+  /**
+   * Retrieves the specified resource
+   *
    * Note, this is equivalent to the other <code>resourcesRetrieveById</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the {@link ResourcesRetrieveByIdQueryParams}

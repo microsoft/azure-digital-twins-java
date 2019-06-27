@@ -16,27 +16,24 @@
    <name>Azure Digital Twins - Spring Boot integration tests</name>
 
    <dependencies>
+      
+   
+   
       <dependency>
          <groupId>com.microsoft.twins</groupId>
-         <artifactId>twin-management-client-autoconfigure</artifactId>
+         <artifactId>twin-management-client-starter</artifactId>
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>com.microsoft.twins</groupId>
-         <artifactId>twin-management-client-core</artifactId>
+         <artifactId>twin-reflector-proxy-starter</artifactId>
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.awaitility</groupId>
          <artifactId>awaitility</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>com.microsoft.twins</groupId>
-         <artifactId>azure-digital-twins-telemetry-ingress</artifactId>
-         <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -69,5 +66,12 @@
          <artifactId>hibernate-validator</artifactId>
          <scope>test</scope>
       </dependency>
+      
+      <dependency>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      
    </dependencies>
 </project>
