@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
+ */
 package com.microsoft.twins.reflector;
 
 import org.junit.runner.RunWith;

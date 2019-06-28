@@ -6,7 +6,6 @@ package com.microsoft.twins.reflector;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
@@ -17,7 +16,7 @@ import lombok.Getter;
 @EnableAutoConfiguration(
     exclude = {DigitalTwinClientAutoConfiguration.class, TwinReflectorProxyAutoConfiguration.class})
 @Configuration
-@EnableBinding(Sink.class)
+@EnableBinding(ReflectorIngressSink.class)
 @Getter
 public class TestConfiguration {
 

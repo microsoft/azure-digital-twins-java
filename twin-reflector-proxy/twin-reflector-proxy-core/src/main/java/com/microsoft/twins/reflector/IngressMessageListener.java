@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.validation.annotation.Validated;
@@ -25,32 +24,29 @@ public class IngressMessageListener {
   private final TopologyUpdater topologyUpdater;
   private final TelemetryForwarder telemetryForwarder;
 
-  // FIXME configure
-  private final UUID hubDeviceId = UUID.randomUUID();
-
-  @StreamListener(target = Sink.INPUT, condition = "headers['TwinReflectorProxy-MessageType']=='partial'")
+  @StreamListener(target = ReflectorIngressSink.INPUT,
+      condition = "headers['TwinReflectorProxy-MessageType']=='partial'")
   void getPartialTopologyUpdate(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
     topologyUpdater.updateTopologyElementPartial(message, correlationId);
 
     if (message.getTelemetry() != null) {
-      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), hubDeviceId, correlationId,
-          message.getId());
+      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), correlationId, message.getId());
     }
   }
 
-  @StreamListener(target = Sink.INPUT, condition = "headers['TwinReflectorProxy-MessageType']=='complete'")
+  @StreamListener(target = ReflectorIngressSink.INPUT, condition = "headers['TwinReflectorProxy-MessageType']=='full'")
   void getCompleteTopologyUpdate(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
     topologyUpdater.updateTopologyElementComplete(message, correlationId);
 
     if (message.getTelemetry() != null) {
-      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), hubDeviceId, correlationId,
-          message.getId());
+      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), correlationId, message.getId());
     }
   }
 
-  @StreamListener(target = Sink.INPUT, condition = "headers['TwinReflectorProxy-MessageType']=='delete'")
+  @StreamListener(target = ReflectorIngressSink.INPUT,
+      condition = "headers['TwinReflectorProxy-MessageType']=='delete'")
   void getDeleteTopologyElement(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
     topologyUpdater.deleteTopologyElement(message.getId(), correlationId);

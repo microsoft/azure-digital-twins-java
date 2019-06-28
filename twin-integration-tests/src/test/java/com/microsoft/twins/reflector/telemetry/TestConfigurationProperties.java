@@ -6,7 +6,7 @@ package com.microsoft.twins.reflector.telemetry;
 import javax.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("azure.event-hubs")
+@ConfigurationProperties("azure.event-hubs.test")
 public class TestConfigurationProperties {
 
   @NotEmpty
@@ -16,7 +16,7 @@ public class TestConfigurationProperties {
   private String secondaryConnectionString;
 
   @NotEmpty
-  private String hubname;
+  private String devicesHubname;
 
   public String getConnectionString() {
     return connectionString;
@@ -34,12 +34,12 @@ public class TestConfigurationProperties {
     this.secondaryConnectionString = secondaryConnectionString;
   }
 
-  public String getHubname() {
-    return hubname;
+  public String getDevicesHubname() {
+    return devicesHubname;
   }
 
-  public void setHubname(final String hubname) {
-    this.hubname = hubname;
+  public void setDevicesHubname(final String devicesHubname) {
+    this.devicesHubname = devicesHubname;
   }
 
 

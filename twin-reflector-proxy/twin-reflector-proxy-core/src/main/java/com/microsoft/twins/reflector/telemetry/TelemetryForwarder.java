@@ -30,7 +30,7 @@ public class TelemetryForwarder implements Closeable {
 
   private final Map<UUID, DeviceClient> knownClients = new ConcurrentHashMap<>();
 
-  private final DeviceConnectionStringResolver deviceConnectionStringResolver;
+  private final DeviceResolver deviceResolver;
 
 
   protected static class EventCallback implements IotHubEventCallback {
@@ -66,22 +66,21 @@ public class TelemetryForwarder implements Closeable {
     }
   }
 
-  public void sendMessage(final String message, final UUID hubDeviceId, final UUID correlationId,
-      final String hardwareId) {
+  public void sendMessage(final String message, final UUID correlationId, final String hardwareId) {
 
-
-    final DeviceClient client = knownClients.computeIfAbsent(hubDeviceId, key -> {
-      try {
-        final DeviceClient cl =
-            new DeviceClient(deviceConnectionStringResolver.getConnectionStringByDeviceId(key).orElseThrow(),
+    // FIXME exception handling
+    final DeviceClient client =
+        knownClients.computeIfAbsent(deviceResolver.getDeviceIdByHardwareId(hardwareId).orElseThrow(), key -> {
+          try {
+            final DeviceClient cl = new DeviceClient(deviceResolver.getConnectionStringByDeviceId(key).orElseThrow(),
                 IotHubClientProtocol.AMQPS);
-        cl.open();
-        return cl;
-      } catch (IllegalArgumentException | URISyntaxException | IOException e) {
-        LOG.error("Could not create client", e);
-        return null;
-      }
-    });
+            cl.open();
+            return cl;
+          } catch (IllegalArgumentException | URISyntaxException | IOException e) {
+            LOG.error("Could not create client", e);
+            return null;
+          }
+        });
 
 
     final Message msg = new Message(message);
