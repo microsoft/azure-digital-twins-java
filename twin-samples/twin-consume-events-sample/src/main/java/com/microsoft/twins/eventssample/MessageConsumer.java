@@ -42,11 +42,10 @@ public class MessageConsumer {
     if (message.getSpacesToNotify().stream().anyMatch(parkingSpaces::contains)) {
 
       final List<DeviceRetrieve> device = twinsApiClient.getDevicesApi()
-          .devicesRetrieve(new DevicesRetrieveQueryParams().ids(message.getId()).includes("space"));
+          .devicesRetrieve(new DevicesRetrieveQueryParams().ids(message.getId().toString()).includes("space"));
 
       if (!device.isEmpty()) {
-        LOG.info("Device {} ready in space {}", device.get(0).getName(),
-            device.get(0).getSpace().getName());
+        LOG.info("Device {} ready in space {}", device.get(0).getName(), device.get(0).getSpace().getName());
       }
 
     }

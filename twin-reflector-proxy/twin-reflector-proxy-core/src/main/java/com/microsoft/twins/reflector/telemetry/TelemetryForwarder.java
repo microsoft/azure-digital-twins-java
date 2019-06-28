@@ -20,6 +20,7 @@ import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.IotHubEventCallback;
 import com.microsoft.azure.sdk.iot.device.IotHubStatusCode;
 import com.microsoft.azure.sdk.iot.device.Message;
+import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxy;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class TelemetryForwarder implements Closeable {
 
   private final Map<UUID, DeviceClient> knownClients = new ConcurrentHashMap<>();
 
-  private final DeviceResolver deviceResolver;
+  private final CachedDigitalTwinProxy cachedDigitalTwinProxy;
 
 
   protected static class EventCallback implements IotHubEventCallback {
@@ -70,10 +71,11 @@ public class TelemetryForwarder implements Closeable {
 
     // FIXME exception handling
     final DeviceClient client =
-        knownClients.computeIfAbsent(deviceResolver.getDeviceIdByHardwareId(hardwareId).orElseThrow(), key -> {
+        knownClients.computeIfAbsent(cachedDigitalTwinProxy.getGatewayIdByHardwareId(hardwareId).orElseThrow(), key -> {
           try {
-            final DeviceClient cl = new DeviceClient(deviceResolver.getConnectionStringByDeviceId(key).orElseThrow(),
-                IotHubClientProtocol.AMQPS);
+            final DeviceClient cl =
+                new DeviceClient(cachedDigitalTwinProxy.getDeviceByDeviceId(key).orElseThrow().getConnectionString(),
+                    IotHubClientProtocol.AMQPS);
             cl.open();
             return cl;
           } catch (IllegalArgumentException | URISyntaxException | IOException e) {

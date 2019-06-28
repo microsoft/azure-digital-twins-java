@@ -9,10 +9,11 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.microsoft.twins.reflector.ReflectorIngressSink;
+import com.microsoft.twins.reflector.TopologyOperationSink;
 
 @Configuration
 @EnableAutoConfiguration
-@EnableBinding({DeviceMessageSink.class, ReflectorIngressSink.class})
+@EnableBinding({DeviceMessageSink.class, ReflectorIngressSink.class, TopologyOperationSink.class})
 @EnableConfigurationProperties(TestConfigurationProperties.class)
 public class TestConfiguration {
 

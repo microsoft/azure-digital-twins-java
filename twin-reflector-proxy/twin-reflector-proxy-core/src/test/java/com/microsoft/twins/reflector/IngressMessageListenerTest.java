@@ -34,14 +34,14 @@ public class IngressMessageListenerTest extends AbstractTest {
     testMessage.setId(testId);
 
     sink.input().send(MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.partial.toString()).build());
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.PARTIAL.toString().toLowerCase()).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).updateTopologyElementPartial(testMessage, null);
 
     final UUID correlationId = UUID.randomUUID();
     sink.input()
         .send(MessageBuilder.withPayload(testMessage)
-            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.partial.toString())
+            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.PARTIAL.toString().toLowerCase())
             .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).updateTopologyElementPartial(testMessage,
@@ -56,14 +56,14 @@ public class IngressMessageListenerTest extends AbstractTest {
     testMessage.setId(testId);
 
     sink.input().send(MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.full.toString()).build());
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.FULL.toString().toLowerCase()).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).updateTopologyElementComplete(testMessage, null);
 
     final UUID correlationId = UUID.randomUUID();
     sink.input()
         .send(MessageBuilder.withPayload(testMessage)
-            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.full.toString())
+            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.FULL.toString().toLowerCase())
             .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).updateTopologyElementComplete(testMessage,
@@ -78,14 +78,14 @@ public class IngressMessageListenerTest extends AbstractTest {
     testMessage.setId(testId);
 
     sink.input().send(MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.delete.toString()).build());
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.DELETE.toString().toLowerCase()).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).deleteTopologyElement(testId, null);
 
     final UUID correlationId = UUID.randomUUID();
     sink.input()
         .send(MessageBuilder.withPayload(testMessage)
-            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.delete.toString())
+            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.DELETE.toString().toLowerCase())
             .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).deleteTopologyElement(testId, correlationId);
@@ -97,7 +97,7 @@ public class IngressMessageListenerTest extends AbstractTest {
 
     assertThatExceptionOfType(MethodArgumentNotValidException.class)
         .isThrownBy(() -> sink.input().send(MessageBuilder.withPayload(testMessage)
-            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.delete.toString()).build()));
+            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.DELETE.toString().toLowerCase()).build()));
     verify(testConfiguration.getTopologyUpdater(), never()).deleteTopologyElement(any(), any());
   }
 
@@ -111,7 +111,7 @@ public class IngressMessageListenerTest extends AbstractTest {
     testMessage.setTelemetry(testTelemetry);
 
     sink.input().send(MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.full.toString()).build());
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.FULL.toString().toLowerCase()).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).updateTopologyElementComplete(testMessage, null);
 
@@ -121,7 +121,7 @@ public class IngressMessageListenerTest extends AbstractTest {
     final UUID correlationId = UUID.randomUUID();
     sink.input()
         .send(MessageBuilder.withPayload(testMessage)
-            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.full.toString())
+            .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.FULL.toString().toLowerCase())
             .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).updateTopologyElementComplete(testMessage,

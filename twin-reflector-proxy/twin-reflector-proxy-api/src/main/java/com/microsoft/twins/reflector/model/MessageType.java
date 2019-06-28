@@ -3,7 +3,18 @@
  */
 package com.microsoft.twins.reflector.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum MessageType {
-  // FIXME uppercase
-  full, partial, delete;
+  FULL, PARTIAL, DELETE;
+
+  @JsonCreator
+  public static MessageType fromString(final String key) {
+    for (final MessageType type : MessageType.values()) {
+      if (type.name().equalsIgnoreCase(key)) {
+        return type;
+      }
+    }
+    return null;
+  }
 }
