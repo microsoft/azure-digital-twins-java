@@ -140,7 +140,7 @@ public abstract class AbstractTest {
     createTypes();
     createResources();
     addDeviceEventEndPoint(testConfigurationProperties.getConnectionString(),
-        testConfigurationProperties.getSecondaryConnectionString(), testConfigurationProperties.getHubname());
+        testConfigurationProperties.getSecondaryConnectionString(), testConfigurationProperties.getDevicesHubname());
   }
 
 

@@ -3,17 +3,16 @@
  */
 package com.microsoft.twins.reflector.telemetry;
 
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class TestMessage {
   private final String hardwareId;
   private final String payload;
-
-  protected TestMessage(final String hardwareId, final String payload) {
-    this.hardwareId = hardwareId;
-    this.payload = payload;
-  }
+  private final UUID deviceId;
 
 
 }
