@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.api;
+package com.microsoft.twins.api.error;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.api.DevicesApi;
 import feign.Client;
 import feign.Request;
 import feign.Request.HttpMethod;
@@ -123,7 +124,7 @@ public class FeignErrorHandlingTest {
     devicesApi.devicesDelete("test");
     final Instant finish = Instant.now();
     final long timeElapsed = Duration.between(start, finish).toMillis();
-    assertThat(timeElapsed).isGreaterThanOrEqualTo(Duration.ofSeconds(1).toMillis());
+    assertThat(timeElapsed).isGreaterThanOrEqualTo(Duration.ofMillis(800).toMillis());
 
     verify(clientMock, times(2)).execute(any(Request.class), any(Options.class));
 
