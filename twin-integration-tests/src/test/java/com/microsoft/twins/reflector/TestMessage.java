@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.telemetry;
+package com.microsoft.twins.reflector;
 
 import java.util.UUID;
 import lombok.EqualsAndHashCode;

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.telemetry;
+package com.microsoft.twins.reflector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
@@ -44,7 +44,6 @@ import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
-import com.microsoft.twins.reflector.TwinReflectorProxyAutoConfiguration;
 import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfiguration;
 
 @RunWith(SpringRunner.class)
@@ -229,10 +228,8 @@ public abstract class AbstractTest {
   }
 
   protected UUID createDevice(final String deviceName, final UUID gatewayId, final UUID spaceId) {
-    // TODO switch to sensors
     final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
 
-    // Add new vehicle to line
     final DeviceCreate device = new DeviceCreate();
     device.setName(deviceName);
     device.setType(TEST_DEVICE_TYPE);
@@ -247,7 +244,7 @@ public abstract class AbstractTest {
     return createdDevice;
   }
 
-  UUID createSensor(final String deviceName, final UUID deviceId, final UUID spaceId) {
+  protected UUID createSensor(final String deviceName, final UUID deviceId, final UUID spaceId) {
     final SensorsApi sensorsApi = twinsApiClient.getSensorsApi();
 
     final SensorCreate device = new SensorCreate();

@@ -1,15 +1,15 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.telemetry;
+package com.microsoft.twins.reflector;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.microsoft.twins.reflector.ReflectorIngressSink;
-import com.microsoft.twins.reflector.TopologyOperationSink;
+import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
+import com.microsoft.twins.reflector.proxy.TopologyOperationSink;
 
 @Configuration
 @EnableAutoConfiguration

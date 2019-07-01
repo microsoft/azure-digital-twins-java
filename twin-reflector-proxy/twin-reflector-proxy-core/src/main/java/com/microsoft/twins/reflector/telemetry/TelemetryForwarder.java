@@ -20,6 +20,7 @@ import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.IotHubEventCallback;
 import com.microsoft.azure.sdk.iot.device.IotHubStatusCode;
 import com.microsoft.azure.sdk.iot.device.Message;
+import com.microsoft.twins.reflector.error.TopologyElementDoesNotExistException;
 import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxy;
 import lombok.RequiredArgsConstructor;
 
@@ -69,13 +70,12 @@ public class TelemetryForwarder implements Closeable {
 
   public void sendMessage(final String message, final UUID correlationId, final String hardwareId) {
 
-    // FIXME exception handling
-    final DeviceClient client =
-        knownClients.computeIfAbsent(cachedDigitalTwinProxy.getGatewayIdByHardwareId(hardwareId).orElseThrow(), key -> {
+    final DeviceClient client = knownClients.computeIfAbsent(cachedDigitalTwinProxy.getGatewayIdByHardwareId(hardwareId)
+        .orElseThrow(() -> new TopologyElementDoesNotExistException(hardwareId, correlationId)), key -> {
           try {
-            final DeviceClient cl =
-                new DeviceClient(cachedDigitalTwinProxy.getDeviceByDeviceId(key).orElseThrow().getConnectionString(),
-                    IotHubClientProtocol.AMQPS);
+            final DeviceClient cl = new DeviceClient(cachedDigitalTwinProxy.getDeviceByDeviceId(key)
+                .orElseThrow(() -> new TopologyElementDoesNotExistException(key.toString(), correlationId))
+                .getConnectionString(), IotHubClientProtocol.AMQPS);
             cl.open();
             return cl;
           } catch (IllegalArgumentException | URISyntaxException | IOException e) {

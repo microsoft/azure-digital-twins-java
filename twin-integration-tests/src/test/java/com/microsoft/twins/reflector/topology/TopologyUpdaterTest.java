@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.telemetry;
+package com.microsoft.twins.reflector.topology;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.UUID;
@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import com.microsoft.twins.api.DevicesApi;
-import com.microsoft.twins.reflector.ReflectorIngressSink;
+import com.microsoft.twins.reflector.AbstractTest;
+import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
 

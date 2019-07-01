@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@ContextConfiguration(classes = {ReflectorTestConfiguration.class})
 public abstract class AbstractTest {
 
 }

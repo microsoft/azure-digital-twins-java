@@ -15,7 +15,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
-import com.microsoft.twins.reflector.ReflectorIngressSink;
+import com.microsoft.twins.reflector.AbstractTest;
+import com.microsoft.twins.reflector.ListenToIngressSampler;
+import com.microsoft.twins.reflector.TestMessage;
+import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
 
