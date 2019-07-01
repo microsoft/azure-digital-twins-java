@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
+ */
 package com.microsoft.twins.reflector.model;
 
 public enum ErrorCode {
