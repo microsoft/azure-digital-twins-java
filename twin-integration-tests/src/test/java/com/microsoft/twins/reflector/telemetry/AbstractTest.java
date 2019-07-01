@@ -66,12 +66,17 @@ public abstract class AbstractTest {
 
   protected UUID tenant;
 
+  protected UUID testGateway;
+
   @Before
   public void setup() {
     createTestTenantSetup();
     cleanTestSensors();
     cleanTestDevices();
     cleanTestSpaces();
+
+    final String gatewayName = UUID.randomUUID().toString();
+    testGateway = createGateway(gatewayName, tenant);
   }
 
   @After

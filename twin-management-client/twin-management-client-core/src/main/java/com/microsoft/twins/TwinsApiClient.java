@@ -25,9 +25,12 @@ import com.microsoft.twins.api.SystemApi;
 import com.microsoft.twins.api.TypesApi;
 import com.microsoft.twins.api.UserDefinedFunctionsApi;
 import com.microsoft.twins.api.UsersApi;
+import com.microsoft.twins.error.RetryOnStatusHandler;
+import feign.Client;
 import feign.Feign;
 import feign.Logger;
 import feign.RequestTemplate;
+import feign.Retryer;
 import feign.http2client.Http2Client;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -51,11 +54,16 @@ public class TwinsApiClient {
     feignBuilder.requestInterceptor(handler);
   }
 
-  public TwinsApiClient(final String twinsUrl) {
+  public TwinsApiClient(final String twinsUrl, final Client client, final Retryer retryer) {
     this.twinsUrl = twinsUrl;
     objectMapper = createObjectMapper();
-    feignBuilder = Feign.builder().encoder(new JacksonEncoderWithContentType(objectMapper)).client(new Http2Client())
-        .logLevel(Logger.Level.FULL).decoder(new JacksonDecoder(objectMapper)).logger(new Slf4jLogger());
+    feignBuilder = Feign.builder().encoder(new JacksonEncoderWithContentType(objectMapper)).client(client)
+        .retryer(retryer).errorDecoder(new RetryOnStatusHandler()).logLevel(Logger.Level.FULL)
+        .decoder(new JacksonDecoder(objectMapper)).logger(new Slf4jLogger());
+  }
+
+  public TwinsApiClient(final String twinsUrl) {
+    this(twinsUrl, new Http2Client(), new Retryer.Default());
   }
 
   public Feign.Builder getFeignBuilder() {
@@ -67,17 +75,17 @@ public class TwinsApiClient {
     return this;
   }
 
-  private ObjectMapper createObjectMapper() {
-    final ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    objectMapper.disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE);
-    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"));
-    objectMapper.registerModule(new JavaTimeModule());
-    return objectMapper;
+  private static ObjectMapper createObjectMapper() {
+    final ObjectMapper mapper = new ObjectMapper();
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    mapper.disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE);
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"));
+    mapper.registerModule(new JavaTimeModule());
+    return mapper;
   }
 
   public ObjectMapper getObjectMapper() {
