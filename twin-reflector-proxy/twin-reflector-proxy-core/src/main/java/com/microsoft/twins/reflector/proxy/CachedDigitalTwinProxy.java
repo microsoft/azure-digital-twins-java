@@ -16,19 +16,18 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.event.model.TopologyOperationEvent;
+import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
 import com.microsoft.twins.model.EndpointCreate.TypeEnum;
 import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.SensorRetrieve;
-import com.microsoft.twins.reflector.TopologyOperationSink;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,16 +41,27 @@ public class CachedDigitalTwinProxy {
   private static final String CACHE_DEVICE_BY_NAME = "deviceByName";
 
 
-  private final TwinsApiClient twinsApiClient;
+  private final SensorsApi sensorsApi;
+  private final DevicesApi devicesApi;
+  private final EndpointsApi endpointsApi;
   private final TwinReflectorProxyProperties properties;
   private final CacheManager cacheManager;
+
+  public UUID createDevice(final String name, final UUID parent, final UUID gateway) {
+    final DeviceCreate device = new DeviceCreate();
+    device.setName(name);
+    device.setSpaceId(parent);
+    device.setHardwareId(name);
+    device.setGatewayId(gateway.toString());
+    device.setCreateIoTHubDevice(false);
+
+    return devicesApi.devicesCreate(device);
+  }
 
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id")})
   public Optional<DeviceRetrieve> getDeviceByName(final String name) {
-
-    final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
     final List<DeviceRetrieve> devices =
         devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"));
 
@@ -65,8 +75,6 @@ public class CachedDigitalTwinProxy {
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_ID)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name")})
   public Optional<DeviceRetrieve> getDeviceByDeviceId(final UUID deviceId) {
-
-    final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
     final List<DeviceRetrieve> devices = devicesApi
         .devicesRetrieve(new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"));
 
@@ -79,18 +87,20 @@ public class CachedDigitalTwinProxy {
 
   @CacheEvict(cacheNames = CACHE_DEVICE_BY_NAME)
   public void deleteDeviceByName(final String name) {
-    final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
+    final Optional<DeviceRetrieve> device = getDeviceByName(name);
 
-    final DeviceRetrieve device = getDeviceByName(name).orElseThrow();
-    devicesApi.devicesDelete(device.getId().toString());
-    cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(device.getId());
+    if (device.isEmpty()) {
+      log.warn("Device with [{}] does not exist. Will silently ignore delition.");
+    }
+
+    devicesApi.devicesDelete(device.get().getId().toString());
+    cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(device.get().getId());
   }
 
 
   @Cacheable(cacheNames = CACHE_GATEWAY_ID_BY_HARDWARE_ID)
   public Optional<UUID> getGatewayIdByHardwareId(final String hardwareId) {
     // Check first if hardware ID belongs to sensor
-    final SensorsApi sensorsApi = twinsApiClient.getSensorsApi();
     final List<SensorRetrieve> sensors = sensorsApi
         .sensorsRetrieve(new SensorsApi.SensorsRetrieveQueryParams().hardwareIds(hardwareId).includes("device"));
 
@@ -102,7 +112,6 @@ public class CachedDigitalTwinProxy {
     }
 
     // Check next if hardware ID belongs to device
-    final DevicesApi devicesApi = twinsApiClient.getDevicesApi();
     final List<DeviceRetrieve> devices =
         devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().hardwareIds(hardwareId));
 
@@ -118,11 +127,10 @@ public class CachedDigitalTwinProxy {
   }
 
   @PostConstruct
-  public void registerForTopologyChanges() {
-    final EndpointsApi endpoints = twinsApiClient.getEndpointsApi();
-
-    final List<EndpointRetrieve> existing = endpoints.endpointsRetrieve(new EndpointsApi.EndpointsRetrieveQueryParams()
-        .types(TypeEnum.EVENTHUB.toString()).eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
+  void registerForTopologyChanges() {
+    final List<EndpointRetrieve> existing =
+        endpointsApi.endpointsRetrieve(new EndpointsApi.EndpointsRetrieveQueryParams()
+            .types(TypeEnum.EVENTHUB.toString()).eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
 
     if (!CollectionUtils.isEmpty(existing) && existing.stream().anyMatch(
         endpoint -> endpoint.getPath().equalsIgnoreCase(properties.getTopologyChangeRegistration().getHubname()))) {
@@ -139,7 +147,7 @@ public class CachedDigitalTwinProxy {
         + ";EntityPath=" + properties.getTopologyChangeRegistration().getHubname());
     eventHub.setPath(properties.getTopologyChangeRegistration().getHubname());
 
-    endpoints.endpointsCreate(eventHub);
+    endpointsApi.endpointsCreate(eventHub);
   }
 
 

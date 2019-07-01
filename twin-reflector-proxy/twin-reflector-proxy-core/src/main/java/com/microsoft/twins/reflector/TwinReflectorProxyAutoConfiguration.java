@@ -11,8 +11,13 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.api.DevicesApi;
+import com.microsoft.twins.api.EndpointsApi;
+import com.microsoft.twins.api.SensorsApi;
+import com.microsoft.twins.reflector.ingress.IngressMessageListener;
+import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxy;
+import com.microsoft.twins.reflector.proxy.TopologyOperationSink;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
 import com.microsoft.twins.reflector.topology.TopologyUpdater;
 
@@ -38,9 +43,9 @@ public class TwinReflectorProxyAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  CachedDigitalTwinProxy cachedDigitalTwinProxy(final TwinsApiClient client,
-      final TwinReflectorProxyProperties properties, final CacheManager cacheManager) {
-    return new CachedDigitalTwinProxy(client, properties, cacheManager);
+  CachedDigitalTwinProxy cachedDigitalTwinProxy(final SensorsApi sensorsApi, final DevicesApi devicesApi,
+      final EndpointsApi endpointsApi, final TwinReflectorProxyProperties properties, final CacheManager cacheManager) {
+    return new CachedDigitalTwinProxy(sensorsApi, devicesApi, endpointsApi, properties, cacheManager);
   }
 
   @Bean

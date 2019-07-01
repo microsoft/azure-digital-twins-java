@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector;
+package com.microsoft.twins.reflector.ingress;
 
 import java.util.UUID;
 import javax.validation.Valid;

@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
 
-package com.microsoft.twins.reflector.telemetry;
+package com.microsoft.twins.reflector;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

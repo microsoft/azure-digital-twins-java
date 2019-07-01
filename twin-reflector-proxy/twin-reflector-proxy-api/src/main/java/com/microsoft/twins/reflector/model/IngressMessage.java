@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.reflector.model;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -28,10 +28,10 @@ public class IngressMessage {
   private Map<String, String> attributes;
 
   @JsonProperty("properties")
-  private Set<Property> properties;
+  private List<Property> properties;
 
   @JsonProperty("relationships")
-  private Set<Relationship> relationships;
+  private List<Relationship> relationships;
 
   @JsonProperty(value = "telemetry")
   private Object telemetry;
