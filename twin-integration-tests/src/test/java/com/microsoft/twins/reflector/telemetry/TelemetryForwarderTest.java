@@ -11,20 +11,14 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Awaitility;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
-import org.springframework.test.context.ContextConfiguration;
 import com.microsoft.twins.reflector.ReflectorIngressSink;
-import com.microsoft.twins.reflector.TwinReflectorProxyAutoConfiguration;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
-import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfiguration;
 
-@ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class, TwinReflectorProxyAutoConfiguration.class,
-    TestConfiguration.class})
 public class TelemetryForwarderTest extends AbstractTest {
 
   @Autowired
@@ -35,14 +29,6 @@ public class TelemetryForwarderTest extends AbstractTest {
 
   @Autowired
   private ReflectorIngressSink sink;
-
-  private UUID testGateway;
-
-  @Before
-  public void createGateway() {
-    final String gatewayName = UUID.randomUUID().toString();
-    testGateway = createGateway(gatewayName, tenant);
-  }
 
   @Test
   public void sendTelemetryMessagesThroughIoTHub()
@@ -97,7 +83,7 @@ public class TelemetryForwarderTest extends AbstractTest {
       testMessage.setTelemetry(payload);
 
       final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-          .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.full.toString())
+          .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.FULL.toString().toLowerCase())
           .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
 
       sink.input().send(hubMessage);
