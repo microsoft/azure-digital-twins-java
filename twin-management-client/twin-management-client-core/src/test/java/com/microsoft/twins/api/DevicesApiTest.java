@@ -5,8 +5,8 @@ package com.microsoft.twins.api;
 
 import java.io.File;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceUpdate;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
@@ -17,7 +17,7 @@ import com.microsoft.twins.model.ExtendedPropertyCreate;
 public class DevicesApiTest extends AbstractApiTest {
   private DevicesApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getDevicesApi();
   }

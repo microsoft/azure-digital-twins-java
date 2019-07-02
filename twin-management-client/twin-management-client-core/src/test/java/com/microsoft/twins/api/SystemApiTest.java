@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * API tests for SystemApi
@@ -12,7 +12,7 @@ import org.junit.Test;
 public class SystemApiTest extends AbstractApiTest {
   private SystemApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getSystemApi();
   }

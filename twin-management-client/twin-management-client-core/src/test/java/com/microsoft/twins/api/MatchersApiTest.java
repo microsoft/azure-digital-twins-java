@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.MatcherCreate;
 import com.microsoft.twins.model.MatcherUpdate;
 
@@ -14,7 +14,7 @@ import com.microsoft.twins.model.MatcherUpdate;
 public class MatchersApiTest extends AbstractApiTest {
   private MatchersApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getMatchersApi();
   }

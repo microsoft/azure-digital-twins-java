@@ -5,8 +5,8 @@ package com.microsoft.twins.api;
 
 import java.io.File;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceUpdate;
@@ -18,7 +18,7 @@ import com.microsoft.twins.model.UserCreate;
 public class SpacesApiTest extends AbstractApiTest {
   private SpacesApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getSpacesApi();
   }

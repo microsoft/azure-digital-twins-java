@@ -5,8 +5,8 @@ package com.microsoft.twins.api;
 
 import java.io.File;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.UserCreateWithSpace;
 import com.microsoft.twins.model.UserUpdate;
@@ -17,7 +17,7 @@ import com.microsoft.twins.model.UserUpdate;
 public class UsersApiTest extends AbstractApiTest {
   private UsersApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getUsersApi();
   }
