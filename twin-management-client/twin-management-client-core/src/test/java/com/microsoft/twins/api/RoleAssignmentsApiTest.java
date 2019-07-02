@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.RoleAssignmentCreate;
 
 /**
@@ -13,7 +13,7 @@ import com.microsoft.twins.model.RoleAssignmentCreate;
 public class RoleAssignmentsApiTest extends AbstractApiTest {
   private RoleAssignmentsApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getRoleAssignmentsApi();
   }

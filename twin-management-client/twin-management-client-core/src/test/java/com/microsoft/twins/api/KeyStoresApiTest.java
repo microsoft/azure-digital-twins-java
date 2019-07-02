@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.KeyStoreCreate;
 import com.microsoft.twins.model.KeyStoreUpdate;
 import com.microsoft.twins.model.SecurityKeyUpdate;
@@ -15,7 +15,7 @@ import com.microsoft.twins.model.SecurityKeyUpdate;
 public class KeyStoresApiTest extends AbstractApiTest {
   private KeyStoresApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getKeyStoresApi();
   }

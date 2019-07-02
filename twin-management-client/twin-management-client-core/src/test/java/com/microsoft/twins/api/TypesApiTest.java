@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.ExtendedTypeCreate;
 import com.microsoft.twins.model.ExtendedTypeUpdate;
 
@@ -14,7 +14,7 @@ import com.microsoft.twins.model.ExtendedTypeUpdate;
 public class TypesApiTest extends AbstractApiTest {
   private TypesApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getTypesApi();
   }

@@ -15,8 +15,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -43,7 +43,7 @@ public class FeignErrorHandlingTest {
 
   private DevicesApi devicesApi;
 
-  @Before
+  @BeforeEach
   public void setup() {
     devicesApi = new TwinsApiClient(ADT_DUMMY_URL, clientMock, new Retryer.Default()).getDevicesApi();
   }

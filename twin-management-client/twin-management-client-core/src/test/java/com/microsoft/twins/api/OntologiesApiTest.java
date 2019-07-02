@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.OntologyUpdate;
 
 /**
@@ -13,7 +13,7 @@ import com.microsoft.twins.model.OntologyUpdate;
 public class OntologiesApiTest extends AbstractApiTest {
   private OntologiesApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getOntologiesApi();
   }

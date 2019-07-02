@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceUpdate;
 
@@ -14,7 +14,7 @@ import com.microsoft.twins.model.SpaceResourceUpdate;
 public class ResourcesApiTest extends AbstractApiTest {
   private ResourcesApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getResourcesApi();
   }

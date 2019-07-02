@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.awaitility.Awaitility;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
@@ -46,7 +46,7 @@ import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
 import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfiguration;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class, TwinReflectorProxyAutoConfiguration.class,
     TestConfiguration.class})
@@ -67,7 +67,7 @@ public abstract class AbstractTest {
 
   protected UUID testGateway;
 
-  @Before
+  @BeforeEach
   public void setup() {
     createTestTenantSetup();
     cleanTestSensors();
@@ -78,7 +78,7 @@ public abstract class AbstractTest {
     testGateway = createGateway(gatewayName, tenant);
   }
 
-  @After
+  @AfterEach
   public void cleanup() {
     cleanTestSensors();
     cleanTestDevices();

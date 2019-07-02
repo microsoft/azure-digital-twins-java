@@ -3,8 +3,8 @@
  */
 package com.microsoft.twins.api;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.ExtendedPropertyKeyCreate;
 import com.microsoft.twins.model.ExtendedPropertyKeyUpdate;
 
@@ -14,7 +14,7 @@ import com.microsoft.twins.model.ExtendedPropertyKeyUpdate;
 public class PropertyKeysApiTest extends AbstractApiTest {
   private PropertyKeysApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getPropertyKeysApi();
   }

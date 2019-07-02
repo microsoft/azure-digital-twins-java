@@ -4,8 +4,8 @@
 package com.microsoft.twins.api;
 
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SensorCreate;
 import com.microsoft.twins.model.SensorUpdate;
@@ -16,7 +16,7 @@ import com.microsoft.twins.model.SensorUpdate;
 public class SensorsApiTest extends AbstractApiTest {
   private SensorsApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getSensorsApi();
   }

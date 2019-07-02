@@ -4,8 +4,8 @@
 package com.microsoft.twins.api;
 
 import java.io.File;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * API tests for UserDefinedFunctionsApi
@@ -13,7 +13,7 @@ import org.junit.Test;
 public class UserDefinedFunctionsApiTest extends AbstractApiTest {
   private UserDefinedFunctionsApi api;
 
-  @Before
+  @BeforeEach
   public void setup() {
     api = TWINS_API_CLIENT.getUserDefinedFunctionsApi();
   }
