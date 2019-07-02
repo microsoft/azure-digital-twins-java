@@ -58,8 +58,6 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
     createFactorySample(tenant);
     createGoToSales(tenant);
     shiftVehicles(tenant, "L-1", 20);
-
-    System.exit(0);
   }
 
   private void createGoToSales(final UUID tenant) {
