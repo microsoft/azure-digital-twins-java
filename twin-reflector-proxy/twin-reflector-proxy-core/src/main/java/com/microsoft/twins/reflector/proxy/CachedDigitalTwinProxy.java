@@ -91,6 +91,7 @@ public class CachedDigitalTwinProxy {
 
     if (device.isEmpty()) {
       log.warn("Device with [{}] does not exist. Will silently ignore delition.");
+      return;
     }
 
     devicesApi.devicesDelete(device.get().getId().toString());
@@ -153,8 +154,8 @@ public class CachedDigitalTwinProxy {
 
   @StreamListener(target = TopologyOperationSink.INPUT)
   void getTopologyUpdate(final TopologyOperationEvent topologyOperationEvent) {
-    if (TopologyOperationEvent.AccessType.UPDATE.equals(topologyOperationEvent.getAccessType())
-        || TopologyOperationEvent.AccessType.DELETE.equals(topologyOperationEvent.getAccessType())) {
+    if (TopologyOperationEvent.AccessType.UPDATE == topologyOperationEvent.getAccessType()
+        || TopologyOperationEvent.AccessType.DELETE == topologyOperationEvent.getAccessType()) {
 
       switch (topologyOperationEvent.getType()) {
         case DEVICE:

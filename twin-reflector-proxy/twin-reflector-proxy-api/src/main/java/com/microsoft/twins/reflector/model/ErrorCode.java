@@ -4,7 +4,9 @@
 package com.microsoft.twins.reflector.model;
 
 public enum ErrorCode {
-  ELEMENT_DOES_NOT_EXIST(1);
+  ELEMENT_DOES_NOT_EXIST(1),
+
+  INCONSISTENT_TOPOLOGY(2);
 
   private final int code;
 

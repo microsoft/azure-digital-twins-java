@@ -16,6 +16,6 @@ public interface DeviceMessageSink {
    * @return input channel.
    */
   @Input(DeviceMessageSink.INPUT)
-  SubscribableChannel input();
+  SubscribableChannel inputChannel();
 
 }

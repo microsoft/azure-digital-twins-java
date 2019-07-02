@@ -173,7 +173,7 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     cleanCacheEvent.setType(Type.DEVICE);
     cleanCacheEvent.setId(testDeviceId);
 
-    topologyOperationSink.input().send(MessageBuilder.withPayload(cleanCacheEvent).build());
+    topologyOperationSink.inputChannel().send(MessageBuilder.withPayload(cleanCacheEvent).build());
 
     assertThat(idCache).isEmpty();
     assertThat(nameCache).isEmpty();

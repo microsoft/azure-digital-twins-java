@@ -42,7 +42,7 @@ public class TopologyUpdaterTest extends AbstractTest {
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.DELETE.toString().toLowerCase())
         .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
 
-    sink.input().send(hubMessage);
+    sink.inputChannel().send(hubMessage);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(twinsApiClient.getDevicesApi()

@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.twins.model.DeviceRetrieve;
+import com.microsoft.twins.reflector.error.InconsistentTopologyException;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Relationship;
 import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxy;
@@ -30,10 +31,7 @@ public class TopologyUpdater {
   public void updateTopologyElementPartial(@Valid final IngressMessage update, final UUID correlationId) {
     log.trace("Got partial topology update: [{}] with correlation ID: [{}]", update, correlationId);
 
-    // FIXME gateway, get
-    final DeviceRetrieve device = cachedDigitalTwinProxy.getDeviceByName(update.getId())
-        .orElseGet(() -> cachedDigitalTwinProxy.getDeviceByDeviceId(cachedDigitalTwinProxy.createDevice(update.getId(),
-            getParent(update.getRelationships()).orElseThrow(), null)).get());
+
 
     // TODO implement
   }
@@ -47,6 +45,14 @@ public class TopologyUpdater {
   public void updateTopologyElementComplete(@Valid final IngressMessage update, final UUID correlationId) {
     log.trace("Got complete topology update: [{}] with correlation ID: [{}]", update, correlationId);
 
+    // FIXME gateway, get
+    final DeviceRetrieve device = cachedDigitalTwinProxy.getDeviceByName(update.getId())
+        .orElseGet(() -> cachedDigitalTwinProxy
+            .getDeviceByDeviceId(cachedDigitalTwinProxy.createDevice(update.getId(),
+                getParent(update.getRelationships()).orElseThrow(
+                    () -> new InconsistentTopologyException(update.getId() + " lacks a parent", correlationId)),
+                null))
+            .get());
 
     // TODO implement
   }
