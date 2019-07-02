@@ -5,8 +5,8 @@ package com.microsoft.twins.api;
 
 import java.io.File;
 import java.util.List;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceUpdate;
 import com.microsoft.twins.model.ExtendedPropertyCreate;

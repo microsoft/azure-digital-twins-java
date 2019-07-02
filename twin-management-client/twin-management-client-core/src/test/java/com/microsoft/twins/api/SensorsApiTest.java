@@ -4,8 +4,8 @@
 package com.microsoft.twins.api;
 
 import java.util.List;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SensorCreate;
 import com.microsoft.twins.model.SensorUpdate;

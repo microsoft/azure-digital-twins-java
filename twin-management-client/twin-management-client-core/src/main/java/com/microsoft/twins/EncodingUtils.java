@@ -13,6 +13,8 @@ import java.util.List;
  * Utilities to support Swagger encoding formats in Feign.
  */
 public final class EncodingUtils {
+  private static final int NOT_SINGLE = 2;
+
   /**
    * Private constructor. Do not construct this class.
    */
@@ -51,7 +53,7 @@ public final class EncodingUtils {
       }
     }
     // Feign natively handles single-element lists and the "multi" format.
-    if (stringValues.size() < 2 || "multi".equals(collectionFormat)) {
+    if (stringValues.size() < NOT_SINGLE || "multi".equals(collectionFormat)) {
       return stringValues;
     }
     // Otherwise return a formatted String

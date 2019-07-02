@@ -22,6 +22,6 @@ public interface TopologyOperationSink {
    * @return input channel.
    */
   @Input(TopologyOperationSink.INPUT)
-  SubscribableChannel input();
+  SubscribableChannel inputChannel();
 
 }

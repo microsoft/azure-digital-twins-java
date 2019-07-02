@@ -19,6 +19,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import com.microsoft.aad.adal4j.AuthenticationContext;
 import com.microsoft.aad.adal4j.AuthenticationResult;
 import com.microsoft.aad.adal4j.ClientCredential;
+import com.microsoft.twins.error.FailedToAcquireBearerTokenException;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.RequiredArgsConstructor;
@@ -70,13 +71,12 @@ public class AadRequestInterceptor implements RequestInterceptor {
         return Optional.empty();
       }
 
-      log.debug("Got token of type '{}' from AAD that expires after {}s",
-          response.getAccessTokenType(), response.getExpiresAfter());
+      log.debug("Got token of type '{}' from AAD that expires after {}s", response.getAccessTokenType(),
+          response.getExpiresAfter());
       rwLock.writeLock().lock();
       try {
         accessToken = response.getAccessToken();
-        accessTokenExpiresAt =
-            Instant.now().plusSeconds(response.getExpiresAfter()).minusMillis(BUFFER.toMillis());
+        accessTokenExpiresAt = Instant.now().plusSeconds(response.getExpiresAfter()).minusMillis(BUFFER.toMillis());
       } finally {
         rwLock.writeLock().unlock();
       }
@@ -84,8 +84,7 @@ public class AadRequestInterceptor implements RequestInterceptor {
       log.debug("Token from AAD stored in cache, will time out at {}", accessTokenExpiresAt);
     } catch (MalformedURLException | ExecutionException | TimeoutException e) {
       log.error("Failed to aquire bearer token from AAD.", e);
-      // FIXME
-      throw new RuntimeException("Failed to aquire bearer token from AAD.", e);
+      throw new FailedToAcquireBearerTokenException("Failed to aquire bearer token from AAD.", e);
     }
 
     rwLock.readLock().lock();
@@ -96,8 +95,7 @@ public class AadRequestInterceptor implements RequestInterceptor {
     }
   }
 
-  private AuthenticationResult acquireToken()
-      throws ExecutionException, TimeoutException, MalformedURLException {
+  private AuthenticationResult acquireToken() throws ExecutionException, TimeoutException, MalformedURLException {
     try {
       return getContext().acquireToken(resource, new ClientCredential(clientId, clientSecret), null)
           .get(timeout.get(ChronoUnit.SECONDS), TimeUnit.SECONDS);
@@ -116,8 +114,7 @@ public class AadRequestInterceptor implements RequestInterceptor {
   public Optional<String> getAccessToken() {
     rwLock.readLock().lock();
     try {
-      if (accessToken != null && accessTokenExpiresAt != null
-          && accessTokenExpiresAt.isAfter(Instant.now())) {
+      if (accessToken != null && accessTokenExpiresAt != null && accessTokenExpiresAt.isAfter(Instant.now())) {
         log.debug("Retieved bearer token from cache.");
         return Optional.of(accessToken);
       }
@@ -134,9 +131,10 @@ public class AadRequestInterceptor implements RequestInterceptor {
       log.warn("The Authorization token has been already set");
     } else {
       log.debug("Constructing Header {} for Token {}", AUTHORIZATION_HEADER, BEARER_TOKEN_TYPE);
-      // FIXME optional mess
-      template.header(AUTHORIZATION_HEADER,
-          String.format("%s %s", BEARER_TOKEN_TYPE, getAccessToken().get()));
+
+      getAccessToken().ifPresentOrElse(
+          token -> template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, token)),
+          () -> log.error("No bearer token available from AAD for {}!", template));
     }
   }
 }

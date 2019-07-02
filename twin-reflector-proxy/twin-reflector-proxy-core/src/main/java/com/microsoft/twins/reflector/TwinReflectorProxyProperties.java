@@ -20,7 +20,7 @@ public class TwinReflectorProxyProperties {
   @Getter
   @Setter
   @Validated
-  public class TopologyChangeRegistration {
+  public static class TopologyChangeRegistration {
 
     @NotEmpty
     private String connectionString;

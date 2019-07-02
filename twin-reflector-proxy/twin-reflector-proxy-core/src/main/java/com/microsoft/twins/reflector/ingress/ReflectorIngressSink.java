@@ -33,6 +33,6 @@ public interface ReflectorIngressSink {
    * @return input channel.
    */
   @Input(ReflectorIngressSink.INPUT)
-  SubscribableChannel input();
+  SubscribableChannel inputChannel();
 
 }
