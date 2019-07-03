@@ -60,7 +60,7 @@ public class CachedDigitalTwinProxy {
 
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},
-      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id")})
+      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id", condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByName(final String name) {
     final List<DeviceRetrieve> devices =
         devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"));
@@ -73,7 +73,7 @@ public class CachedDigitalTwinProxy {
   }
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_ID)},
-      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name")})
+      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name", condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByDeviceId(final UUID deviceId) {
     final List<DeviceRetrieve> devices = devicesApi
         .devicesRetrieve(new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"));

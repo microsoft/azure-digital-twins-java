@@ -12,16 +12,19 @@ public class RetryOnStatusHandler extends ErrorDecoder.Default {
 
   @Override
   public Exception decode(final String methodKey, final Response response) {
-    if (409 == response.status()) {
-      return new RetryableException(response.status(), "conflict: will retry", null, null);
-    } else if (429 == response.status()) {
-      final Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.SECOND, 1);
 
-      return new RetryableException(response.status(), "to many request: retry in a second",
-          response.request().httpMethod(), cal.getTime());
-    } else {
-      return super.decode(methodKey, response);
+    switch (response.status()) {
+      case 404:
+      case 409:
+        return new RetryableException(response.status(), response.status() + " will retry", null, null);
+      case 429:
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, 1);
+
+        return new RetryableException(response.status(), "to many request: retry in a second",
+            response.request().httpMethod(), cal.getTime());
+      default:
+        return super.decode(methodKey, response);
     }
   }
 

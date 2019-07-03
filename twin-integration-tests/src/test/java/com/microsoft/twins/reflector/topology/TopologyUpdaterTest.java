@@ -32,8 +32,8 @@ public class TopologyUpdaterTest extends AbstractTest {
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId, testGateway, testSpace);
 
-    assertThat(twinsApiClient.getDevicesApi()
-        .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString()))).hasSize(1);
+    assertThat(devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString())))
+        .hasSize(1);
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
@@ -45,8 +45,8 @@ public class TopologyUpdaterTest extends AbstractTest {
     sink.inputChannel().send(hubMessage);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
-        .pollInterval(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(twinsApiClient.getDevicesApi()
-            .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString()))).isEmpty());
+        .pollInterval(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+            devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString()))).isEmpty());
   }
 
 }
