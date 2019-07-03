@@ -27,7 +27,6 @@ az ad sp show --id YOUR_AP_ID --query objectId -o tsv
 
 on `https://INSTANCE.REGION.azuresmartspaces.net/management/api/v1.0/system/roles`
 
-
 Note: to setup postman follow this guide https://docs.microsoft.com/en-us/azure/digital-twins/how-to-configure-postman
 
 Examples values:
@@ -36,7 +35,7 @@ Examples values:
 - Auth URL: https://login.microsoftonline.com/contoso.onmicrosoft.com/oauth2/authorize?resource=0b07f429-9f4b-4714-9392-cc5e8e80c8b0
 - Client ID: XXXX
 
-3.2. POST the assignments
+  3.2. POST the assignments
 
 on `https://INSTANCE.REGION.azuresmartspaces.net/management/api/v1.0/roleassignments`
 

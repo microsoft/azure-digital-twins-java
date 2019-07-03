@@ -162,41 +162,6 @@ public class TwinsApiClient {
     return feignBuilder.target(clientClass, twinsUrl);
   }
 
-  /**
-   * Select the Accept header's value from the given accepts array: if JSON exists in the given array,
-   * use it; otherwise use all of them (joining into a string)
-   *
-   * @param accepts The accepts array to select from
-   * @return The Accept header to use. If the given array is empty, null will be returned (not to set
-   *         the Accept header explicitly).
-   */
-  public String selectHeaderAccept(final String[] accepts) {
-    if (accepts.length == 0) {
-      return null;
-    }
-    if (StringUtil.containsIgnoreCase(accepts, "application/json")) {
-      return "application/json";
-    }
-    return StringUtil.join(accepts, ",");
-  }
-
-  /**
-   * Select the Content-Type header's value from the given array: if JSON exists in the given array,
-   * use it; otherwise use the first one of the array.
-   *
-   * @param contentTypes The Content-Type array to select from
-   * @return The Content-Type header to use. If the given array is empty, JSON will be used.
-   */
-  public String selectHeaderContentType(final String[] contentTypes) {
-    if (contentTypes.length == 0) {
-      return "application/json";
-    }
-    if (StringUtil.containsIgnoreCase(contentTypes, "application/json")) {
-      return "application/json";
-    }
-    return contentTypes[0];
-  }
-
   private static class JacksonEncoderWithContentType extends JacksonEncoder {
     public JacksonEncoderWithContentType(final ObjectMapper objectMapper) {
       super(objectMapper);

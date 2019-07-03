@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utilities to support Swagger encoding formats in Feign.
@@ -60,14 +61,14 @@ public final class EncodingUtils {
     final String[] stringArray = stringValues.toArray(new String[0]);
     switch (collectionFormat) {
       case "ssv":
-        return StringUtil.join(stringArray, " ");
+        return StringUtils.join(stringArray, " ");
       case "tsv":
-        return StringUtil.join(stringArray, "\t");
+        return StringUtils.join(stringArray, "\t");
       case "pipes":
-        return StringUtil.join(stringArray, "|");
+        return StringUtils.join(stringArray, "|");
       case "csv":
       default:
-        return StringUtil.join(stringArray, ",");
+        return StringUtils.join(stringArray, ",");
     }
   }
 

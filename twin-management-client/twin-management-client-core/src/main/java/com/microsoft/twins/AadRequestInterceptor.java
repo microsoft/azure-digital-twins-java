@@ -128,7 +128,7 @@ public class AadRequestInterceptor implements RequestInterceptor {
   @Override
   public void apply(final RequestTemplate template) {
     if (template.headers().containsKey(AUTHORIZATION_HEADER)) {
-      log.warn("The Authorization token has been already set");
+      log.debug("The Authorization token has been already set");
     } else {
       log.debug("Constructing Header {} for Token {}", AUTHORIZATION_HEADER, BEARER_TOKEN_TYPE);
 

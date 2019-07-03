@@ -34,7 +34,7 @@
          <groupId>io.github.openfeign</groupId>
          <artifactId>feign-java11</artifactId>
       </dependency>
-
+      
       <!-- Authentication: Java -->
       <dependency>
          <groupId>com.microsoft.azure</groupId>
