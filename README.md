@@ -6,7 +6,7 @@ This projects aims to provide modules and samples for leveraging Azure Digital T
 
 ## Modules
 
-- [ADT Java Management Client](twin-managemnet-client) including optional Spring Boot integration
+- [ADT Java Management Client](twin-management-client) including optional Spring Boot integration
 - [ADT Java Samples](twin-samples) leveraging the management client including a sample to consume events from ADT.
 - [Twin Reflector Proxy](twin-reflector-proxy) - still in development aims to provide a single event driven cloud ingress point for messages that contain either ADT topology changes or telemetry ingress.
 
