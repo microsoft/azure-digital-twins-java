@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,6 +18,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.EndpointsApi;
@@ -34,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class CachedDigitalTwinProxy {
 
   private static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
@@ -62,7 +66,7 @@ public class CachedDigitalTwinProxy {
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id",
           condition = "#result != null")})
-  public Optional<DeviceRetrieve> getDeviceByName(final String name) {
+  public Optional<DeviceRetrieve> getDeviceByName(@NotEmpty final String name) {
     final List<DeviceRetrieve> devices = devicesApi
         .devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"));
 
@@ -76,7 +80,7 @@ public class CachedDigitalTwinProxy {
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_ID)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name",
           condition = "#result != null")})
-  public Optional<DeviceRetrieve> getDeviceByDeviceId(final UUID deviceId) {
+  public Optional<DeviceRetrieve> getDeviceByDeviceId(@NotNull final UUID deviceId) {
     final List<DeviceRetrieve> devices = devicesApi.devicesRetrieve(
         new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"));
 
@@ -88,7 +92,7 @@ public class CachedDigitalTwinProxy {
   }
 
   @CacheEvict(cacheNames = CACHE_DEVICE_BY_NAME)
-  public void deleteDeviceByName(final String name) {
+  public void deleteDeviceByName(@NotEmpty final String name) {
     final Optional<DeviceRetrieve> device = getDeviceByName(name);
 
     if (device.isEmpty()) {
@@ -102,7 +106,7 @@ public class CachedDigitalTwinProxy {
 
 
   @Cacheable(cacheNames = CACHE_GATEWAY_ID_BY_HARDWARE_ID)
-  public Optional<UUID> getGatewayIdByHardwareId(final String hardwareId) {
+  public Optional<UUID> getGatewayIdByHardwareId(@NotEmpty final String hardwareId) {
     // Check first if hardware ID belongs to sensor
     final List<SensorRetrieve> sensors = sensorsApi.sensorsRetrieve(
         new SensorsApi.SensorsRetrieveQueryParams().hardwareIds(hardwareId).includes("device"));

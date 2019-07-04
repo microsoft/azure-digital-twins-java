@@ -15,11 +15,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.commons.lang3.time.StopWatch;
 import com.microsoft.aad.adal4j.AuthenticationContext;
 import com.microsoft.aad.adal4j.AuthenticationResult;
 import com.microsoft.aad.adal4j.ClientCredential;
 import com.microsoft.twins.error.FailedToAcquireBearerTokenException;
+import org.apache.commons.lang3.time.StopWatch;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +84,7 @@ public class AadRequestInterceptor implements RequestInterceptor {
 
       log.debug("Token from AAD stored in cache, will time out at {}", accessTokenExpiresAt);
     } catch (MalformedURLException | ExecutionException | TimeoutException e) {
-      log.error("Failed to aquire bearer token from AAD.", e);
+      log.error("Failed to acquire bearer token from AAD.", e);
       throw new FailedToAcquireBearerTokenException("Failed to aquire bearer token from AAD.", e);
     }
 

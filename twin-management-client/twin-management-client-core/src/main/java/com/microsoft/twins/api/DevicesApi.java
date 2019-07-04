@@ -38,23 +38,23 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Creates a device
    *
-   * @param name (optional)
-   * @param friendlyName (optional)
-   * @param description (optional)
-   * @param type (optional)
-   * @param typeId (optional)
-   * @param subtype (optional)
-   * @param subtypeId (optional)
-   * @param hardwareId (optional)
-   * @param gatewayId (optional)
-   * @param spaceId (optional)
-   * @param status (optional)
-   * @param location (optional)
-   * @param sensors (optional)
-   * @param createIoTHubDevice (optional)
-   * @param parentDeviceType (optional)
+   * @param name                (optional)
+   * @param friendlyName        (optional)
+   * @param description         (optional)
+   * @param type                (optional)
+   * @param typeId              (optional)
+   * @param subtype             (optional)
+   * @param subtypeId           (optional)
+   * @param hardwareId          (optional)
+   * @param gatewayId           (optional)
+   * @param spaceId             (optional)
+   * @param status              (optional)
+   * @param location            (optional)
+   * @param sensors             (optional)
+   * @param createIoTHubDevice  (optional)
+   * @param parentDeviceType    (optional)
    * @param parentDeviceSubtype (optional)
-   * @param properties (optional)
+   * @param properties          (optional)
    * @return UUID
    */
   @RequestLine("POST /api/v1.0/devices")
@@ -97,23 +97,23 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Creates or updates a device using Name and SpaceId as the unique key
    *
-   * @param name (optional)
-   * @param friendlyName (optional)
-   * @param description (optional)
-   * @param type (optional)
-   * @param typeId (optional)
-   * @param subtype (optional)
-   * @param subtypeId (optional)
-   * @param hardwareId (optional)
-   * @param gatewayId (optional)
-   * @param spaceId (optional)
-   * @param status (optional)
-   * @param location (optional)
-   * @param sensors (optional)
-   * @param createIoTHubDevice (optional)
-   * @param parentDeviceType (optional)
+   * @param name                (optional)
+   * @param friendlyName        (optional)
+   * @param description         (optional)
+   * @param type                (optional)
+   * @param typeId              (optional)
+   * @param subtype             (optional)
+   * @param subtypeId           (optional)
+   * @param hardwareId          (optional)
+   * @param gatewayId           (optional)
+   * @param spaceId             (optional)
+   * @param status              (optional)
+   * @param location            (optional)
+   * @param sensors             (optional)
+   * @param createIoTHubDevice  (optional)
+   * @param parentDeviceType    (optional)
    * @param parentDeviceSubtype (optional)
-   * @param properties (optional)
+   * @param properties          (optional)
    * @return UUID
    */
   @RequestLine("PUT /api/v1.0/devices")
@@ -134,7 +134,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Creates a property value
    *
    * @param body Extended property data (required)
-   * @param id Parent Id (required)
+   * @param id   Parent Id (required)
    * @return String
    */
   @RequestLine("POST /api/v1.0/devices/{id}/properties")
@@ -144,8 +144,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Creates a property value
    *
-   * @param id Parent Id (required)
-   * @param name (optional)
+   * @param id    Parent Id (required)
+   * @param name  (optional)
    * @param value (optional)
    * @return String
    */
@@ -177,7 +177,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Delete the contents of the given version of the given blob Delete will fail if this version has
    * any associations
    *
-   * @param id blob id (required)
+   * @param id      blob id (required)
    * @param version blob version (required)
    */
   @RequestLine("DELETE /api/v1.0/devices/blobs/{id}/contents/{version}")
@@ -196,7 +196,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Deletes the given property value
    *
-   * @param id Parent Id (required)
+   * @param id   Parent Id (required)
    * @param name Property name (required)
    */
   @RequestLine("DELETE /api/v1.0/devices/{id}/properties/{name}")
@@ -206,7 +206,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets the contents of the given version of the given blob
    *
-   * @param id blob id (required)
+   * @param id      blob id (required)
    * @param version blob content version (required)
    * @return File
    */
@@ -227,10 +227,10 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets the first resource of the given type by walking up the spaces hierarchy
    *
-   * @param id Device Id (required)
-   * @param type The resource type (required)
+   * @param id       Device Id (required)
+   * @param type     The resource type (required)
    * @param includes Comma separated list of what to include, for example
-   *        \&quot;Space,DependentChildren\&quot;. Defaults to None (optional)
+   *                 \&quot;Space,DependentChildren\&quot;. Defaults to None (optional)
    * @return SpaceResourceRetrieve
    */
   @RequestLine("GET /api/v1.0/devices/{id}/resources/{type}?includes={includes}")
@@ -246,16 +246,16 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * optional query parameters, especially when used with the {@link DevicesGetResourceQueryParams}
    * class that allows for building up this map in a fluent style.
    *
-   * @param id Device Id (required)
-   * @param type The resource type (required)
+   * @param id          Device Id (required)
+   * @param type        The resource type (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;Space,DependentChildren\&quot;. Defaults to None (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;Space,DependentChildren\&quot;. Defaults to None (optional)</li>
+   *                    </ul>
    * @return SpaceResourceRetrieve
    *
    */
@@ -269,6 +269,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class DevicesGetResourceQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public DevicesGetResourceQueryParams includes(final String value) {
       put("includes", EncodingUtils.encode(value));
       return this;
@@ -287,35 +289,37 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets a list of devices
    *
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
-   *        (optional)
-   * @param hardwareIds Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of hardware ids (such
-   *        as MAC addresses) to filter by (optional)
-   * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names to filter by
-   *        (optional)
-   * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device types to filter
-   *        by. (optional)
-   * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device subtypes to
-   *        filter by. (optional)
-   * @param gateways Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of gateway ids to filter
-   *        by (optional)
-   * @param status Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of status to filter by.
-   *        E.g: status&#x3D;Disabled,Offline (optional)
-   * @param includes Comma separated list of what to include, for example
-   *        \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)
-   * @param propertyKey Optional filter on objects that have the given property key defined
-   *        (optional)
-   * @param propertyValue Optional filter on the value of the given property key (optional)
+   * @param ids                     Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to
+   *                                filter by (optional)
+   * @param hardwareIds             Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                                hardware ids (such as MAC addresses) to filter by (optional)
+   * @param names                   Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names
+   *                                to filter by (optional)
+   * @param types                   Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device
+   *                                types to filter by. (optional)
+   * @param subtypes                Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device
+   *                                subtypes to filter by. (optional)
+   * @param gateways                Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                                gateway ids to filter by (optional)
+   * @param status                  Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of status
+   *                                to filter by. E.g: status&#x3D;Disabled,Offline (optional)
+   * @param includes                Comma separated list of what to include, for example
+   *                                \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)
+   * @param propertyKey             Optional filter on objects that have the given property key
+   *                                defined (optional)
+   * @param propertyValue           Optional filter on the value of the given property key
+   *                                (optional)
    * @param propertyValueSearchType Optional type of search on property value. Contains or Equals.
-   *        Defaults to Equals (optional)
-   * @param spaceId Optionally filter on objects based on their location in the topology relative to
-   *        the specified spaceId (optional)
-   * @param traverse None (the default) for the specified spaceId only, Down for space and
-   *        descendants, Up for spaceId and ancestors, Any for both (optional)
-   * @param minLevel Optional filter on minimum level, inclusive (optional)
-   * @param maxLevel Optional filter on maximum level, inclusive (optional)
-   * @param minRelative Specify if min level is absolute or relative (optional)
-   * @param maxRelative Specify if max level is absolute or relative (optional)
+   *                                Defaults to Equals (optional)
+   * @param spaceId                 Optionally filter on objects based on their location in the
+   *                                topology relative to the specified spaceId (optional)
+   * @param traverse                None (the default) for the specified spaceId only, Down for
+   *                                space and descendants, Up for spaceId and ancestors, Any for
+   *                                both (optional)
+   * @param minLevel                Optional filter on minimum level, inclusive (optional)
+   * @param maxLevel                Optional filter on maximum level, inclusive (optional)
+   * @param minRelative             Specify if min level is absolute or relative (optional)
+   * @param maxRelative             Specify if max level is absolute or relative (optional)
    * @return java.util.List&lt;DeviceRetrieve&gt;
    */
   @RequestLine("GET /api/v1.0/devices?ids={ids}&hardwareIds={hardwareIds}&names={names}&types={types}&subtypes={subtypes}&gateways={gateways}&status={status}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
@@ -340,41 +344,44 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * allows for building up this map in a fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
-   *        (optional)</li>
-   *        <li>hardwareIds - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of hardware ids
-   *        (such as MAC addresses) to filter by (optional)</li>
-   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names to filter by
-   *        (optional)</li>
-   *        <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device types to
-   *        filter by. (optional)</li>
-   *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device subtypes
-   *        to filter by. (optional)</li>
-   *        <li>gateways - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of gateway ids to
-   *        filter by (optional)</li>
-   *        <li>status - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of status to filter
-   *        by. E.g: status&#x3D;Disabled,Offline (optional)</li>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)</li>
-   *        <li>propertyKey - Optional filter on objects that have the given property key defined
-   *        (optional)</li>
-   *        <li>propertyValue - Optional filter on the value of the given property key
-   *        (optional)</li>
-   *        <li>propertyValueSearchType - Optional type of search on property value. Contains or
-   *        Equals. Defaults to Equals (optional)</li>
-   *        <li>spaceId - Optionally filter on objects based on their location in the topology
-   *        relative to the specified spaceId (optional)</li>
-   *        <li>traverse - None (the default) for the specified spaceId only, Down for space and
-   *        descendants, Up for spaceId and ancestors, Any for both (optional)</li>
-   *        <li>minLevel - Optional filter on minimum level, inclusive (optional)</li>
-   *        <li>maxLevel - Optional filter on maximum level, inclusive (optional)</li>
-   *        <li>minRelative - Specify if min level is absolute or relative (optional)</li>
-   *        <li>maxRelative - Specify if max level is absolute or relative (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to
+   *                    filter by (optional)</li>
+   *                    <li>hardwareIds - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                    hardware ids (such as MAC addresses) to filter by (optional)</li>
+   *                    <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names
+   *                    to filter by (optional)</li>
+   *                    <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device
+   *                    types to filter by. (optional)</li>
+   *                    <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                    device subtypes to filter by. (optional)</li>
+   *                    <li>gateways - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                    gateway ids to filter by (optional)</li>
+   *                    <li>status - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                    status to filter by. E.g: status&#x3D;Disabled,Offline (optional)</li>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)</li>
+   *                    <li>propertyKey - Optional filter on objects that have the given property
+   *                    key defined (optional)</li>
+   *                    <li>propertyValue - Optional filter on the value of the given property key
+   *                    (optional)</li>
+   *                    <li>propertyValueSearchType - Optional type of search on property value.
+   *                    Contains or Equals. Defaults to Equals (optional)</li>
+   *                    <li>spaceId - Optionally filter on objects based on their location in the
+   *                    topology relative to the specified spaceId (optional)</li>
+   *                    <li>traverse - None (the default) for the specified spaceId only, Down for
+   *                    space and descendants, Up for spaceId and ancestors, Any for both
+   *                    (optional)</li>
+   *                    <li>minLevel - Optional filter on minimum level, inclusive (optional)</li>
+   *                    <li>maxLevel - Optional filter on maximum level, inclusive (optional)</li>
+   *                    <li>minRelative - Specify if min level is absolute or relative
+   *                    (optional)</li>
+   *                    <li>maxRelative - Specify if max level is absolute or relative
+   *                    (optional)</li>
+   *                    </ul>
    * @return java.util.List&lt;DeviceRetrieve&gt;
    *
    */
@@ -387,6 +394,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * in a fluent style.
    */
   public static class DevicesRetrieveQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public DevicesRetrieveQueryParams ids(final String value) {
       put("ids", EncodingUtils.encode(value));
       return this;
@@ -476,24 +485,24 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets a list of blobs
    *
-   * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter by
-   *        (optional)
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
-   *        (optional)
-   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
-   *        filter by (optional)
-   * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
-   *        (optional)
-   * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to filter by
-   *        (optional)
-   * @param includes Comma separated list of what to include, for example
-   *        \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)
-   * @param spaceId Optionally filter on objects based on their location in the topology relative to
-   *        the specified spaceId (optional)
-   * @param traverse None (the default) for the specified spaceId only, Down for space and
-   *        descendants, Up for spaceId and ancestors, Any for both (optional)
-   * @param minLevel Optional filter on minimum level, inclusive (optional)
-   * @param maxLevel Optional filter on maximum level, inclusive (optional)
+   * @param names       Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to
+   *                    filter by (optional)
+   * @param ids         Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *                    (optional)
+   * @param sharings    Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
+   *                    filter by (optional)
+   * @param types       Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
+   *                    (optional)
+   * @param subtypes    Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to filter
+   *                    by (optional)
+   * @param includes    Comma separated list of what to include, for example
+   *                    \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)
+   * @param spaceId     Optionally filter on objects based on their location in the topology
+   *                    relative to the specified spaceId (optional)
+   * @param traverse    None (the default) for the specified spaceId only, Down for space and
+   *                    descendants, Up for spaceId and ancestors, Any for both (optional)
+   * @param minLevel    Optional filter on minimum level, inclusive (optional)
+   * @param maxLevel    Optional filter on maximum level, inclusive (optional)
    * @param minRelative Specify if min level is absolute or relative (optional)
    * @param maxRelative Specify if max level is absolute or relative (optional)
    * @return java.util.List&lt;BlobMetadataRetrieve&gt;
@@ -517,31 +526,34 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to
-   *        filter by (optional)</li>
-   *        <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
-   *        (optional)</li>
-   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes
-   *        to filter by (optional)</li>
-   *        <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
-   *        (optional)</li>
-   *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to
-   *        filter by (optional)</li>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)</li>
-   *        <li>spaceId - Optionally filter on objects based on their location in the topology
-   *        relative to the specified spaceId (optional)</li>
-   *        <li>traverse - None (the default) for the specified spaceId only, Down for space and
-   *        descendants, Up for spaceId and ancestors, Any for both (optional)</li>
-   *        <li>minLevel - Optional filter on minimum level, inclusive (optional)</li>
-   *        <li>maxLevel - Optional filter on maximum level, inclusive (optional)</li>
-   *        <li>minRelative - Specify if min level is absolute or relative (optional)</li>
-   *        <li>maxRelative - Specify if max level is absolute or relative (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob
+   *                    names to filter by (optional)</li>
+   *                    <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to
+   *                    filter by (optional)</li>
+   *                    <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                    Sharing modes to filter by (optional)</li>
+   *                    <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types
+   *                    to filter by (optional)</li>
+   *                    <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of
+   *                    subtypes to filter by (optional)</li>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)</li>
+   *                    <li>spaceId - Optionally filter on objects based on their location in the
+   *                    topology relative to the specified spaceId (optional)</li>
+   *                    <li>traverse - None (the default) for the specified spaceId only, Down for
+   *                    space and descendants, Up for spaceId and ancestors, Any for both
+   *                    (optional)</li>
+   *                    <li>minLevel - Optional filter on minimum level, inclusive (optional)</li>
+   *                    <li>maxLevel - Optional filter on maximum level, inclusive (optional)</li>
+   *                    <li>minRelative - Specify if min level is absolute or relative
+   *                    (optional)</li>
+   *                    <li>maxRelative - Specify if max level is absolute or relative
+   *                    (optional)</li>
+   *                    </ul>
    * @return java.util.List&lt;BlobMetadataRetrieve&gt;
    *
    */
@@ -555,6 +567,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * <code>devicesRetrieveBlobMetadata</code> method in a fluent style.
    */
   public static class DevicesRetrieveBlobMetadataQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public DevicesRetrieveBlobMetadataQueryParams names(final String value) {
       put("names", EncodingUtils.encode(value));
       return this;
@@ -619,9 +633,9 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets a blob
    *
-   * @param id Blob Id (required)
+   * @param id       Blob Id (required)
    * @param includes Comma separated list of what to include, for example
-   *        \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)
+   *                 \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)
    * @return BlobMetadataRetrieve
    */
   @RequestLine("GET /api/v1.0/devices/blobs/{id}?includes={includes}")
@@ -638,15 +652,15 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * {@link DevicesRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map
    * in a fluent style.
    *
-   * @param id Blob Id (required)
+   * @param id          Blob Id (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)</li>
+   *                    </ul>
    * @return BlobMetadataRetrieve
    *
    */
@@ -660,6 +674,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * <code>devicesRetrieveBlobMetadataById</code> method in a fluent style.
    */
   public static class DevicesRetrieveBlobMetadataByIdQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public DevicesRetrieveBlobMetadataByIdQueryParams includes(final String value) {
       put("includes", EncodingUtils.encode(value));
       return this;
@@ -669,9 +685,9 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets a specific device
    *
-   * @param id Device Id (required)
+   * @param id       Device Id (required)
    * @param includes Comma separated list of what to include, for example
-   *        \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)
+   *                 \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)
    * @return DeviceRetrieve
    */
   @RequestLine("GET /api/v1.0/devices/{id}?includes={includes}")
@@ -686,15 +702,15 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * optional query parameters, especially when used with the {@link DevicesRetrieveByIdQueryParams}
    * class that allows for building up this map in a fluent style.
    *
-   * @param id Device Id (required)
+   * @param id          Device Id (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)</li>
+   *                    </ul>
    * @return DeviceRetrieve
    *
    */
@@ -708,6 +724,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class DevicesRetrieveByIdQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public DevicesRetrieveByIdQueryParams includes(final String value) {
       put("includes", EncodingUtils.encode(value));
       return this;
@@ -717,9 +735,9 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets the first keystore by walking up the spaces hierarchy
    *
-   * @param id Device Id (required)
+   * @param id       Device Id (required)
    * @param includes Comma separated list of what to include, for example \&quot;Space,Keys\&quot;.
-   *        Defaults to None (optional)
+   *                 Defaults to None (optional)
    * @return KeyStoreRetrieve
    */
   @RequestLine("GET /api/v1.0/devices/{id}/keystore?includes={includes}")
@@ -736,15 +754,15 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * {@link DevicesRetrieveKeyStoreQueryParams} class that allows for building up this map in a
    * fluent style.
    *
-   * @param id Device Id (required)
+   * @param id          Device Id (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
+   *                    </ul>
    * @return KeyStoreRetrieve
    *
    */
@@ -758,6 +776,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * <code>devicesRetrieveKeyStore</code> method in a fluent style.
    */
   public static class DevicesRetrieveKeyStoreQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public DevicesRetrieveKeyStoreQueryParams includes(final String value) {
       put("includes", EncodingUtils.encode(value));
       return this;
@@ -767,7 +787,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets the value of a property
    *
-   * @param id Parent Id (required)
+   * @param id   Parent Id (required)
    * @param name Property name (required)
    * @return String
    */
@@ -788,7 +808,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Updates a device
    *
    * @param body The device information (required)
-   * @param id Device Id (required)
+   * @param id   Device Id (required)
    */
   @RequestLine("PATCH /api/v1.0/devices/{id}")
   @Headers({"Accept: */*",})
@@ -797,19 +817,19 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Updates a device
    *
-   * @param id Device Id (required)
-   * @param name (optional)
+   * @param id           Device Id (required)
+   * @param name         (optional)
    * @param friendlyName (optional)
-   * @param description (optional)
-   * @param hardwareId (optional)
-   * @param gatewayId (optional)
-   * @param spaceId (optional)
-   * @param status (optional)
-   * @param location (optional)
-   * @param type (optional)
-   * @param typeId (optional)
-   * @param subtype (optional)
-   * @param subtypeId (optional)
+   * @param description  (optional)
+   * @param hardwareId   (optional)
+   * @param gatewayId    (optional)
+   * @param spaceId      (optional)
+   * @param status       (optional)
+   * @param location     (optional)
+   * @param type         (optional)
+   * @param typeId       (optional)
+   * @param subtype      (optional)
+   * @param subtypeId    (optional)
    */
   @RequestLine("PATCH /api/v1.0/devices/{id}")
   @Headers({"Accept: */*",})
@@ -825,7 +845,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Updates a blob This is a multi-part request. For more information, see sample app or doc
    * examples.
    *
-   * @param id blob Id (required)
+   * @param id       blob Id (required)
    * @param metadata (optional)
    * @param contents (optional)
    */
@@ -838,7 +858,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Creates or updates property values
    *
    * @param body The properties (required)
-   * @param id Parent Id (required)
+   * @param id   Parent Id (required)
    * @return Object
    */
   @RequestLine("PUT /api/v1.0/devices/{id}/properties")
