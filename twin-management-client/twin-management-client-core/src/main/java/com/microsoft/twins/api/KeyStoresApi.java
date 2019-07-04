@@ -33,9 +33,9 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Creates a key store
    *
-   * @param name (optional)
+   * @param name        (optional)
    * @param description (optional)
-   * @param spaceId (optional)
+   * @param spaceId     (optional)
    * @return UUID
    */
   @RequestLine("POST /api/v1.0/keystores")
@@ -65,7 +65,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Deletes the given key
    *
-   * @param id The store identifier (required)
+   * @param id  The store identifier (required)
    * @param key The key identifier (required)
    */
   @RequestLine("DELETE /api/v1.0/keystores/{id}/keys/{key}")
@@ -75,8 +75,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Gets a token for the specified device using the specified key
    *
-   * @param id The key store identifier (required)
-   * @param key The key identifier (required)
+   * @param id        The key store identifier (required)
+   * @param key       The key identifier (required)
    * @param deviceMac The device to generate the token for (required)
    * @return String
    */
@@ -94,15 +94,15 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * {@link KeyStoresGenerateTokenFromKeyByIdQueryParams} class that allows for building up this map
    * in a fluent style.
    *
-   * @param id The key store identifier (required)
-   * @param key The key identifier (required)
+   * @param id          The key store identifier (required)
+   * @param key         The key identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>deviceMac - The device to generate the token for (required)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>deviceMac - The device to generate the token for (required)</li>
+   *                    </ul>
    * @return String
    *
    */
@@ -116,6 +116,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * <code>keyStoresGenerateTokenFromKeyById</code> method in a fluent style.
    */
   public static class KeyStoresGenerateTokenFromKeyByIdQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public KeyStoresGenerateTokenFromKeyByIdQueryParams deviceMac(final String value) {
       put("deviceMac", EncodingUtils.encode(value));
       return this;
@@ -125,7 +127,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Gets a token for the specified device for the last valid key.
    *
-   * @param id The identifier (required)
+   * @param id        The identifier (required)
    * @param deviceMac The device to generate the token for (required)
    * @return String
    */
@@ -143,14 +145,14 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * {@link KeyStoresGenerateTokenFromLastKeyQueryParams} class that allows for building up this map
    * in a fluent style.
    *
-   * @param id The identifier (required)
+   * @param id          The identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>deviceMac - The device to generate the token for (required)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>deviceMac - The device to generate the token for (required)</li>
+   *                    </ul>
    * @return String
    *
    */
@@ -164,6 +166,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * <code>keyStoresGenerateTokenFromLastKey</code> method in a fluent style.
    */
   public static class KeyStoresGenerateTokenFromLastKeyQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public KeyStoresGenerateTokenFromLastKeyQueryParams deviceMac(final String value) {
       put("deviceMac", EncodingUtils.encode(value));
       return this;
@@ -173,9 +177,9 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Retrieves key stores
    *
-   * @param spaceId Optional filter on parent space id (optional)
+   * @param spaceId  Optional filter on parent space id (optional)
    * @param includes Comma separated list of what to include, for example \&quot;Space,Keys\&quot;.
-   *        Defaults to None (optional)
+   *                 Defaults to None (optional)
    * @return java.util.List&lt;KeyStoreRetrieve&gt;
    */
   @RequestLine("GET /api/v1.0/keystores?spaceId={spaceId}&includes={includes}")
@@ -192,14 +196,14 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * allows for building up this map in a fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>spaceId - Optional filter on parent space id (optional)</li>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>spaceId - Optional filter on parent space id (optional)</li>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
+   *                    </ul>
    * @return java.util.List&lt;KeyStoreRetrieve&gt;
    *
    */
@@ -213,6 +217,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class KeyStoresRetrieveQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public KeyStoresRetrieveQueryParams spaceId(final String value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
@@ -227,9 +233,9 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Retrieves a key store
    *
-   * @param id The identifier (required)
+   * @param id       The identifier (required)
    * @param includes Comma separated list of what to include, for example \&quot;Space,Keys\&quot;.
-   *        Defaults to None (optional)
+   *                 Defaults to None (optional)
    * @return KeyStoreRetrieve
    */
   @RequestLine("GET /api/v1.0/keystores/{id}?includes={includes}")
@@ -246,15 +252,15 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * {@link KeyStoresRetrieveByIdQueryParams} class that allows for building up this map in a fluent
    * style.
    *
-   * @param id The identifier (required)
+   * @param id          The identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>includes - Comma separated list of what to include, for example
-   *        \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>includes - Comma separated list of what to include, for example
+   *                    \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
+   *                    </ul>
    * @return KeyStoreRetrieve
    *
    */
@@ -268,6 +274,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class KeyStoresRetrieveByIdQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public KeyStoresRetrieveByIdQueryParams includes(final String value) {
       put("includes", EncodingUtils.encode(value));
       return this;
@@ -277,7 +285,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Retrieves the given key
    *
-   * @param id The key store identifier (required)
+   * @param id  The key store identifier (required)
    * @param key The key identifier (required)
    * @return SecurityKeyRetrieve
    */
@@ -309,7 +317,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * Updates a key store
    *
    * @param body The store information (required)
-   * @param id The identifier (required)
+   * @param id   The identifier (required)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
   @Headers({"Accept: */*",})
@@ -318,8 +326,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Updates a key store
    *
-   * @param id The identifier (required)
-   * @param name (optional)
+   * @param id          The identifier (required)
+   * @param name        (optional)
    * @param description (optional)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
@@ -331,8 +339,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * Updates the given key
    *
    * @param body The key data (required)
-   * @param id The store identifier (required)
-   * @param key The key identifier (required)
+   * @param id   The store identifier (required)
+   * @param key  The key identifier (required)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
@@ -342,8 +350,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Updates the given key
    *
-   * @param id The store identifier (required)
-   * @param key The key identifier (required)
+   * @param id     The store identifier (required)
+   * @param key    The key identifier (required)
    * @param status (optional)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")

@@ -51,7 +51,7 @@ import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfigurati
 @ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class,
     TwinReflectorProxyAutoConfiguration.class, TestConfiguration.class})
 @EnableBinding(Sink.class)
-public abstract class AbstractTest {
+public abstract class AbstractIntegrationTest {
   private static final String TEST_SPACE_TYPE = "TestSpaces";
   private static final String TEST_DEVICE_TYPE = "TestDevices";
   private static final String TEST_SENSOR_TYPE = "TestSensors";

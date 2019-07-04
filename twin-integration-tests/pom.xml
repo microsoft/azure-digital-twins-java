@@ -3,7 +3,6 @@
     Copyright (c) Microsoft Corporation. Licensed under the MIT License.
 
 -->
-<!-- Copyright (c) Microsoft Corporation. Licensed under the MIT License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -14,12 +13,9 @@
       <version>0.1.0-SNAPSHOT</version>
    </parent>
    <artifactId>twin-integration-tests</artifactId>
-   <name>Azure Digital Twins - Spring Boot integration tests</name>
+   <name>Azure Digital Twins :: Spring Boot integration tests</name>
 
    <dependencies>
-
-
-
       <dependency>
          <groupId>com.microsoft.twins</groupId>
          <artifactId>twin-management-client-starter</artifactId>

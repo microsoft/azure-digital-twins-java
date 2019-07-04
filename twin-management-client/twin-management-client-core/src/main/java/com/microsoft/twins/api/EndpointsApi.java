@@ -30,11 +30,11 @@ public interface EndpointsApi extends TwinsApiClient.Api {
   /**
    * Creates an endpoint
    *
-   * @param type (optional)
-   * @param eventTypes (optional)
-   * @param connectionString (optional)
+   * @param type                      (optional)
+   * @param eventTypes                (optional)
+   * @param connectionString          (optional)
    * @param secondaryConnectionString (optional)
-   * @param path (optional)
+   * @param path                      (optional)
    * @return UUID
    */
   @RequestLine("POST /api/v1.0/endpoints")
@@ -57,7 +57,7 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    * Modifies an existing endpoint. Does not create if it doesn&#x27;t exist.
    *
    * @param body Update payload (required)
-   * @param id Endpoint id (required)
+   * @param id   Endpoint id (required)
    * @return Object
    */
   @RequestLine("PUT /api/v1.0/endpoints/{id}")
@@ -67,12 +67,12 @@ public interface EndpointsApi extends TwinsApiClient.Api {
   /**
    * Modifies an existing endpoint. Does not create if it doesn&#x27;t exist.
    *
-   * @param id Endpoint id (required)
-   * @param type (optional)
-   * @param eventTypes (optional)
-   * @param connectionString (optional)
+   * @param id                        Endpoint id (required)
+   * @param type                      (optional)
+   * @param eventTypes                (optional)
+   * @param connectionString          (optional)
    * @param secondaryConnectionString (optional)
-   * @param path (optional)
+   * @param path                      (optional)
    * @return Object
    */
   @RequestLine("PUT /api/v1.0/endpoints/{id}")
@@ -87,8 +87,8 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    * Gets a list of endpoints
    *
    * @param timeUpdated Minimum last updated UTC time (optional)
-   * @param types Endpoint types (optional)
-   * @param eventTypes Types of event (optional)
+   * @param types       Endpoint types (optional)
+   * @param eventTypes  Types of event (optional)
    * @return java.util.List&lt;EndpointRetrieve&gt;
    */
   @RequestLine("GET /api/v1.0/endpoints?timeUpdated={timeUpdated}&types={types}&eventTypes={eventTypes}")
@@ -105,14 +105,14 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    * allows for building up this map in a fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
-   *        <p>
-   *        The following elements may be specified in the query map:
-   *        </p>
-   *        <ul>
-   *        <li>timeUpdated - Minimum last updated UTC time (optional)</li>
-   *        <li>types - Endpoint types (optional)</li>
-   *        <li>eventTypes - Types of event (optional)</li>
-   *        </ul>
+   *                    <p>
+   *                    The following elements may be specified in the query map:
+   *                    </p>
+   *                    <ul>
+   *                    <li>timeUpdated - Minimum last updated UTC time (optional)</li>
+   *                    <li>types - Endpoint types (optional)</li>
+   *                    <li>eventTypes - Types of event (optional)</li>
+   *                    </ul>
    * @return java.util.List&lt;EndpointRetrieve&gt;
    *
    */
@@ -126,6 +126,8 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class EndpointsRetrieveQueryParams extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+
     public EndpointsRetrieveQueryParams timeUpdated(final String value) {
       put("timeUpdated", EncodingUtils.encode(value));
       return this;
