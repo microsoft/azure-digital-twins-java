@@ -110,12 +110,8 @@ public class TelemetryForwarder implements Closeable {
 
   @Override
   public void close() throws IOException {
-    knownClients.entrySet().forEach(entry -> {
-      try {
-        entry.getValue().closeNow();
-      } catch (final IOException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    for (final DeviceClient client : knownClients.values()) {
+      client.closeNow();
+    }
   }
 }

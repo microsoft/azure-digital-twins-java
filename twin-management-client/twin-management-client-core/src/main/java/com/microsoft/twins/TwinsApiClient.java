@@ -31,7 +31,7 @@ import feign.Feign;
 import feign.Logger;
 import feign.RequestTemplate;
 import feign.Retryer;
-import feign.http2client.Http2Client;
+import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.slf4j.Slf4jLogger;
@@ -64,7 +64,7 @@ public class TwinsApiClient {
   }
 
   public TwinsApiClient(final String twinsUrl) {
-    this(twinsUrl, new Http2Client(), new Retryer.Default());
+    this(twinsUrl, new ApacheHttpClient(), new Retryer.Default());
   }
 
   public Feign.Builder getFeignBuilder() {
