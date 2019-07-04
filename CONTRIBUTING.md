@@ -14,4 +14,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Codestyle
 
-We use the [Google Java Style Guide](https://github.com/google/styleguide) where a formatter for Eclipse IDE is available.
+We use the [Google Java Style Guide](https://github.com/google/styleguide). A formatter for Eclipse IDE is available https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml which works with [Visual Studio Code](https://code.visualstudio.com) as well.
