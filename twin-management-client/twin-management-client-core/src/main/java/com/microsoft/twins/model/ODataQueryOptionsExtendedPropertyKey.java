@@ -224,7 +224,8 @@ public class ODataQueryOptionsExtendedPropertyKey {
     this.rawValues = rawValues;
   }
 
-  public ODataQueryOptionsExtendedPropertyKey selectExpand(final SelectExpandQueryOption selectExpand) {
+  public ODataQueryOptionsExtendedPropertyKey selectExpand(
+      final SelectExpandQueryOption selectExpand) {
     this.selectExpand = selectExpand;
     return this;
   }
@@ -319,7 +320,8 @@ public class ODataQueryOptionsExtendedPropertyKey {
     this.top = top;
   }
 
-  public ODataQueryOptionsExtendedPropertyKey inlineCount(final InlineCountQueryOption inlineCount) {
+  public ODataQueryOptionsExtendedPropertyKey inlineCount(
+      final InlineCountQueryOption inlineCount) {
     this.inlineCount = inlineCount;
     return this;
   }

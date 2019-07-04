@@ -170,10 +170,12 @@ public class SensorsApiTest extends AbstractApiTest {
    */
   @Test
   public void sensorsRetrieveTestQueryMap() {
-    final SensorsApi.SensorsRetrieveQueryParams queryParams = new SensorsApi.SensorsRetrieveQueryParams().ids(null)
-        .deviceIds(null).types(null).portTypes(null).dataTypes(null).dataSubtypes(null).dataUnitTypes(null)
-        .hardwareIds(null).includes(null).propertyKey(null).propertyValue(null).propertyValueSearchType(null)
-        .spaceId(null).traverse(null).minLevel(null).maxLevel(null).minRelative(null).maxRelative(null);
+    final SensorsApi.SensorsRetrieveQueryParams queryParams =
+        new SensorsApi.SensorsRetrieveQueryParams().ids(null).deviceIds(null).types(null)
+            .portTypes(null).dataTypes(null).dataSubtypes(null).dataUnitTypes(null)
+            .hardwareIds(null).includes(null).propertyKey(null).propertyValue(null)
+            .propertyValueSearchType(null).spaceId(null).traverse(null).minLevel(null)
+            .maxLevel(null).minRelative(null).maxRelative(null);
     // List<SensorRetrieve> response =
     // api.sensorsRetrieve(queryParams);
     // TODO: test validations

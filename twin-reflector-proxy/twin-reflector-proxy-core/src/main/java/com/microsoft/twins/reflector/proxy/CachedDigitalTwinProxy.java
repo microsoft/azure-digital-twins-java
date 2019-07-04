@@ -60,10 +60,11 @@ public class CachedDigitalTwinProxy {
 
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},
-      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id", condition = "#result != null")})
+      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id",
+          condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByName(final String name) {
-    final List<DeviceRetrieve> devices =
-        devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"));
+    final List<DeviceRetrieve> devices = devicesApi
+        .devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"));
 
     if (devices.isEmpty()) {
       return Optional.empty();
@@ -73,10 +74,11 @@ public class CachedDigitalTwinProxy {
   }
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_ID)},
-      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name", condition = "#result != null")})
+      put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name",
+          condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByDeviceId(final UUID deviceId) {
-    final List<DeviceRetrieve> devices = devicesApi
-        .devicesRetrieve(new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"));
+    final List<DeviceRetrieve> devices = devicesApi.devicesRetrieve(
+        new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"));
 
     if (devices.isEmpty()) {
       return Optional.empty();
@@ -102,8 +104,8 @@ public class CachedDigitalTwinProxy {
   @Cacheable(cacheNames = CACHE_GATEWAY_ID_BY_HARDWARE_ID)
   public Optional<UUID> getGatewayIdByHardwareId(final String hardwareId) {
     // Check first if hardware ID belongs to sensor
-    final List<SensorRetrieve> sensors = sensorsApi
-        .sensorsRetrieve(new SensorsApi.SensorsRetrieveQueryParams().hardwareIds(hardwareId).includes("device"));
+    final List<SensorRetrieve> sensors = sensorsApi.sensorsRetrieve(
+        new SensorsApi.SensorsRetrieveQueryParams().hardwareIds(hardwareId).includes("device"));
 
     if (!CollectionUtils.isEmpty(sensors)) {
       if (StringUtils.isEmpty(sensors.get(0).getDevice().getGatewayId())) {
@@ -129,12 +131,12 @@ public class CachedDigitalTwinProxy {
 
   @PostConstruct
   void registerForTopologyChanges() {
-    final List<EndpointRetrieve> existing =
-        endpointsApi.endpointsRetrieve(new EndpointsApi.EndpointsRetrieveQueryParams()
-            .types(TypeEnum.EVENTHUB.toString()).eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
+    final List<EndpointRetrieve> existing = endpointsApi.endpointsRetrieve(
+        new EndpointsApi.EndpointsRetrieveQueryParams().types(TypeEnum.EVENTHUB.toString())
+            .eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
 
-    if (!CollectionUtils.isEmpty(existing) && existing.stream().anyMatch(
-        endpoint -> endpoint.getPath().equalsIgnoreCase(properties.getTopologyChangeRegistration().getHubname()))) {
+    if (!CollectionUtils.isEmpty(existing) && existing.stream().anyMatch(endpoint -> endpoint
+        .getPath().equalsIgnoreCase(properties.getTopologyChangeRegistration().getHubname()))) {
       return;
     }
 
@@ -142,10 +144,11 @@ public class CachedDigitalTwinProxy {
     final EndpointCreate eventHub = new EndpointCreate();
     eventHub.addEventTypesItem(EventTypesEnum.TOPOLOGYOPERATION);
     eventHub.setType(TypeEnum.EVENTHUB);
-    eventHub.setConnectionString(properties.getTopologyChangeRegistration().getConnectionString() + ";EntityPath="
-        + properties.getTopologyChangeRegistration().getHubname());
-    eventHub.setSecondaryConnectionString(properties.getTopologyChangeRegistration().getSecondaryConnectionString()
+    eventHub.setConnectionString(properties.getTopologyChangeRegistration().getConnectionString()
         + ";EntityPath=" + properties.getTopologyChangeRegistration().getHubname());
+    eventHub.setSecondaryConnectionString(
+        properties.getTopologyChangeRegistration().getSecondaryConnectionString() + ";EntityPath="
+            + properties.getTopologyChangeRegistration().getHubname());
     eventHub.setPath(properties.getTopologyChangeRegistration().getHubname());
 
     endpointsApi.endpointsCreate(eventHub);
@@ -172,7 +175,8 @@ public class CachedDigitalTwinProxy {
 
     if (inCache != null) {
       cacheManager.getCache(CACHE_DEVICE_BY_NAME).evict(((DeviceRetrieve) inCache.get()).getName());
-      cacheManager.getCache(CACHE_GATEWAY_ID_BY_HARDWARE_ID).evict(((DeviceRetrieve) inCache.get()).getHardwareId());
+      cacheManager.getCache(CACHE_GATEWAY_ID_BY_HARDWARE_ID)
+          .evict(((DeviceRetrieve) inCache.get()).getHardwareId());
       cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(deviceId);
     }
   }

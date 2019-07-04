@@ -33,12 +33,14 @@ import feign.Util;
 @ExtendWith(MockitoExtension.class)
 public class FeignErrorHandlingTest {
 
-  private static final String ADT_TEST_URL = "https://docs.westcentralus.azuresmartspaces.net/management";
+  private static final String ADT_TEST_URL =
+      "https://docs.westcentralus.azuresmartspaces.net/management";
 
   @Mock
   private Client client;
 
-  private final Request dummyRequest = Request.create(HttpMethod.DELETE, ADT_TEST_URL, Collections.emptyMap(), null);
+  private final Request dummyRequest =
+      Request.create(HttpMethod.DELETE, ADT_TEST_URL, Collections.emptyMap(), null);
 
   private DevicesApi devicesApi;
 
@@ -50,8 +52,8 @@ public class FeignErrorHandlingTest {
   @Test
   public void successMeansNoRetry() throws IOException {
 
-    when(client.execute(any(Request.class), any(Options.class)))
-        .thenReturn(Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest).build());
+    when(client.execute(any(Request.class), any(Options.class))).thenReturn(Response.builder()
+        .status(200).headers(Collections.emptyMap()).request(dummyRequest).build());
 
     devicesApi.devicesDelete("test");
 
@@ -61,7 +63,8 @@ public class FeignErrorHandlingTest {
   @Test
   public void defaultRetryGivingUpAfter5Tries() throws IOException {
 
-    when(client.execute(any(Request.class), any(Options.class))).thenThrow(new UnknownHostException());
+    when(client.execute(any(Request.class), any(Options.class)))
+        .thenThrow(new UnknownHostException());
 
     try {
       devicesApi.devicesDelete("test");
@@ -76,11 +79,13 @@ public class FeignErrorHandlingTest {
   @Test
   public void definedRetryAttempts() throws IOException {
 
-    when(client.execute(any(Request.class), any(Options.class))).thenThrow(new UnknownHostException());
+    when(client.execute(any(Request.class), any(Options.class)))
+        .thenThrow(new UnknownHostException());
 
     final int maxAttempts = 3;
 
-    devicesApi = new TwinsApiClient(ADT_TEST_URL, client, new Retryer.Default(1, 100, maxAttempts)).getDevicesApi();
+    devicesApi = new TwinsApiClient(ADT_TEST_URL, client, new Retryer.Default(1, 100, maxAttempts))
+        .getDevicesApi();
 
     try {
       devicesApi.devicesDelete("test");
@@ -96,8 +101,10 @@ public class FeignErrorHandlingTest {
   public void conflictResultsInRetry() throws IOException {
 
     when(client.execute(any(Request.class), any(Options.class))).thenReturn(
-        Response.builder().status(409).headers(Collections.emptyMap()).request(dummyRequest).build(),
-        Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest).build());
+        Response.builder().status(409).headers(Collections.emptyMap()).request(dummyRequest)
+            .build(),
+        Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest)
+            .build());
 
     devicesApi.devicesDelete("test");
 
@@ -109,8 +116,10 @@ public class FeignErrorHandlingTest {
   public void tooManyRequestsResultsInRetry() throws IOException {
 
     when(client.execute(any(Request.class), any(Options.class))).thenReturn(
-        Response.builder().status(429).headers(Collections.emptyMap()).request(dummyRequest).build(),
-        Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest).build());
+        Response.builder().status(429).headers(Collections.emptyMap()).request(dummyRequest)
+            .build(),
+        Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest)
+            .build());
 
 
     final Instant start = Instant.now();
@@ -127,9 +136,15 @@ public class FeignErrorHandlingTest {
   @Test
   public void retryAfterHeaderIsApplied() throws IOException {
 
-    when(client.execute(any(Request.class), any(Options.class))).thenReturn(Response.builder().status(400)
-        .headers(Collections.singletonMap(Util.RETRY_AFTER, Collections.singletonList("1"))).request(dummyRequest)
-        .build(), Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest).build());
+    when(
+        client.execute(any(Request.class), any(Options.class)))
+            .thenReturn(
+                Response.builder().status(400)
+                    .headers(
+                        Collections.singletonMap(Util.RETRY_AFTER, Collections.singletonList("1")))
+                    .request(dummyRequest).build(),
+                Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest)
+                    .build());
 
 
     devicesApi.devicesDelete("test");

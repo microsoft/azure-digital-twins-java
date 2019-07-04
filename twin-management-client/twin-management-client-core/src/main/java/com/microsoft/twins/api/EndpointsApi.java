@@ -41,7 +41,8 @@ public interface EndpointsApi extends TwinsApiClient.Api {
   @Headers({"Accept: */*",})
   UUID endpointsCreate(@Param("type") String type, @Param("eventTypes") List<String> eventTypes,
       @Param("connectionString") String connectionString,
-      @Param("secondaryConnectionString") String secondaryConnectionString, @Param("path") String path);
+      @Param("secondaryConnectionString") String secondaryConnectionString,
+      @Param("path") String path);
 
   /**
    * Deletes the specified endpoint
@@ -77,8 +78,10 @@ public interface EndpointsApi extends TwinsApiClient.Api {
   @RequestLine("PUT /api/v1.0/endpoints/{id}")
   @Headers({"Accept: */*",})
   Object endpointsModify(@Param("id") String id, @Param("type") String type,
-      @Param("eventTypes") List<String> eventTypes, @Param("connectionString") String connectionString,
-      @Param("secondaryConnectionString") String secondaryConnectionString, @Param("path") String path);
+      @Param("eventTypes") List<String> eventTypes,
+      @Param("connectionString") String connectionString,
+      @Param("secondaryConnectionString") String secondaryConnectionString,
+      @Param("path") String path);
 
   /**
    * Gets a list of endpoints
@@ -90,8 +93,8 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/endpoints?timeUpdated={timeUpdated}&types={types}&eventTypes={eventTypes}")
   @Headers({"Accept: */*",})
-  List<EndpointRetrieve> endpointsRetrieve(@Param("timeUpdated") String timeUpdated, @Param("types") String types,
-      @Param("eventTypes") String eventTypes);
+  List<EndpointRetrieve> endpointsRetrieve(@Param("timeUpdated") String timeUpdated,
+      @Param("types") String types, @Param("eventTypes") String eventTypes);
 
   /**
    * Gets a list of endpoints
@@ -115,11 +118,12 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/endpoints?timeUpdated={timeUpdated}&types={types}&eventTypes={eventTypes}")
   @Headers({"Content-Type: */*",})
-  List<EndpointRetrieve> endpointsRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<EndpointRetrieve> endpointsRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>endpointsRetrieve</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>endpointsRetrieve</code>
+   * method in a fluent style.
    */
   public static class EndpointsRetrieveQueryParams extends HashMap<String, Object> {
     public EndpointsRetrieveQueryParams timeUpdated(final String value) {

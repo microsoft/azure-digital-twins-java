@@ -59,7 +59,8 @@ public class TelemetryForwarder implements Closeable {
         case THROTTLED:
         case TOO_MANY_DEVICES:
         case UNAUTHORIZED:
-          LOG.debug("IoT Hub responded with an error to message {} with status {}", msg.getMessageId(), status);
+          LOG.debug("IoT Hub responded with an error to message {} with status {}",
+              msg.getMessageId(), status);
           break;
         default:
           break;
@@ -70,19 +71,26 @@ public class TelemetryForwarder implements Closeable {
 
   public void sendMessage(final String message, final UUID correlationId, final String hardwareId) {
 
-    final DeviceClient client = knownClients.computeIfAbsent(cachedDigitalTwinProxy.getGatewayIdByHardwareId(hardwareId)
-        .orElseThrow(() -> new TopologyElementDoesNotExistException(hardwareId, correlationId)), key -> {
-          try {
-            final DeviceClient cl = new DeviceClient(cachedDigitalTwinProxy.getDeviceByDeviceId(key)
-                .orElseThrow(() -> new TopologyElementDoesNotExistException(key.toString(), correlationId))
-                .getConnectionString(), IotHubClientProtocol.AMQPS);
-            cl.open();
-            return cl;
-          } catch (IllegalArgumentException | URISyntaxException | IOException e) {
-            LOG.error("Could not create client", e);
-            return null;
-          }
-        });
+    final DeviceClient client =
+        knownClients
+            .computeIfAbsent(
+                cachedDigitalTwinProxy.getGatewayIdByHardwareId(hardwareId).orElseThrow(
+                    () -> new TopologyElementDoesNotExistException(hardwareId, correlationId)),
+                key -> {
+                  try {
+                    final DeviceClient cl = new DeviceClient(
+                        cachedDigitalTwinProxy.getDeviceByDeviceId(key)
+                            .orElseThrow(() -> new TopologyElementDoesNotExistException(
+                                key.toString(), correlationId))
+                            .getConnectionString(),
+                        IotHubClientProtocol.AMQPS);
+                    cl.open();
+                    return cl;
+                  } catch (IllegalArgumentException | URISyntaxException | IOException e) {
+                    LOG.error("Could not create client", e);
+                    return null;
+                  }
+                });
 
 
     final Message msg = new Message(message);

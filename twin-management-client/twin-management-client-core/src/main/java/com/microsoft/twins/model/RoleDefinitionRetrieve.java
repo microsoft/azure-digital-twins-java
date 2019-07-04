@@ -151,15 +151,22 @@ public class RoleDefinitionRetrieve extends AbstractRetrieve<RoleDefinitionRetri
    * Gets or Sets accessControlType
    */
   public enum AccessControlTypeEnum {
-    NONE("None"), DEVICE("Device"), DEVICEBLOBMETADATA("DeviceBlobMetadata"), DEVICEEXTENDEDPROPERTY(
-        "DeviceExtendedProperty"), EXTENDEDPROPERTYKEY(
-            "ExtendedPropertyKey"), EXTENDEDTYPE("ExtendedType"), ENDPOINT("Endpoint"), KEYSTORE("KeyStore"), MATCHER(
-                "Matcher"), ONTOLOGY("Ontology"), REPORT("Report"), ROLEDEFINITION("RoleDefinition"), SENSOR(
-                    "Sensor"), SENSOREXTENDEDPROPERTY("SensorExtendedProperty"), SPACE("Space"), SPACEBLOBMETADATA(
-                        "SpaceBlobMetadata"), SPACEEXTENDEDPROPERTY("SpaceExtendedProperty"), SPACERESOURCE(
-                            "SpaceResource"), SPACEROLEASSIGNMENT("SpaceRoleAssignment"), SYSTEM(
-                                "System"), USERDEFINEDFUNCTION("UserDefinedFunction"), USER("User"), USERBLOBMETADATA(
-                                    "UserBlobMetadata"), USEREXTENDEDPROPERTY("UserExtendedProperty");
+    NONE("None"), DEVICE("Device"), DEVICEBLOBMETADATA(
+        "DeviceBlobMetadata"), DEVICEEXTENDEDPROPERTY(
+            "DeviceExtendedProperty"), EXTENDEDPROPERTYKEY("ExtendedPropertyKey"), EXTENDEDTYPE(
+                "ExtendedType"), ENDPOINT("Endpoint"), KEYSTORE("KeyStore"), MATCHER(
+                    "Matcher"), ONTOLOGY("Ontology"), REPORT("Report"), ROLEDEFINITION(
+                        "RoleDefinition"), SENSOR("Sensor"), SENSOREXTENDEDPROPERTY(
+                            "SensorExtendedProperty"), SPACE("Space"), SPACEBLOBMETADATA(
+                                "SpaceBlobMetadata"), SPACEEXTENDEDPROPERTY(
+                                    "SpaceExtendedProperty"), SPACERESOURCE(
+                                        "SpaceResource"), SPACEROLEASSIGNMENT(
+                                            "SpaceRoleAssignment"), SYSTEM(
+                                                "System"), USERDEFINEDFUNCTION(
+                                                    "UserDefinedFunction"), USER(
+                                                        "User"), USERBLOBMETADATA(
+                                                            "UserBlobMetadata"), USEREXTENDEDPROPERTY(
+                                                                "UserExtendedProperty");
     private final String value;
 
     AccessControlTypeEnum(final String value) {

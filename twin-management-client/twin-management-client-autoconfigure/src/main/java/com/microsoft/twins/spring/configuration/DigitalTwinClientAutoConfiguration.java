@@ -35,8 +35,9 @@ public class DigitalTwinClientAutoConfiguration {
   @ConditionalOnClass(TwinsApiClient.class)
   TwinsApiClient twinsApiClient(final DigitalTwinsClientProperties properties) {
 
-    return new TwinsApiClient(properties.getAad().getAuthorityHost(), properties.getAad().getTenant(),
-        properties.getAad().getClientId(), properties.getAad().getClientSecret(), properties.getAad().getTimeout(),
+    return new TwinsApiClient(properties.getAad().getAuthorityHost(),
+        properties.getAad().getTenant(), properties.getAad().getClientId(),
+        properties.getAad().getClientSecret(), properties.getAad().getTimeout(),
         properties.getTwinsUrl().toString());
   }
 

@@ -57,9 +57,10 @@ public class TwinsApiClient {
   public TwinsApiClient(final String twinsUrl, final Client client, final Retryer retryer) {
     this.twinsUrl = twinsUrl;
     objectMapper = createObjectMapper();
-    feignBuilder = Feign.builder().encoder(new JacksonEncoderWithContentType(objectMapper)).client(client)
-        .retryer(retryer).errorDecoder(new RetryOnStatusHandler()).logLevel(Logger.Level.FULL)
-        .decoder(new JacksonDecoder(objectMapper)).logger(new Slf4jLogger());
+    feignBuilder =
+        Feign.builder().encoder(new JacksonEncoderWithContentType(objectMapper)).client(client)
+            .retryer(retryer).errorDecoder(new RetryOnStatusHandler()).logLevel(Logger.Level.FULL)
+            .decoder(new JacksonDecoder(objectMapper)).logger(new Slf4jLogger());
   }
 
   public TwinsApiClient(final String twinsUrl) {

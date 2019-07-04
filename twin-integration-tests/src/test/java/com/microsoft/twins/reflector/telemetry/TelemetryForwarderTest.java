@@ -86,7 +86,8 @@ public class TelemetryForwarderTest extends AbstractTest {
       testMessage.setTelemetry(payload);
 
       final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-          .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.FULL.toString().toLowerCase())
+          .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
+              MessageType.FULL.toString().toLowerCase())
           .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
 
       sink.inputChannel().send(hubMessage);

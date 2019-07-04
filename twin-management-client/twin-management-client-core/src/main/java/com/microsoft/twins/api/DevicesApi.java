@@ -60,11 +60,14 @@ public interface DevicesApi extends TwinsApiClient.Api {
   @RequestLine("POST /api/v1.0/devices")
   @Headers({"Accept: */*",})
   UUID devicesCreate(@Param("name") String name, @Param("friendlyName") String friendlyName,
-      @Param("description") String description, @Param("type") String type, @Param("typeId") Integer typeId,
-      @Param("subtype") String subtype, @Param("subtypeId") Integer subtypeId, @Param("hardwareId") String hardwareId,
-      @Param("gatewayId") String gatewayId, @Param("spaceId") UUID spaceId, @Param("status") String status,
-      @Param("location") Location location, @Param("sensors") List<SensorCreateNoParent> sensors,
-      @Param("createIoTHubDevice") Boolean createIoTHubDevice, @Param("parentDeviceType") String parentDeviceType,
+      @Param("description") String description, @Param("type") String type,
+      @Param("typeId") Integer typeId, @Param("subtype") String subtype,
+      @Param("subtypeId") Integer subtypeId, @Param("hardwareId") String hardwareId,
+      @Param("gatewayId") String gatewayId, @Param("spaceId") UUID spaceId,
+      @Param("status") String status, @Param("location") Location location,
+      @Param("sensors") List<SensorCreateNoParent> sensors,
+      @Param("createIoTHubDevice") Boolean createIoTHubDevice,
+      @Param("parentDeviceType") String parentDeviceType,
       @Param("parentDeviceSubtype") String parentDeviceSubtype,
       @Param("properties") List<ExtendedPropertyCreate> properties);
 
@@ -116,11 +119,14 @@ public interface DevicesApi extends TwinsApiClient.Api {
   @RequestLine("PUT /api/v1.0/devices")
   @Headers({"Accept: */*",})
   UUID devicesCreateOrUpdate(@Param("name") String name, @Param("friendlyName") String friendlyName,
-      @Param("description") String description, @Param("type") String type, @Param("typeId") Integer typeId,
-      @Param("subtype") String subtype, @Param("subtypeId") Integer subtypeId, @Param("hardwareId") String hardwareId,
-      @Param("gatewayId") String gatewayId, @Param("spaceId") UUID spaceId, @Param("status") String status,
-      @Param("location") Location location, @Param("sensors") List<SensorCreateNoParent> sensors,
-      @Param("createIoTHubDevice") Boolean createIoTHubDevice, @Param("parentDeviceType") String parentDeviceType,
+      @Param("description") String description, @Param("type") String type,
+      @Param("typeId") Integer typeId, @Param("subtype") String subtype,
+      @Param("subtypeId") Integer subtypeId, @Param("hardwareId") String hardwareId,
+      @Param("gatewayId") String gatewayId, @Param("spaceId") UUID spaceId,
+      @Param("status") String status, @Param("location") Location location,
+      @Param("sensors") List<SensorCreateNoParent> sensors,
+      @Param("createIoTHubDevice") Boolean createIoTHubDevice,
+      @Param("parentDeviceType") String parentDeviceType,
       @Param("parentDeviceSubtype") String parentDeviceSubtype,
       @Param("properties") List<ExtendedPropertyCreate> properties);
 
@@ -145,7 +151,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/devices/{id}/properties")
   @Headers({"Accept: */*",})
-  String devicesCreateProperty(@Param("id") String id, @Param("name") String name, @Param("value") String value);
+  String devicesCreateProperty(@Param("id") String id, @Param("name") String name,
+      @Param("value") String value);
 
   /**
    * Deletes a device and its children such as sensors, blobs, ...
@@ -234,10 +241,10 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets the first resource of the given type by walking up the spaces hierarchy
    *
-   * Note, this is equivalent to the other <code>devicesGetResource</code> method, but with the query
-   * parameters collected into a single Map parameter. This is convenient for services with optional
-   * query parameters, especially when used with the {@link DevicesGetResourceQueryParams} class that
-   * allows for building up this map in a fluent style.
+   * Note, this is equivalent to the other <code>devicesGetResource</code> method, but with the
+   * query parameters collected into a single Map parameter. This is convenient for services with
+   * optional query parameters, especially when used with the {@link DevicesGetResourceQueryParams}
+   * class that allows for building up this map in a fluent style.
    *
    * @param id Device Id (required)
    * @param type The resource type (required)
@@ -280,22 +287,24 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets a list of devices
    *
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
    * @param hardwareIds Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of hardware ids (such
    *        as MAC addresses) to filter by (optional)
    * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names to filter by
    *        (optional)
-   * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device types to filter by.
-   *        (optional)
+   * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device types to filter
+   *        by. (optional)
    * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of device subtypes to
    *        filter by. (optional)
    * @param gateways Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of gateway ids to filter
    *        by (optional)
-   * @param status Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of status to filter by. E.g:
-   *        status&#x3D;Disabled,Offline (optional)
+   * @param status Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of status to filter by.
+   *        E.g: status&#x3D;Disabled,Offline (optional)
    * @param includes Comma separated list of what to include, for example
    *        \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)
-   * @param propertyKey Optional filter on objects that have the given property key defined (optional)
+   * @param propertyKey Optional filter on objects that have the given property key defined
+   *        (optional)
    * @param propertyValue Optional filter on the value of the given property key (optional)
    * @param propertyValueSearchType Optional type of search on property value. Contains or Equals.
    *        Defaults to Equals (optional)
@@ -311,12 +320,15 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/devices?ids={ids}&hardwareIds={hardwareIds}&names={names}&types={types}&subtypes={subtypes}&gateways={gateways}&status={status}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<DeviceRetrieve> devicesRetrieve(@Param("ids") String ids, @Param("hardwareIds") String hardwareIds,
-      @Param("names") String names, @Param("types") String types, @Param("subtypes") String subtypes,
-      @Param("gateways") String gateways, @Param("status") String status, @Param("includes") String includes,
-      @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
-      @Param("propertyValueSearchType") String propertyValueSearchType, @Param("spaceId") String spaceId,
-      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
+  List<DeviceRetrieve> devicesRetrieve(@Param("ids") String ids,
+      @Param("hardwareIds") String hardwareIds, @Param("names") String names,
+      @Param("types") String types, @Param("subtypes") String subtypes,
+      @Param("gateways") String gateways, @Param("status") String status,
+      @Param("includes") String includes, @Param("propertyKey") String propertyKey,
+      @Param("propertyValue") String propertyValue,
+      @Param("propertyValueSearchType") String propertyValueSearchType,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
@@ -350,7 +362,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    *        \&quot;Sensors,SasToken\&quot;. Defaults to None (optional)</li>
    *        <li>propertyKey - Optional filter on objects that have the given property key defined
    *        (optional)</li>
-   *        <li>propertyValue - Optional filter on the value of the given property key (optional)</li>
+   *        <li>propertyValue - Optional filter on the value of the given property key
+   *        (optional)</li>
    *        <li>propertyValueSearchType - Optional type of search on property value. Contains or
    *        Equals. Defaults to Equals (optional)</li>
    *        <li>spaceId - Optionally filter on objects based on their location in the topology
@@ -465,9 +478,10 @@ public interface DevicesApi extends TwinsApiClient.Api {
    *
    * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter by
    *        (optional)
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
-   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to filter
-   *        by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
+   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
+   *        filter by (optional)
    * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
    *        (optional)
    * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to filter by
@@ -486,9 +500,10 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/devices/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<BlobMetadataRetrieve> devicesRetrieveBlobMetadata(@Param("names") String names, @Param("ids") String ids,
-      @Param("sharings") String sharings, @Param("types") String types, @Param("subtypes") String subtypes,
-      @Param("includes") String includes, @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+  List<BlobMetadataRetrieve> devicesRetrieveBlobMetadata(@Param("names") String names,
+      @Param("ids") String ids, @Param("sharings") String sharings, @Param("types") String types,
+      @Param("subtypes") String subtypes, @Param("includes") String includes,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
@@ -496,8 +511,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Gets a list of blobs
    *
    * Note, this is equivalent to the other <code>devicesRetrieveBlobMetadata</code> method, but with
-   * the query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
+   * the query parameters collected into a single Map parameter. This is convenient for services
+   * with optional query parameters, especially when used with the
    * {@link DevicesRetrieveBlobMetadataQueryParams} class that allows for building up this map in a
    * fluent style.
    *
@@ -506,12 +521,12 @@ public interface DevicesApi extends TwinsApiClient.Api {
    *        The following elements may be specified in the query map:
    *        </p>
    *        <ul>
-   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter
-   *        by (optional)</li>
+   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to
+   *        filter by (optional)</li>
    *        <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
    *        (optional)</li>
-   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
-   *        filter by (optional)</li>
+   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes
+   *        to filter by (optional)</li>
    *        <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
    *        (optional)</li>
    *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to
@@ -532,7 +547,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/devices/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<BlobMetadataRetrieve> devicesRetrieveBlobMetadata(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<BlobMetadataRetrieve> devicesRetrieveBlobMetadata(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
    * A convenience class for generating query parameters for the
@@ -610,16 +626,17 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/devices/blobs/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  BlobMetadataRetrieve devicesRetrieveBlobMetadataById(@Param("id") String id, @Param("includes") String includes);
+  BlobMetadataRetrieve devicesRetrieveBlobMetadataById(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Gets a blob
    *
    * Note, this is equivalent to the other <code>devicesRetrieveBlobMetadataById</code> method, but
-   * with the query parameters collected into a single Map parameter. This is convenient for services
-   * with optional query parameters, especially when used with the
-   * {@link DevicesRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map in
-   * a fluent style.
+   * with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
+   * {@link DevicesRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map
+   * in a fluent style.
    *
    * @param id Blob Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -664,10 +681,10 @@ public interface DevicesApi extends TwinsApiClient.Api {
   /**
    * Gets a specific device
    *
-   * Note, this is equivalent to the other <code>devicesRetrieveById</code> method, but with the query
-   * parameters collected into a single Map parameter. This is convenient for services with optional
-   * query parameters, especially when used with the {@link DevicesRetrieveByIdQueryParams} class that
-   * allows for building up this map in a fluent style.
+   * Note, this is equivalent to the other <code>devicesRetrieveById</code> method, but with the
+   * query parameters collected into a single Map parameter. This is convenient for services with
+   * optional query parameters, especially when used with the {@link DevicesRetrieveByIdQueryParams}
+   * class that allows for building up this map in a fluent style.
    *
    * @param id Device Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -683,7 +700,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/devices/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  DeviceRetrieve devicesRetrieveById(@Param("id") String id, @QueryMap(encoded = true) Map<String, Object> queryParams);
+  DeviceRetrieve devicesRetrieveById(@Param("id") String id,
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
    * A convenience class for generating query parameters for the <code>devicesRetrieveById</code>
@@ -706,7 +724,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/devices/{id}/keystore?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve devicesRetrieveKeyStore(@Param("id") String id, @Param("includes") String includes);
+  KeyStoreRetrieve devicesRetrieveKeyStore(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Gets the first keystore by walking up the spaces hierarchy
@@ -714,8 +733,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    * Note, this is equivalent to the other <code>devicesRetrieveKeyStore</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the
-   * {@link DevicesRetrieveKeyStoreQueryParams} class that allows for building up this map in a fluent
-   * style.
+   * {@link DevicesRetrieveKeyStoreQueryParams} class that allows for building up this map in a
+   * fluent style.
    *
    * @param id Device Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -735,8 +754,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>devicesRetrieveKeyStore</code>
-   * method in a fluent style.
+   * A convenience class for generating query parameters for the
+   * <code>devicesRetrieveKeyStore</code> method in a fluent style.
    */
   public static class DevicesRetrieveKeyStoreQueryParams extends HashMap<String, Object> {
     public DevicesRetrieveKeyStoreQueryParams includes(final String value) {
@@ -794,11 +813,13 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/devices/{id}")
   @Headers({"Accept: */*",})
-  void devicesUpdate(@Param("id") String id, @Param("name") String name, @Param("friendlyName") String friendlyName,
-      @Param("description") String description, @Param("hardwareId") String hardwareId,
-      @Param("gatewayId") String gatewayId, @Param("spaceId") UUID spaceId, @Param("status") String status,
-      @Param("location") Location location, @Param("type") String type, @Param("typeId") Integer typeId,
-      @Param("subtype") String subtype, @Param("subtypeId") Integer subtypeId);
+  void devicesUpdate(@Param("id") String id, @Param("name") String name,
+      @Param("friendlyName") String friendlyName, @Param("description") String description,
+      @Param("hardwareId") String hardwareId, @Param("gatewayId") String gatewayId,
+      @Param("spaceId") UUID spaceId, @Param("status") String status,
+      @Param("location") Location location, @Param("type") String type,
+      @Param("typeId") Integer typeId, @Param("subtype") String subtype,
+      @Param("subtypeId") Integer subtypeId);
 
   /**
    * Updates a blob This is a multi-part request. For more information, see sample app or doc
@@ -810,7 +831,8 @@ public interface DevicesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/devices/blobs/{id}")
   @Headers({"Accept: */*",})
-  void devicesUpdateBlob(@Param("id") String id, @Param("metadata") String metadata, @Param("contents") File contents);
+  void devicesUpdateBlob(@Param("id") String id, @Param("metadata") String metadata,
+      @Param("contents") File contents);
 
   /**
    * Creates or updates property values

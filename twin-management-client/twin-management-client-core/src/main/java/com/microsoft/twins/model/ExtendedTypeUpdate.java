@@ -155,7 +155,8 @@ public class ExtendedTypeUpdate {
   }
 
   /**
-   * Parent space Id. An extended type is available to all spaces within the specified space topology
+   * Parent space Id. An extended type is available to all spaces within the specified space
+   * topology
    *
    * @return spaceId
    **/
@@ -233,8 +234,8 @@ public class ExtendedTypeUpdate {
 
   /**
    * If disabled, a type cannot be be referenced. This can be used to remove types from loaded
-   * ontologies or to prevent \&quot;wrong\&quot; type names from being created. For example, creating
-   * a disabled type called &#x27;Temp&#x27; will enforce using Temperature instead
+   * ontologies or to prevent \&quot;wrong\&quot; type names from being created. For example,
+   * creating a disabled type called &#x27;Temp&#x27; will enforce using Temperature instead
    *
    * @return disabled
    **/

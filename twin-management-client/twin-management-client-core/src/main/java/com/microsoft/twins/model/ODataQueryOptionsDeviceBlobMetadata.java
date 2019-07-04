@@ -224,7 +224,8 @@ public class ODataQueryOptionsDeviceBlobMetadata {
     this.rawValues = rawValues;
   }
 
-  public ODataQueryOptionsDeviceBlobMetadata selectExpand(final SelectExpandQueryOption selectExpand) {
+  public ODataQueryOptionsDeviceBlobMetadata selectExpand(
+      final SelectExpandQueryOption selectExpand) {
     this.selectExpand = selectExpand;
     return this;
   }

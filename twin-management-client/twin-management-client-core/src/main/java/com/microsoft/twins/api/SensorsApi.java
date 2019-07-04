@@ -56,13 +56,15 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/sensors")
   @Headers({"Accept: */*",})
-  UUID sensorsCreate(@Param("deviceId") UUID deviceId, @Param("port") String port, @Param("pollRate") Integer pollRate,
-      @Param("dataType") String dataType, @Param("type") String type, @Param("portType") String portType,
+  UUID sensorsCreate(@Param("deviceId") UUID deviceId, @Param("port") String port,
+      @Param("pollRate") Integer pollRate, @Param("dataType") String dataType,
+      @Param("type") String type, @Param("portType") String portType,
       @Param("dataUnitType") String dataUnitType, @Param("dataSubtype") String dataSubtype,
-      @Param("spaceId") UUID spaceId, @Param("location") Location location, @Param("portTypeId") Integer portTypeId,
-      @Param("dataUnitTypeId") Integer dataUnitTypeId, @Param("typeId") Integer typeId,
-      @Param("dataTypeId") Integer dataTypeId, @Param("dataSubtypeId") Integer dataSubtypeId,
-      @Param("hardwareId") String hardwareId, @Param("properties") List<ExtendedPropertyCreate> properties);
+      @Param("spaceId") UUID spaceId, @Param("location") Location location,
+      @Param("portTypeId") Integer portTypeId, @Param("dataUnitTypeId") Integer dataUnitTypeId,
+      @Param("typeId") Integer typeId, @Param("dataTypeId") Integer dataTypeId,
+      @Param("dataSubtypeId") Integer dataSubtypeId, @Param("hardwareId") String hardwareId,
+      @Param("properties") List<ExtendedPropertyCreate> properties);
 
   /**
    * Creates a property value
@@ -85,7 +87,8 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/sensors/{id}/properties")
   @Headers({"Accept: */*",})
-  String sensorsCreateProperty(@Param("id") String id, @Param("name") String name, @Param("value") String value);
+  String sensorsCreateProperty(@Param("id") String id, @Param("name") String name,
+      @Param("value") String value);
 
   /**
    * Deletes a sensor
@@ -174,7 +177,8 @@ public interface SensorsApi extends TwinsApiClient.Api {
   /**
    * Gets a list of sensors
    *
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
    * @param deviceIds Optionally filter on sensors that belong to the given devices (optional)
    * @param types Optionally filter on types (optional)
    * @param portTypes Optionally on port types (optional)
@@ -183,7 +187,8 @@ public interface SensorsApi extends TwinsApiClient.Api {
    * @param dataUnitTypes Optionally on data unit types (optional)
    * @param hardwareIds Optionally on hardwareIds (optional)
    * @param includes What to include (optional)
-   * @param propertyKey Optional filter on objects that have the given property key defined (optional)
+   * @param propertyKey Optional filter on objects that have the given property key defined
+   *        (optional)
    * @param propertyValue Optional filter on the value of the given property key (optional)
    * @param propertyValueSearchType Optional type of search on property value. Contains or Equals.
    *        Defaults to Equals (optional)
@@ -199,13 +204,15 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors?ids={ids}&deviceIds={deviceIds}&types={types}&portTypes={portTypes}&dataTypes={dataTypes}&dataSubtypes={dataSubtypes}&dataUnitTypes={dataUnitTypes}&hardwareIds={hardwareIds}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<SensorRetrieve> sensorsRetrieve(@Param("ids") String ids, @Param("deviceIds") String deviceIds,
-      @Param("types") String types, @Param("portTypes") String portTypes, @Param("dataTypes") String dataTypes,
+  List<SensorRetrieve> sensorsRetrieve(@Param("ids") String ids,
+      @Param("deviceIds") String deviceIds, @Param("types") String types,
+      @Param("portTypes") String portTypes, @Param("dataTypes") String dataTypes,
       @Param("dataSubtypes") String dataSubtypes, @Param("dataUnitTypes") String dataUnitTypes,
       @Param("hardwareIds") String hardwareIds, @Param("includes") String includes,
       @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
-      @Param("propertyValueSearchType") String propertyValueSearchType, @Param("spaceId") String spaceId,
-      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
+      @Param("propertyValueSearchType") String propertyValueSearchType,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
@@ -234,7 +241,8 @@ public interface SensorsApi extends TwinsApiClient.Api {
    *        <li>includes - What to include (optional)</li>
    *        <li>propertyKey - Optional filter on objects that have the given property key defined
    *        (optional)</li>
-   *        <li>propertyValue - Optional filter on the value of the given property key (optional)</li>
+   *        <li>propertyValue - Optional filter on the value of the given property key
+   *        (optional)</li>
    *        <li>propertyValueSearchType - Optional type of search on property value. Contains or
    *        Equals. Defaults to Equals (optional)</li>
    *        <li>spaceId - Optionally filter on objects based on their location in the topology
@@ -363,10 +371,10 @@ public interface SensorsApi extends TwinsApiClient.Api {
   /**
    * Gets a sensor
    *
-   * Note, this is equivalent to the other <code>sensorsRetrieveById</code> method, but with the query
-   * parameters collected into a single Map parameter. This is convenient for services with optional
-   * query parameters, especially when used with the {@link SensorsRetrieveByIdQueryParams} class that
-   * allows for building up this map in a fluent style.
+   * Note, this is equivalent to the other <code>sensorsRetrieveById</code> method, but with the
+   * query parameters collected into a single Map parameter. This is convenient for services with
+   * optional query parameters, especially when used with the {@link SensorsRetrieveByIdQueryParams}
+   * class that allows for building up this map in a fluent style.
    *
    * @param id The identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -381,7 +389,8 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  SensorRetrieve sensorsRetrieveById(@Param("id") String id, @QueryMap(encoded = true) Map<String, Object> queryParams);
+  SensorRetrieve sensorsRetrieveById(@Param("id") String id,
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
    * A convenience class for generating query parameters for the <code>sensorsRetrieveById</code>
@@ -438,11 +447,13 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/sensors/{id}")
   @Headers({"Accept: */*",})
-  void sensorsUpdate(@Param("id") String id, @Param("port") String port, @Param("pollRate") Integer pollRate,
-      @Param("dataType") String dataType, @Param("dataSubtype") String dataSubtype, @Param("type") String type,
-      @Param("deviceId") UUID deviceId, @Param("spaceId") UUID spaceId, @Param("location") Location location,
-      @Param("portType") String portType, @Param("dataUnitType") String dataUnitType,
-      @Param("portTypeId") Integer portTypeId, @Param("dataUnitTypeId") Integer dataUnitTypeId,
+  void sensorsUpdate(@Param("id") String id, @Param("port") String port,
+      @Param("pollRate") Integer pollRate, @Param("dataType") String dataType,
+      @Param("dataSubtype") String dataSubtype, @Param("type") String type,
+      @Param("deviceId") UUID deviceId, @Param("spaceId") UUID spaceId,
+      @Param("location") Location location, @Param("portType") String portType,
+      @Param("dataUnitType") String dataUnitType, @Param("portTypeId") Integer portTypeId,
+      @Param("dataUnitTypeId") Integer dataUnitTypeId,
       @Param("dataSubtypeId") Integer dataSubtypeId, @Param("typeId") Integer typeId,
       @Param("dataTypeId") Integer dataTypeId, @Param("hardwareId") String hardwareId);
 

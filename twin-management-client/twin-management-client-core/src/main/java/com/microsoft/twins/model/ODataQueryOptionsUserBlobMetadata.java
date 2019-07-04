@@ -224,7 +224,8 @@ public class ODataQueryOptionsUserBlobMetadata {
     this.rawValues = rawValues;
   }
 
-  public ODataQueryOptionsUserBlobMetadata selectExpand(final SelectExpandQueryOption selectExpand) {
+  public ODataQueryOptionsUserBlobMetadata selectExpand(
+      final SelectExpandQueryOption selectExpand) {
     this.selectExpand = selectExpand;
     return this;
   }

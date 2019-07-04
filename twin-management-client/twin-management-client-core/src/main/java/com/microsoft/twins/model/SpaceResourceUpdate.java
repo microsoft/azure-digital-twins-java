@@ -182,8 +182,8 @@ public class SpaceResourceUpdate {
    * Resource status
    */
   public enum StatusEnum {
-    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED("Failed"), DELETING(
-        "Deleting");
+    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED(
+        "Failed"), DELETING("Deleting");
     private final String value;
 
     StatusEnum(final String value) {
@@ -265,8 +265,8 @@ public class SpaceResourceUpdate {
   }
 
   /**
-   * Resource-type-dependent template parameters. Specifying a value creates or updates the given key.
-   * Specifying null for value deletes the corresponding key.
+   * Resource-type-dependent template parameters. Specifying a value creates or updates the given
+   * key. Specifying null for value deletes the corresponding key.
    *
    * @return parameters
    **/

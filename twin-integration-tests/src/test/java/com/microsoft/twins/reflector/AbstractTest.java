@@ -48,8 +48,8 @@ import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfigurati
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles({"test"})
-@ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class, TwinReflectorProxyAutoConfiguration.class,
-    TestConfiguration.class})
+@ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class,
+    TwinReflectorProxyAutoConfiguration.class, TestConfiguration.class})
 @EnableBinding(Sink.class)
 public abstract class AbstractTest {
   private static final String TEST_SPACE_TYPE = "TestSpaces";
@@ -100,8 +100,9 @@ public abstract class AbstractTest {
   }
 
   private void cleanTestSpaces() {
-    final List<SpaceRetrieveWithChildren> existing = spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams()
-        .types(TEST_SPACE_TYPE).useParentSpace(true).spaceId(tenant.toString()).traverse("Down"));
+    final List<SpaceRetrieveWithChildren> existing =
+        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().types(TEST_SPACE_TYPE)
+            .useParentSpace(true).spaceId(tenant.toString()).traverse("Down"));
 
     existing.forEach(space -> spacesApi.spacesDelete(space.getId().toString()));
   }
@@ -129,10 +130,12 @@ public abstract class AbstractTest {
     if (!found.isEmpty()) {
       tenant = found.get(0).getId();
 
-      assertThat(resourcesApi.resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant.toString())))
-          .hasSize(1);
+      assertThat(resourcesApi
+          .resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant.toString())))
+              .hasSize(1);
       assertThat(endpointsApi.endpointsRetrieve(new EndpointsRetrieveQueryParams()
-          .eventTypes(EventTypesEnum.DEVICEMESSAGE.toString()).types(TypeEnum.EVENTHUB.toString()))).hasSize(1);
+          .eventTypes(EventTypesEnum.DEVICEMESSAGE.toString()).types(TypeEnum.EVENTHUB.toString())))
+              .hasSize(1);
 
       return;
     }
@@ -150,12 +153,13 @@ public abstract class AbstractTest {
     createTypes();
     createResources();
     addDeviceEventEndPoint(testConfigurationProperties.getConnectionString(),
-        testConfigurationProperties.getSecondaryConnectionString(), testConfigurationProperties.getDevicesHubname());
+        testConfigurationProperties.getSecondaryConnectionString(),
+        testConfigurationProperties.getDevicesHubname());
   }
 
 
-  private void addDeviceEventEndPoint(final String connectionString, final String secondaryConnectionString,
-      final String hubName) {
+  private void addDeviceEventEndPoint(final String connectionString,
+      final String secondaryConnectionString, final String hubName) {
 
     final EndpointCreate eventHub = new EndpointCreate();
     eventHub.addEventTypesItem(EventTypesEnum.DEVICEMESSAGE);
@@ -166,7 +170,8 @@ public abstract class AbstractTest {
 
     final UUID created = endpointsApi.endpointsCreate(eventHub);
 
-    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS)
+    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
         .until(() -> endpointsApi.endpointsRetrieveById(created.toString())
             .getStatus() == EndpointRetrieve.StatusEnum.READY);
   }
@@ -193,7 +198,8 @@ public abstract class AbstractTest {
     iotHub.setType(SpaceResourceCreate.TypeEnum.IOTHUB);
     final UUID created = resourcesApi.resourcesCreate(iotHub);
 
-    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS)
+    Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
         .until(() -> resourcesApi.resourcesRetrieveById(created.toString())
             .getStatus() == SpaceResourceRetrieve.StatusEnum.RUNNING);
   }

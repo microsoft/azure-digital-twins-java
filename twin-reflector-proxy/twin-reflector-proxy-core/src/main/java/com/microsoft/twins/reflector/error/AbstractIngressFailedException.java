@@ -13,15 +13,19 @@ public abstract class AbstractIngressFailedException extends RuntimeException {
   private final ErrorCode errorCode;
   private final UUID correlationID;
 
-  AbstractIngressFailedException(final String message, final UUID correlationID, final ErrorCode errorCode) {
-    super(message + "[errorCode: " + errorCode.getCode() + " | correlationID: " + correlationID + "]");
+  AbstractIngressFailedException(final String message, final UUID correlationID,
+      final ErrorCode errorCode) {
+    super(message + "[errorCode: " + errorCode.getCode() + " | correlationID: " + correlationID
+        + "]");
     this.errorCode = errorCode;
     this.correlationID = correlationID;
   }
 
-  AbstractIngressFailedException(final String message, final UUID correlationID, final Throwable cause,
-      final ErrorCode errorCode) {
-    super(message + "[errorCode: " + errorCode.getCode() + " | correlationID: " + correlationID + "]", cause);
+  AbstractIngressFailedException(final String message, final UUID correlationID,
+      final Throwable cause, final ErrorCode errorCode) {
+    super(
+        message + "[errorCode: " + errorCode.getCode() + " | correlationID: " + correlationID + "]",
+        cause);
     this.errorCode = errorCode;
     this.correlationID = correlationID;
   }

@@ -105,7 +105,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
 
     if (data[0] != 0x00) {
       // Not a described type
-      throw new IllegalArgumentException(String.format("Bytes are not an AMQP described type, code %02X", data[0]));
+      throw new IllegalArgumentException(
+          String.format("Bytes are not an AMQP described type, code %02X", data[0]));
     }
     int offset = 1;
     final Result symbol = deserializeSymbol(data, offset);
@@ -114,7 +115,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
       throw new IllegalArgumentException("Unrecognized described type " + (String) symbol.result);
     }
     final Result uriString = deserializeString(data, offset);
-    return new Result(new DescribedType((String) symbol.result, uriString.result), offset + uriString.bytesConsumed);
+    return new Result(new DescribedType((String) symbol.result, uriString.result),
+        offset + uriString.bytesConsumed);
   }
 
   /***
@@ -137,7 +139,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     } else if (data[0] == 0x42) {
       retval = new Boolean(false);
     } else {
-      throw new IllegalArgumentException(String.format("Bytes are not an AMQP boolean, code %02X", data[0]));
+      throw new IllegalArgumentException(
+          String.format("Bytes are not an AMQP boolean, code %02X", data[0]));
     }
     return new Result(retval, 1);
   }
@@ -164,7 +167,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     } else if (r.result instanceof Long) {
       unsignedResult = (Long) r.result;
     } else {
-      throw new IllegalArgumentException(String.format("Bytes are not an AMQP unsigned integer, code %02X", data[0]));
+      throw new IllegalArgumentException(
+          String.format("Bytes are not an AMQP unsigned integer, code %02X", data[0]));
     }
 
     return new Long(unsignedResult);
@@ -203,7 +207,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
         break;
 
       default:
-        throw new IllegalArgumentException(String.format("Bytes are not an AMQP unsigned integer, code %02X", data[0]));
+        throw new IllegalArgumentException(
+            String.format("Bytes are not an AMQP unsigned integer, code %02X", data[0]));
     }
 
     return retval;
@@ -220,8 +225,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
   }
 
   /***
-   * Deserialize any of the AMQP signed integer types. Return the value as a long, which can represent
-   * the range of any of the smaller types.
+   * Deserialize any of the AMQP signed integer types. Return the value as a long, which can
+   * represent the range of any of the smaller types.
    * 
    * @param data AMQP-encoded bytes
    * @return signed long represented by the bytes, sign-extended to 64 bits
@@ -240,7 +245,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     } else if (r.result instanceof Long) {
       signedResult = (Long) r.result;
     } else {
-      throw new IllegalArgumentException(String.format("Bytes are not an AMQP signed integer, code %02X", data[0]));
+      throw new IllegalArgumentException(
+          String.format("Bytes are not an AMQP signed integer, code %02X", data[0]));
     }
 
     return new Long(signedResult);
@@ -278,7 +284,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
         break;
 
       default:
-        throw new IllegalArgumentException(String.format("Bytes are not an AMQP signed integer, code %02X", data[0]));
+        throw new IllegalArgumentException(
+            String.format("Bytes are not an AMQP signed integer, code %02X", data[0]));
     }
 
     return retval;
@@ -421,8 +428,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
 
     if ((data[0] != 0x73) || (data.length < 5)) {
       // Not a UTF32 character
-      throw new IllegalArgumentException(
-          String.format("Bytes are not a UTF32 character or data buffer too short, code %02X", data[0]));
+      throw new IllegalArgumentException(String
+          .format("Bytes are not a UTF32 character or data buffer too short, code %02X", data[0]));
     }
     final int intBits = (int) build4(data, 1);
     return new Result(Character.toChars(intBits), 5);
@@ -489,8 +496,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
 
     if ((data[0] != (byte) 0x83) || (data.length < 9)) {
       // Not a timestamp
-      throw new IllegalArgumentException(
-          String.format("Bytes are not an AMQP timestamp or data buffer too short, code %02X", data[0]));
+      throw new IllegalArgumentException(String
+          .format("Bytes are not an AMQP timestamp or data buffer too short, code %02X", data[0]));
     }
     return new Result(Instant.ofEpochMilli(build8(data, 1)), 9);
   }
@@ -530,7 +537,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     return (String) deserializeSymbol(data, 0).result;
   }
 
-  private Result deserializeSymbol(final byte[] data, final int startingOffset) throws IllegalArgumentException {
+  private Result deserializeSymbol(final byte[] data, final int startingOffset)
+      throws IllegalArgumentException {
     sanitize(data);
 
     if (data[startingOffset] == (byte) 0xA3) {
@@ -538,7 +546,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     } else if (data[startingOffset] == (byte) 0xB3) {
       return deserializeLongString(data, startingOffset, StandardCharsets.US_ASCII);
     }
-    throw new IllegalArgumentException(String.format("Bytes are not an AMQP symbol, code %02X", data[startingOffset]));
+    throw new IllegalArgumentException(
+        String.format("Bytes are not an AMQP symbol, code %02X", data[startingOffset]));
   }
 
   /***
@@ -552,7 +561,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     return (String) deserializeString(data, 0).result;
   }
 
-  private Result deserializeString(final byte[] data, final int startingOffset) throws IllegalArgumentException {
+  private Result deserializeString(final byte[] data, final int startingOffset)
+      throws IllegalArgumentException {
     sanitize(data);
 
     if (data[startingOffset] == (byte) 0xA1) {
@@ -560,37 +570,41 @@ public class AmqpDeserializer implements Deserializer<Object> {
     } else if (data[startingOffset] == (byte) 0xB1) {
       return deserializeLongString(data, startingOffset, StandardCharsets.UTF_8);
     }
-    throw new IllegalArgumentException(String.format("Bytes are not an AMQP string, code %02X", data[startingOffset]));
+    throw new IllegalArgumentException(
+        String.format("Bytes are not an AMQP string, code %02X", data[startingOffset]));
   }
 
-  private Result deserializeShortString(final byte[] data, final int startingOffset, final Charset encoding)
-      throws IllegalArgumentException {
+  private Result deserializeShortString(final byte[] data, final int startingOffset,
+      final Charset encoding) throws IllegalArgumentException {
     final int encodedLength = (data[startingOffset + 1] & 0x000000FF);
     if ((startingOffset + 2 + encodedLength) > data.length) {
       // Malformed
-      throw new IllegalArgumentException("Expected string length does not match actual data length");
+      throw new IllegalArgumentException(
+          "Expected string length does not match actual data length");
     }
     return new Result(
-        new String(Arrays.copyOfRange(data, startingOffset + 2, startingOffset + 2 + encodedLength), encoding),
+        new String(Arrays.copyOfRange(data, startingOffset + 2, startingOffset + 2 + encodedLength),
+            encoding),
         encodedLength + 2);
   }
 
-  private Result deserializeLongString(final byte[] data, final int startingOffset, final Charset encoding)
-      throws IllegalArgumentException {
+  private Result deserializeLongString(final byte[] data, final int startingOffset,
+      final Charset encoding) throws IllegalArgumentException {
     final long encodedLength = build4(data, startingOffset + 1);
     if ((startingOffset + 5 + encodedLength) > data.length) {
       // Malformed
-      throw new IllegalArgumentException("Expected string length does not match actual data length");
+      throw new IllegalArgumentException(
+          "Expected string length does not match actual data length");
     }
-    return new Result(
-        new String(Arrays.copyOfRange(data, startingOffset + 5, (int) (startingOffset + 5 + encodedLength)), encoding),
-        (int) encodedLength + 5);
+    return new Result(new String(
+        Arrays.copyOfRange(data, startingOffset + 5, (int) (startingOffset + 5 + encodedLength)),
+        encoding), (int) encodedLength + 5);
   }
 
   /***
-   * Deserialization method from the interface. Automatically deserializes any type based on the AMQP
-   * encoding. The downside is that since it can deserialize any type, it can only return Object and
-   * the caller must determine the type and perform a cast in order to make use of it.
+   * Deserialization method from the interface. Automatically deserializes any type based on the
+   * AMQP encoding. The downside is that since it can deserialize any type, it can only return
+   * Object and the caller must determine the type and perform a cast in order to make use of it.
    * 
    * @param topic Topic name. Required by the interface but not used.
    * @param data AMQP-encoded bytes
@@ -605,7 +619,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
     return deserialize(data).result;
   }
 
-  private Result deserialize(final byte[] data) throws IllegalArgumentException, UnsupportedOperationException {
+  private Result deserialize(final byte[] data)
+      throws IllegalArgumentException, UnsupportedOperationException {
     sanitize(data);
 
     Result retval = null;
@@ -702,7 +717,8 @@ public class AmqpDeserializer implements Deserializer<Object> {
         final int encodedLength = (data[1] & 0x000000FF);
         if (encodedLength > (data.length - 2)) {
           // Malformed
-          throw new IllegalArgumentException("Expected binary length does not match actual data length");
+          throw new IllegalArgumentException(
+              "Expected binary length does not match actual data length");
         }
         retval = new Result(Arrays.copyOfRange(data, 2, 2 + encodedLength), encodedLength + 2);
       }
@@ -729,9 +745,11 @@ public class AmqpDeserializer implements Deserializer<Object> {
         final long encodedLength = build4(data, 1);
         if (encodedLength > (data.length - 5)) {
           // Malformed
-          throw new IllegalArgumentException("Expected binary length does not match actual data length");
+          throw new IllegalArgumentException(
+              "Expected binary length does not match actual data length");
         }
-        retval = new Result(Arrays.copyOfRange(data, 5, (int) (5 + encodedLength)), (int) encodedLength + 5);
+        retval = new Result(Arrays.copyOfRange(data, 5, (int) (5 + encodedLength)),
+            (int) encodedLength + 5);
       }
         break;
 

@@ -23,7 +23,8 @@ public class TopologyUpdater {
 
   // Note: for the time being we assume the ID is stored in the name fields and we only handle the
   // topology element device for now.
-  public void updateTopologyElementPartial(@Valid final IngressMessage update, final UUID correlationId) {
+  public void updateTopologyElementPartial(@Valid final IngressMessage update,
+      final UUID correlationId) {
     log.trace("Got partial topology update: [{}] with correlation ID: [{}]", update, correlationId);
 
 
@@ -38,8 +39,10 @@ public class TopologyUpdater {
   // .findAny().map(Relationship::getTargetId).map(UUID::fromString);
   // }
 
-  public void updateTopologyElementComplete(@Valid final IngressMessage update, final UUID correlationId) {
-    log.trace("Got complete topology update: [{}] with correlation ID: [{}]", update, correlationId);
+  public void updateTopologyElementComplete(@Valid final IngressMessage update,
+      final UUID correlationId) {
+    log.trace("Got complete topology update: [{}] with correlation ID: [{}]", update,
+        correlationId);
 
     // FIXME gateway, get
     // final DeviceRetrieve device = cachedDigitalTwinProxy.getDeviceByName(update.getId())
@@ -54,7 +57,8 @@ public class TopologyUpdater {
   }
 
   public void deleteTopologyElement(@NotBlank final String id, final UUID correlationId) {
-    log.trace("Got delete topology element with ID: [{}] with correlation ID: [{}]", id, correlationId);
+    log.trace("Got delete topology element with ID: [{}] with correlation ID: [{}]", id,
+        correlationId);
 
     cachedDigitalTwinProxy.deleteDeviceByName(id);
     // TODO implement

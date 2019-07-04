@@ -88,9 +88,9 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Gets a token for the specified device using the specified key
    *
-   * Note, this is equivalent to the other <code>keyStoresGenerateTokenFromKeyById</code> method, but
-   * with the query parameters collected into a single Map parameter. This is convenient for services
-   * with optional query parameters, especially when used with the
+   * Note, this is equivalent to the other <code>keyStoresGenerateTokenFromKeyById</code> method,
+   * but with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
    * {@link KeyStoresGenerateTokenFromKeyByIdQueryParams} class that allows for building up this map
    * in a fluent style.
    *
@@ -131,14 +131,15 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/last/token?deviceMac={deviceMac}")
   @Headers({"Accept: */*",})
-  String keyStoresGenerateTokenFromLastKey(@Param("id") String id, @Param("deviceMac") String deviceMac);
+  String keyStoresGenerateTokenFromLastKey(@Param("id") String id,
+      @Param("deviceMac") String deviceMac);
 
   /**
    * Gets a token for the specified device for the last valid key.
    *
-   * Note, this is equivalent to the other <code>keyStoresGenerateTokenFromLastKey</code> method, but
-   * with the query parameters collected into a single Map parameter. This is convenient for services
-   * with optional query parameters, especially when used with the
+   * Note, this is equivalent to the other <code>keyStoresGenerateTokenFromLastKey</code> method,
+   * but with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
    * {@link KeyStoresGenerateTokenFromLastKeyQueryParams} class that allows for building up this map
    * in a fluent style.
    *
@@ -179,7 +180,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores?spaceId={spaceId}&includes={includes}")
   @Headers({"Accept: */*",})
-  List<KeyStoreRetrieve> keyStoresRetrieve(@Param("spaceId") String spaceId, @Param("includes") String includes);
+  List<KeyStoreRetrieve> keyStoresRetrieve(@Param("spaceId") String spaceId,
+      @Param("includes") String includes);
 
   /**
    * Retrieves key stores
@@ -203,11 +205,12 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores?spaceId={spaceId}&includes={includes}")
   @Headers({"Content-Type: */*",})
-  List<KeyStoreRetrieve> keyStoresRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<KeyStoreRetrieve> keyStoresRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>keyStoresRetrieve</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>keyStoresRetrieve</code>
+   * method in a fluent style.
    */
   public static class KeyStoresRetrieveQueryParams extends HashMap<String, Object> {
     public KeyStoresRetrieveQueryParams spaceId(final String value) {
@@ -231,15 +234,17 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") String id, @Param("includes") String includes);
+  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Retrieves a key store
    *
    * Note, this is equivalent to the other <code>keyStoresRetrieveById</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the {@link KeyStoresRetrieveByIdQueryParams}
-   * class that allows for building up this map in a fluent style.
+   * optional query parameters, especially when used with the
+   * {@link KeyStoresRetrieveByIdQueryParams} class that allows for building up this map in a fluent
+   * style.
    *
    * @param id The identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -319,7 +324,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdate(@Param("id") String id, @Param("name") String name, @Param("description") String description);
+  void keyStoresUpdate(@Param("id") String id, @Param("name") String name,
+      @Param("description") String description);
 
   /**
    * Updates the given key
@@ -330,7 +336,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdateKey(SecurityKeyUpdate body, @Param("id") String id, @Param("key") Integer key);
+  void keyStoresUpdateKey(SecurityKeyUpdate body, @Param("id") String id,
+      @Param("key") Integer key);
 
   /**
    * Updates the given key
@@ -341,5 +348,6 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdateKey(@Param("id") String id, @Param("key") Integer key, @Param("status") String status);
+  void keyStoresUpdateKey(@Param("id") String id, @Param("key") Integer key,
+      @Param("status") String status);
 }

@@ -211,7 +211,8 @@ public class ExtendedPropertyFilters {
     this.propertyValue = propertyValue;
   }
 
-  public ExtendedPropertyFilters propertyValueSearchType(final PropertyValueSearchTypeEnum propertyValueSearchType) {
+  public ExtendedPropertyFilters propertyValueSearchType(
+      final PropertyValueSearchTypeEnum propertyValueSearchType) {
     this.propertyValueSearchType = propertyValueSearchType;
     return this;
   }
@@ -225,7 +226,8 @@ public class ExtendedPropertyFilters {
     return propertyValueSearchType;
   }
 
-  public void setPropertyValueSearchType(final PropertyValueSearchTypeEnum propertyValueSearchType) {
+  public void setPropertyValueSearchType(
+      final PropertyValueSearchTypeEnum propertyValueSearchType) {
     this.propertyValueSearchType = propertyValueSearchType;
   }
 }

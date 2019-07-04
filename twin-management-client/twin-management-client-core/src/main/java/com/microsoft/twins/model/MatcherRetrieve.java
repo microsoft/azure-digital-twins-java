@@ -321,12 +321,14 @@ public class MatcherRetrieve extends AbstractRetrieve<MatcherRetrieve> {
     this.conditions = conditions;
   }
 
-  public MatcherRetrieve userDefinedFunctions(final List<UserDefinedFunctionRetrieve> userDefinedFunctions) {
+  public MatcherRetrieve userDefinedFunctions(
+      final List<UserDefinedFunctionRetrieve> userDefinedFunctions) {
     this.userDefinedFunctions = userDefinedFunctions;
     return this;
   }
 
-  public MatcherRetrieve addUserDefinedFunctionsItem(final UserDefinedFunctionRetrieve userDefinedFunctionsItem) {
+  public MatcherRetrieve addUserDefinedFunctionsItem(
+      final UserDefinedFunctionRetrieve userDefinedFunctionsItem) {
     if (this.userDefinedFunctions == null) {
       this.userDefinedFunctions = new java.util.ArrayList<>();
     }
@@ -344,7 +346,8 @@ public class MatcherRetrieve extends AbstractRetrieve<MatcherRetrieve> {
     return userDefinedFunctions;
   }
 
-  public void setUserDefinedFunctions(final List<UserDefinedFunctionRetrieve> userDefinedFunctions) {
+  public void setUserDefinedFunctions(
+      final List<UserDefinedFunctionRetrieve> userDefinedFunctions) {
     this.userDefinedFunctions = userDefinedFunctions;
   }
 }

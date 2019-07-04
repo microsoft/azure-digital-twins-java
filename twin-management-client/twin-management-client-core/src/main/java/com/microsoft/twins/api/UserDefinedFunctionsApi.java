@@ -19,8 +19,8 @@ import feign.RequestLine;
 public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
   /**
    * Creates a udf This is a multi-part request. For more information, see doc examples. Key value
-   * pairs specified in the Content-Disposition header in the udf-chunk of the multipart request will
-   * be preserved as meta-data on the stored udf.
+   * pairs specified in the Content-Disposition header in the udf-chunk of the multipart request
+   * will be preserved as meta-data on the stored udf.
    *
    * @param metadata (optional)
    * @param contents (optional)
@@ -28,7 +28,8 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/userdefinedfunctions")
   @Headers({"Accept: */*",})
-  UUID userDefinedFunctionsCreate(@Param("metadata") String metadata, @Param("contents") File contents);
+  UUID userDefinedFunctionsCreate(@Param("metadata") String metadata,
+      @Param("contents") File contents);
 
   /**
    * Deletes a udf
@@ -54,7 +55,8 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    *
    * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of udf names to filter by
    *        (optional)
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
    * @param includes Comma separated list of what to include, for example
    *        \&quot;ContentInfo,Description\&quot;. Defaults to None (optional)
    * @param spaceId Optionally filter on objects based on their location in the topology relative to
@@ -69,17 +71,18 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/userdefinedfunctions?names={names}&ids={ids}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<UserDefinedFunctionRetrieve> userDefinedFunctionsRetrieve(@Param("names") String names, @Param("ids") String ids,
-      @Param("includes") String includes, @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+  List<UserDefinedFunctionRetrieve> userDefinedFunctionsRetrieve(@Param("names") String names,
+      @Param("ids") String ids, @Param("includes") String includes,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Gets a list of udfs
    *
-   * Note, this is equivalent to the other <code>userDefinedFunctionsRetrieve</code> method, but with
-   * the query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
+   * Note, this is equivalent to the other <code>userDefinedFunctionsRetrieve</code> method, but
+   * with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
    * {@link UserDefinedFunctionsRetrieveQueryParams} class that allows for building up this map in a
    * fluent style.
    *
@@ -88,8 +91,8 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    *        The following elements may be specified in the query map:
    *        </p>
    *        <ul>
-   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of udf names to filter
-   *        by (optional)</li>
+   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of udf names to
+   *        filter by (optional)</li>
    *        <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
    *        (optional)</li>
    *        <li>includes - Comma separated list of what to include, for example
@@ -179,10 +182,10 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    * Gets a udf
    *
    * Note, this is equivalent to the other <code>userDefinedFunctionsRetrieveById</code> method, but
-   * with the query parameters collected into a single Map parameter. This is convenient for services
-   * with optional query parameters, especially when used with the
-   * {@link UserDefinedFunctionsRetrieveByIdQueryParams} class that allows for building up this map in
-   * a fluent style.
+   * with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
+   * {@link UserDefinedFunctionsRetrieveByIdQueryParams} class that allows for building up this map
+   * in a fluent style.
    *
    * @param id Udf Id (required)
    * @param queryParams Map of query parameters as name-value pairs

@@ -38,8 +38,8 @@ public class DevicesApiTest extends AbstractApiTest {
    * Creates a blob
    *
    * This is a multi-part request. For more information, see sample app or doc examples. Key value
-   * pairs specified in the Content-Disposition header in the blob-chunk of the multipart request will
-   * be preserved as meta-data on the stored blob.
+   * pairs specified in the Content-Disposition header in the blob-chunk of the multipart request
+   * will be preserved as meta-data on the stored blob.
    */
   @Test
   public void devicesCreateBlobTest() {
@@ -248,10 +248,11 @@ public class DevicesApiTest extends AbstractApiTest {
    */
   @Test
   public void devicesRetrieveTestQueryMap() {
-    final DevicesApi.DevicesRetrieveQueryParams queryParams = new DevicesApi.DevicesRetrieveQueryParams().ids(null)
-        .hardwareIds(null).names(null).types(null).subtypes(null).gateways(null).status(null).includes(null)
-        .propertyKey(null).propertyValue(null).propertyValueSearchType(null).spaceId(null).traverse(null).minLevel(null)
-        .maxLevel(null).minRelative(null).maxRelative(null);
+    final DevicesApi.DevicesRetrieveQueryParams queryParams =
+        new DevicesApi.DevicesRetrieveQueryParams().ids(null).hardwareIds(null).names(null)
+            .types(null).subtypes(null).gateways(null).status(null).includes(null).propertyKey(null)
+            .propertyValue(null).propertyValueSearchType(null).spaceId(null).traverse(null)
+            .minLevel(null).maxLevel(null).minRelative(null).maxRelative(null);
     // List<DeviceRetrieve> response =
     // api.devicesRetrieve(queryParams);
     // TODO: test validations
@@ -294,9 +295,9 @@ public class DevicesApiTest extends AbstractApiTest {
   @Test
   public void devicesRetrieveBlobMetadataTestQueryMap() {
     final DevicesApi.DevicesRetrieveBlobMetadataQueryParams queryParams =
-        new DevicesApi.DevicesRetrieveBlobMetadataQueryParams().names(null).ids(null).sharings(null).types(null)
-            .subtypes(null).includes(null).spaceId(null).traverse(null).minLevel(null).maxLevel(null).minRelative(null)
-            .maxRelative(null);
+        new DevicesApi.DevicesRetrieveBlobMetadataQueryParams().names(null).ids(null).sharings(null)
+            .types(null).subtypes(null).includes(null).spaceId(null).traverse(null).minLevel(null)
+            .maxLevel(null).minRelative(null).maxRelative(null);
     // List<BlobMetadataRetrieve> response =
     // api.devicesRetrieveBlobMetadata(queryParams);
     // TODO: test validations

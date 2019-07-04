@@ -141,8 +141,8 @@ public class TreeFilterModel {
   private UUID spaceId;
 
   /**
-   * None (the default) for the specified spaceId only, Down for space and descendants, Up for spaceId
-   * and ancestors, Any for both
+   * None (the default) for the specified spaceId only, Down for space and descendants, Up for
+   * spaceId and ancestors, Any for both
    */
   public enum TraverseEnum {
     NONE("None"), DOWN("Down"), UP("Up"), SPAN("Span");
@@ -210,8 +210,8 @@ public class TreeFilterModel {
   }
 
   /**
-   * None (the default) for the specified spaceId only, Down for space and descendants, Up for spaceId
-   * and ancestors, Any for both
+   * None (the default) for the specified spaceId only, Down for space and descendants, Up for
+   * spaceId and ancestors, Any for both
    *
    * @return traverse
    **/

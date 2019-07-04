@@ -196,8 +196,8 @@ public class ExtendedPropertyKeyRetrieve {
    * Primitive data type used for validation.
    */
   public enum PrimitiveDataTypeEnum {
-    NONE("None"), STRING("String"), BOOL("Bool"), INT("Int"), UINT("UInt"), LONG("Long"), DATETIME("DateTime"), JSON(
-        "Json"), SET("Set"), ENUM("Enum");
+    NONE("None"), STRING("String"), BOOL("Bool"), INT("Int"), UINT("UInt"), LONG("Long"), DATETIME(
+        "DateTime"), JSON("Json"), SET("Set"), ENUM("Enum");
     private final String value;
 
     PrimitiveDataTypeEnum(final String value) {
@@ -411,7 +411,8 @@ public class ExtendedPropertyKeyRetrieve {
     this.space = space;
   }
 
-  public ExtendedPropertyKeyRetrieve primitiveDataType(final PrimitiveDataTypeEnum primitiveDataType) {
+  public ExtendedPropertyKeyRetrieve primitiveDataType(
+      final PrimitiveDataTypeEnum primitiveDataType) {
     this.primitiveDataType = primitiveDataType;
     return this;
   }

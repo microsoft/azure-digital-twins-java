@@ -148,7 +148,8 @@ public class EndpointRetrieve extends AbstractRetrieve<EndpointRetrieve> {
    * Endpoint status
    */
   public enum StatusEnum {
-    PROVISIONING("Provisioning"), READY("Ready"), STOPPED("Stopped"), FAILED("Failed"), DELETING("Deleting");
+    PROVISIONING("Provisioning"), READY("Ready"), STOPPED("Stopped"), FAILED("Failed"), DELETING(
+        "Deleting");
     private final String value;
 
     StatusEnum(final String value) {
@@ -218,8 +219,8 @@ public class EndpointRetrieve extends AbstractRetrieve<EndpointRetrieve> {
    * Gets or Sets eventTypes
    */
   public enum EventTypesEnum {
-    SENSORCHANGE("SensorChange"), SPACECHANGE("SpaceChange"), TOPOLOGYOPERATION("TopologyOperation"), DEVICEMESSAGE(
-        "DeviceMessage"), UDFCUSTOM("UdfCustom");
+    SENSORCHANGE("SensorChange"), SPACECHANGE("SpaceChange"), TOPOLOGYOPERATION(
+        "TopologyOperation"), DEVICEMESSAGE("DeviceMessage"), UDFCUSTOM("UdfCustom");
     private final String value;
 
     EventTypesEnum(final String value) {

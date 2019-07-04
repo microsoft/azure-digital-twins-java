@@ -61,12 +61,14 @@ public interface SpacesApi extends TwinsApiClient.Api {
   @RequestLine("POST /api/v1.0/spaces")
   @Headers({"Accept: */*",})
   UUID spacesCreate(@Param("name") String name, @Param("description") String description,
-      @Param("friendlyName") String friendlyName, @Param("type") String type, @Param("typeId") Integer typeId,
-      @Param("parentSpaceId") UUID parentSpaceId, @Param("subtype") String subtype,
-      @Param("subtypeId") Integer subtypeId, @Param("location") Location location,
-      @Param("timeZoneId") Integer timeZoneId, @Param("status") String status, @Param("statusId") Integer statusId,
-      @Param("properties") List<ExtendedPropertyCreate> properties, @Param("timeZoneName") String timeZoneName,
-      @Param("children") List<SpaceCreate> children, @Param("users") List<UserCreate> users);
+      @Param("friendlyName") String friendlyName, @Param("type") String type,
+      @Param("typeId") Integer typeId, @Param("parentSpaceId") UUID parentSpaceId,
+      @Param("subtype") String subtype, @Param("subtypeId") Integer subtypeId,
+      @Param("location") Location location, @Param("timeZoneId") Integer timeZoneId,
+      @Param("status") String status, @Param("statusId") Integer statusId,
+      @Param("properties") List<ExtendedPropertyCreate> properties,
+      @Param("timeZoneName") String timeZoneName, @Param("children") List<SpaceCreate> children,
+      @Param("users") List<UserCreate> users);
 
   /**
    * Creates a blob This is a multi-part request. For more information, see sample app or doc
@@ -108,8 +110,9 @@ public interface SpacesApi extends TwinsApiClient.Api {
   @RequestLine("PUT /api/v1.0/spaces/{id}/users")
   @Headers({"Accept: */*",})
   String spacesCreateOrUpdateUser(@Param("id") String id, @Param("upn") String upn,
-      @Param("location") Location location, @Param("firstName") String firstName, @Param("lastName") String lastName,
-      @Param("managerName") String managerName, @Param("metadata") Map<String, String> metadata,
+      @Param("location") Location location, @Param("firstName") String firstName,
+      @Param("lastName") String lastName, @Param("managerName") String managerName,
+      @Param("metadata") Map<String, String> metadata,
       @Param("properties") List<ExtendedPropertyCreate> properties);
 
   /**
@@ -133,13 +136,14 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/spaces/{id}/properties")
   @Headers({"Accept: */*",})
-  String spacesCreateProperty(@Param("id") String id, @Param("name") String name, @Param("value") String value);
+  String spacesCreateProperty(@Param("id") String id, @Param("name") String name,
+      @Param("value") String value);
 
   /**
-   * Deletes a space and its children, such as devices, sensors, users, ... Deleting a space will fail
-   * if one of these objects belongs in the space tree about to be deleted: - Space resource: These
-   * need to be deleted first. - Sensors attached to devices that do **not** belong in the space tree
-   * about to be deleted: these (or their parent device) need to be deleted first.
+   * Deletes a space and its children, such as devices, sensors, users, ... Deleting a space will
+   * fail if one of these objects belongs in the space tree about to be deleted: - Space resource:
+   * These need to be deleted first. - Sensors attached to devices that do **not** belong in the
+   * space tree about to be deleted: these (or their parent device) need to be deleted first.
    *
    * @param id Space Id (required)
    */
@@ -229,7 +233,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/values?sensorDataTypes={sensorDataTypes}")
   @Headers({"Accept: */*",})
-  List<SensorValue> spacesGetValue(@Param("id") String id, @Param("sensorDataTypes") String sensorDataTypes);
+  List<SensorValue> spacesGetValue(@Param("id") String id,
+      @Param("sensorDataTypes") String sensorDataTypes);
 
   /**
    * Gets the aggregate of the values of the child sensors of the given type
@@ -254,11 +259,12 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/values?sensorDataTypes={sensorDataTypes}")
   @Headers({"Content-Type: */*",})
-  List<SensorValue> spacesGetValue(@Param("id") String id, @QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<SensorValue> spacesGetValue(@Param("id") String id,
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>spacesGetValue</code> method in
-   * a fluent style.
+   * A convenience class for generating query parameters for the <code>spacesGetValue</code> method
+   * in a fluent style.
    */
   public static class SpacesGetValueQueryParams extends HashMap<String, Object> {
     public SpacesGetValueQueryParams sensorDataTypes(final String value) {
@@ -278,8 +284,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/spaces/{id}/users/move?toSpaceId={toSpaceId}&resetLocation={resetLocation}")
   @Headers({"Accept: */*",})
-  Object spacesMoveUsersToSpace(List<UserCreate> body, @Param("toSpaceId") String toSpaceId, @Param("id") String id,
-      @Param("resetLocation") Boolean resetLocation);
+  Object spacesMoveUsersToSpace(List<UserCreate> body, @Param("toSpaceId") String toSpaceId,
+      @Param("id") String id, @Param("resetLocation") Boolean resetLocation);
 
   /**
    * Moves the users with provided UPNs from one space to another
@@ -287,8 +293,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * Note, this is equivalent to the other <code>spacesMoveUsersToSpace</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the
-   * {@link SpacesMoveUsersToSpaceQueryParams} class that allows for building up this map in a fluent
-   * style.
+   * {@link SpacesMoveUsersToSpaceQueryParams} class that allows for building up this map in a
+   * fluent style.
    *
    * @param body List of users who need to be re-assigned (required)
    * @param id Space Id where the users are currently associated (required)
@@ -327,10 +333,11 @@ public interface SpacesApi extends TwinsApiClient.Api {
   /**
    * Gets a list of spaces
    *
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
-   * @param name Optional name filter (optional)
-   * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space types to filter by.
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
    *        (optional)
+   * @param name Optional name filter (optional)
+   * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space types to filter
+   *        by. (optional)
    * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space subtypes to
    *        filter by. (optional)
    * @param statuses Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space statuses to
@@ -343,7 +350,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    *        Motion\&quot; (optional)
    * @param includes Comma separated list of what to include, for example
    *        \&quot;Sensors,Devices\&quot;. Defaults to None (optional)
-   * @param propertyKey Optional filter on objects that have the given property key defined (optional)
+   * @param propertyKey Optional filter on objects that have the given property key defined
+   *        (optional)
    * @param propertyValue Optional filter on the value of the given property key (optional)
    * @param propertyValueSearchType Optional type of search on property value. Contains or Equals.
    *        Defaults to Equals (optional)
@@ -359,13 +367,15 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces?ids={ids}&name={name}&types={types}&subtypes={subtypes}&statuses={statuses}&useParentSpace={useParentSpace}&userUpn={userUpn}&sensorDataTypes={sensorDataTypes}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<SpaceRetrieveWithChildren> spacesRetrieve(@Param("ids") String ids, @Param("name") String name,
-      @Param("types") String types, @Param("subtypes") String subtypes, @Param("statuses") String statuses,
-      @Param("useParentSpace") Boolean useParentSpace, @Param("userUpn") String userUpn,
-      @Param("sensorDataTypes") String sensorDataTypes, @Param("includes") String includes,
-      @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
-      @Param("propertyValueSearchType") String propertyValueSearchType, @Param("spaceId") String spaceId,
-      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
+  List<SpaceRetrieveWithChildren> spacesRetrieve(@Param("ids") String ids,
+      @Param("name") String name, @Param("types") String types, @Param("subtypes") String subtypes,
+      @Param("statuses") String statuses, @Param("useParentSpace") Boolean useParentSpace,
+      @Param("userUpn") String userUpn, @Param("sensorDataTypes") String sensorDataTypes,
+      @Param("includes") String includes, @Param("propertyKey") String propertyKey,
+      @Param("propertyValue") String propertyValue,
+      @Param("propertyValueSearchType") String propertyValueSearchType,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
@@ -386,10 +396,10 @@ public interface SpacesApi extends TwinsApiClient.Api {
    *        <li>name - Optional name filter (optional)</li>
    *        <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space types to
    *        filter by. (optional)</li>
-   *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space subtypes to
-   *        filter by. (optional)</li>
-   *        <li>statuses - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space statuses to
-   *        filter by. (optional)</li>
+   *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space subtypes
+   *        to filter by. (optional)</li>
+   *        <li>statuses - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of space statuses
+   *        to filter by. (optional)</li>
    *        <li>useParentSpace - If true, spaceId represents the space&#x27;s parent. Defaults to
    *        false. (optional)</li>
    *        <li>userUpn - Optional filter for spaces associated with the given user (optional)</li>
@@ -400,7 +410,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    *        \&quot;Sensors,Devices\&quot;. Defaults to None (optional)</li>
    *        <li>propertyKey - Optional filter on objects that have the given property key defined
    *        (optional)</li>
-   *        <li>propertyValue - Optional filter on the value of the given property key (optional)</li>
+   *        <li>propertyValue - Optional filter on the value of the given property key
+   *        (optional)</li>
    *        <li>propertyValueSearchType - Optional type of search on property value. Contains or
    *        Equals. Defaults to Equals (optional)</li>
    *        <li>spaceId - Optionally filter on objects based on their location in the topology
@@ -417,11 +428,12 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces?ids={ids}&name={name}&types={types}&subtypes={subtypes}&statuses={statuses}&useParentSpace={useParentSpace}&userUpn={userUpn}&sensorDataTypes={sensorDataTypes}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<SpaceRetrieveWithChildren> spacesRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<SpaceRetrieveWithChildren> spacesRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>spacesRetrieve</code> method in
-   * a fluent style.
+   * A convenience class for generating query parameters for the <code>spacesRetrieve</code> method
+   * in a fluent style.
    */
   public static class SpacesRetrieveQueryParams extends HashMap<String, Object> {
     public SpacesRetrieveQueryParams ids(final String value) {
@@ -520,9 +532,10 @@ public interface SpacesApi extends TwinsApiClient.Api {
    *
    * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter by
    *        (optional)
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
-   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to filter
-   *        by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
+   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
+   *        filter by (optional)
    * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
    *        (optional)
    * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to filter by
@@ -541,9 +554,10 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<BlobMetadataRetrieve> spacesRetrieveBlobMetadata(@Param("names") String names, @Param("ids") String ids,
-      @Param("sharings") String sharings, @Param("types") String types, @Param("subtypes") String subtypes,
-      @Param("includes") String includes, @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+  List<BlobMetadataRetrieve> spacesRetrieveBlobMetadata(@Param("names") String names,
+      @Param("ids") String ids, @Param("sharings") String sharings, @Param("types") String types,
+      @Param("subtypes") String subtypes, @Param("includes") String includes,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
@@ -551,8 +565,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * Gets a list of blobs
    *
    * Note, this is equivalent to the other <code>spacesRetrieveBlobMetadata</code> method, but with
-   * the query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
+   * the query parameters collected into a single Map parameter. This is convenient for services
+   * with optional query parameters, especially when used with the
    * {@link SpacesRetrieveBlobMetadataQueryParams} class that allows for building up this map in a
    * fluent style.
    *
@@ -561,12 +575,12 @@ public interface SpacesApi extends TwinsApiClient.Api {
    *        The following elements may be specified in the query map:
    *        </p>
    *        <ul>
-   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter
-   *        by (optional)</li>
+   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to
+   *        filter by (optional)</li>
    *        <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
    *        (optional)</li>
-   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
-   *        filter by (optional)</li>
+   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes
+   *        to filter by (optional)</li>
    *        <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
    *        (optional)</li>
    *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to
@@ -587,7 +601,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<BlobMetadataRetrieve> spacesRetrieveBlobMetadata(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<BlobMetadataRetrieve> spacesRetrieveBlobMetadata(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
    * A convenience class for generating query parameters for the
@@ -665,16 +680,17 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  BlobMetadataRetrieve spacesRetrieveBlobMetadataById(@Param("id") String id, @Param("includes") String includes);
+  BlobMetadataRetrieve spacesRetrieveBlobMetadataById(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Gets a blob
    *
    * Note, this is equivalent to the other <code>spacesRetrieveBlobMetadataById</code> method, but
-   * with the query parameters collected into a single Map parameter. This is convenient for services
-   * with optional query parameters, especially when used with the
-   * {@link SpacesRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map in a
-   * fluent style.
+   * with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
+   * {@link SpacesRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map in
+   * a fluent style.
    *
    * @param id Blob Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -717,16 +733,16 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}?includes={includes}&sensorDataTypes={sensorDataTypes}")
   @Headers({"Accept: */*",})
-  SpaceRetrieveWithChildren spacesRetrieveById(@Param("id") String id, @Param("includes") String includes,
-      @Param("sensorDataTypes") String sensorDataTypes);
+  SpaceRetrieveWithChildren spacesRetrieveById(@Param("id") String id,
+      @Param("includes") String includes, @Param("sensorDataTypes") String sensorDataTypes);
 
   /**
    * Gets a specific space
    *
-   * Note, this is equivalent to the other <code>spacesRetrieveById</code> method, but with the query
-   * parameters collected into a single Map parameter. This is convenient for services with optional
-   * query parameters, especially when used with the {@link SpacesRetrieveByIdQueryParams} class that
-   * allows for building up this map in a fluent style.
+   * Note, this is equivalent to the other <code>spacesRetrieveById</code> method, but with the
+   * query parameters collected into a single Map parameter. This is convenient for services with
+   * optional query parameters, especially when used with the {@link SpacesRetrieveByIdQueryParams}
+   * class that allows for building up this map in a fluent style.
    *
    * @param id Space Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -774,7 +790,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/keystore?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") String id, @Param("includes") String includes);
+  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Gets the first keystore by walking up the spaces hierarchy
@@ -782,8 +799,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * Note, this is equivalent to the other <code>spacesRetrieveKeyStore</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the
-   * {@link SpacesRetrieveKeyStoreQueryParams} class that allows for building up this map in a fluent
-   * style.
+   * {@link SpacesRetrieveKeyStoreQueryParams} class that allows for building up this map in a
+   * fluent style.
    *
    * @param id Space Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -827,16 +844,18 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/parent?spaceType={spaceType}&includes={includes}&sensorDataTypes={sensorDataTypes}")
   @Headers({"Accept: */*",})
-  SpaceRetrieveWithChildren spacesRetrieveParent(@Param("id") String id, @Param("spaceType") String spaceType,
-      @Param("includes") String includes, @Param("sensorDataTypes") String sensorDataTypes);
+  SpaceRetrieveWithChildren spacesRetrieveParent(@Param("id") String id,
+      @Param("spaceType") String spaceType, @Param("includes") String includes,
+      @Param("sensorDataTypes") String sensorDataTypes);
 
   /**
    * Gets the first space of the given type by walking up the spaces hierarchy
    *
    * Note, this is equivalent to the other <code>spacesRetrieveParent</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the {@link SpacesRetrieveParentQueryParams}
-   * class that allows for building up this map in a fluent style.
+   * optional query parameters, especially when used with the
+   * {@link SpacesRetrieveParentQueryParams} class that allows for building up this map in a fluent
+   * style.
    *
    * @param id Space Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -911,8 +930,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * Note, this is equivalent to the other <code>spacesRetrieveResource</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the
-   * {@link SpacesRetrieveResourceQueryParams} class that allows for building up this map in a fluent
-   * style.
+   * {@link SpacesRetrieveResourceQueryParams} class that allows for building up this map in a
+   * fluent style.
    *
    * @param id The space id (required)
    * @param type The resource type (required)
@@ -963,8 +982,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * Note, this is equivalent to the other <code>spacesRetrieveUserByUpn</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the
-   * {@link SpacesRetrieveUserByUpnQueryParams} class that allows for building up this map in a fluent
-   * style.
+   * {@link SpacesRetrieveUserByUpnQueryParams} class that allows for building up this map in a
+   * fluent style.
    *
    * @param id Space Id (required)
    * @param upn The user&#x27;s UPN (required)
@@ -985,8 +1004,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>spacesRetrieveUserByUpn</code>
-   * method in a fluent style.
+   * A convenience class for generating query parameters for the
+   * <code>spacesRetrieveUserByUpn</code> method in a fluent style.
    */
   public static class SpacesRetrieveUserByUpnQueryParams extends HashMap<String, Object> {
     public SpacesRetrieveUserByUpnQueryParams includes(final String value) {
@@ -1006,7 +1025,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * @param lastName Optional filter on last name (optional)
    * @param includes Comma separated list of what to include, for example \&quot;Space\&quot;.
    *        Defaults to None (optional)
-   * @param propertyKey Optional filter on objects that have the given property key defined (optional)
+   * @param propertyKey Optional filter on objects that have the given property key defined
+   *        (optional)
    * @param propertyValue Optional filter on the value of the given property key (optional)
    * @param propertyValueSearchType Optional type of search on property value. Contains or Equals.
    *        Defaults to Equals (optional)
@@ -1015,17 +1035,18 @@ public interface SpacesApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/spaces/{id}/users?traverse={traverse}&unmapped={unmapped}&firstName={firstName}&lastName={lastName}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}")
   @Headers({"Accept: */*",})
   List<UserRetrieve> spacesRetrieveUsers(@Param("id") String id, @Param("traverse") String traverse,
-      @Param("unmapped") Boolean unmapped, @Param("firstName") String firstName, @Param("lastName") String lastName,
-      @Param("includes") String includes, @Param("propertyKey") String propertyKey,
-      @Param("propertyValue") String propertyValue, @Param("propertyValueSearchType") String propertyValueSearchType);
+      @Param("unmapped") Boolean unmapped, @Param("firstName") String firstName,
+      @Param("lastName") String lastName, @Param("includes") String includes,
+      @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
+      @Param("propertyValueSearchType") String propertyValueSearchType);
 
   /**
    * Gets the list of users associated with the given space
    *
-   * Note, this is equivalent to the other <code>spacesRetrieveUsers</code> method, but with the query
-   * parameters collected into a single Map parameter. This is convenient for services with optional
-   * query parameters, especially when used with the {@link SpacesRetrieveUsersQueryParams} class that
-   * allows for building up this map in a fluent style.
+   * Note, this is equivalent to the other <code>spacesRetrieveUsers</code> method, but with the
+   * query parameters collected into a single Map parameter. This is convenient for services with
+   * optional query parameters, especially when used with the {@link SpacesRetrieveUsersQueryParams}
+   * class that allows for building up this map in a fluent style.
    *
    * @param id Space Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -1042,7 +1063,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    *        Defaults to None (optional)</li>
    *        <li>propertyKey - Optional filter on objects that have the given property key defined
    *        (optional)</li>
-   *        <li>propertyValue - Optional filter on the value of the given property key (optional)</li>
+   *        <li>propertyValue - Optional filter on the value of the given property key
+   *        (optional)</li>
    *        <li>propertyValueSearchType - Optional type of search on property value. Contains or
    *        Equals. Defaults to Equals (optional)</li>
    *        </ul>
@@ -1130,8 +1152,9 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/spaces/{id}")
   @Headers({"Accept: */*",})
-  void spacesUpdate(@Param("id") String id, @Param("name") String name, @Param("description") String description,
-      @Param("friendlyName") String friendlyName, @Param("type") String type, @Param("typeId") Integer typeId,
+  void spacesUpdate(@Param("id") String id, @Param("name") String name,
+      @Param("description") String description, @Param("friendlyName") String friendlyName,
+      @Param("type") String type, @Param("typeId") Integer typeId,
       @Param("parentSpaceId") UUID parentSpaceId, @Param("subtype") String subtype,
       @Param("subtypeId") Integer subtypeId, @Param("location") Location location,
       @Param("timeZoneId") Integer timeZoneId, @Param("timeZoneName") String timeZoneName,
@@ -1147,7 +1170,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/spaces/blobs/{id}")
   @Headers({"Accept: */*",})
-  void spacesUpdateBlob(@Param("id") String id, @Param("metadata") String metadata, @Param("contents") File contents);
+  void spacesUpdateBlob(@Param("id") String id, @Param("metadata") String metadata,
+      @Param("contents") File contents);
 
   /**
    * Creates or updates property values

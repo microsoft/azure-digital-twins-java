@@ -32,21 +32,25 @@ public class TopologyUpdaterTest extends AbstractTest {
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId, testGateway, testSpace);
 
-    assertThat(devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString())))
-        .hasSize(1);
+    assertThat(devicesApi
+        .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString())))
+            .hasSize(1);
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, MessageType.DELETE.toString().toLowerCase())
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
+            MessageType.DELETE.toString().toLowerCase())
         .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
 
     sink.inputChannel().send(hubMessage);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
-        .pollInterval(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
-            devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString()))).isEmpty());
+        .pollInterval(1, TimeUnit.SECONDS)
+        .untilAsserted(() -> assertThat(devicesApi
+            .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString())))
+                .isEmpty());
   }
 
 }

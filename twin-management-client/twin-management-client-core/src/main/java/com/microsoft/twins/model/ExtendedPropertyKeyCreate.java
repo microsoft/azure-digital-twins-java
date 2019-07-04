@@ -146,8 +146,8 @@ public class ExtendedPropertyKeyCreate {
    * Primitive data type used for validation. Defaults to None if not specified
    */
   public enum PrimitiveDataTypeEnum {
-    NONE("None"), STRING("String"), BOOL("Bool"), INT("Int"), UINT("UInt"), LONG("Long"), DATETIME("DateTime"), JSON(
-        "Json"), SET("Set"), ENUM("Enum");
+    NONE("None"), STRING("String"), BOOL("Bool"), INT("Int"), UINT("UInt"), LONG("Long"), DATETIME(
+        "DateTime"), JSON("Json"), SET("Set"), ENUM("Enum");
     private final String value;
 
     PrimitiveDataTypeEnum(final String value) {
@@ -246,7 +246,8 @@ public class ExtendedPropertyKeyCreate {
     this.name = name;
   }
 
-  public ExtendedPropertyKeyCreate primitiveDataType(final PrimitiveDataTypeEnum primitiveDataType) {
+  public ExtendedPropertyKeyCreate primitiveDataType(
+      final PrimitiveDataTypeEnum primitiveDataType) {
     this.primitiveDataType = primitiveDataType;
     return this;
   }

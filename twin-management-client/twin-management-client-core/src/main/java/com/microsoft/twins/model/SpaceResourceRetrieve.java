@@ -222,12 +222,16 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     WESTUS("WestUS"), WESTUS2("WestUS2"), CENTRALUSEUAP("CentralUSEUAP"), EASTUS("EastUS"), EASTUS2(
         "EastUS2"), CENTRALUS("CentralUS"), SOUTHCENTRALUS("SouthCentralUS"), WESTCENTRALUS(
             "WestCentralUS"), CANADAEAST("CanadaEast"), CANADACENTRAL("CanadaCentral"), BRAZILSOUTH(
-                "BrazilSouth"), AUSTRALIAEAST("AustraliaEast"), AUSTRALIASOUTHEAST("AustraliaSoutheast"), SOUTHEASTASIA(
-                    "SoutheastAsia"), EASTASIA("EastAsia"), CENTRALINDIA(
-                        "CentralIndia"), SOUTHINDIA("SouthIndia"), JAPANEAST("JapanEast"), JAPANWEST(
-                            "JapanWest"), KOREACENTRAL("KoreaCentral"), KOREASOUTH("KoreaSouth"), NORTHEUROPE(
-                                "NorthEurope"), WESTEUROPE("WestEurope"), UKWEST("UKWest"), UKSOUTH(
-                                    "UKSouth"), GERMANYCENTRAL("GermanyCentral"), GERMANYNORTHEAST("GermanyNortheast");
+                "BrazilSouth"), AUSTRALIAEAST("AustraliaEast"), AUSTRALIASOUTHEAST(
+                    "AustraliaSoutheast"), SOUTHEASTASIA("SoutheastAsia"), EASTASIA(
+                        "EastAsia"), CENTRALINDIA(
+                            "CentralIndia"), SOUTHINDIA("SouthIndia"), JAPANEAST(
+                                "JapanEast"), JAPANWEST("JapanWest"), KOREACENTRAL(
+                                    "KoreaCentral"), KOREASOUTH("KoreaSouth"), NORTHEUROPE(
+                                        "NorthEurope"), WESTEUROPE("WestEurope"), UKWEST(
+                                            "UKWest"), UKSOUTH("UKSouth"), GERMANYCENTRAL(
+                                                "GermanyCentral"), GERMANYNORTHEAST(
+                                                    "GermanyNortheast");
     private final String value;
 
     RegionEnum(final String value) {
@@ -268,8 +272,8 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
    * Resource status
    */
   public enum StatusEnum {
-    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED("Failed"), DELETING(
-        "Deleting");
+    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED(
+        "Failed"), DELETING("Deleting");
     private final String value;
 
     StatusEnum(final String value) {
@@ -581,12 +585,14 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     this.properties = properties;
   }
 
-  public SpaceResourceRetrieve dependentChildren(final List<SpaceResourceRetrieve> dependentChildren) {
+  public SpaceResourceRetrieve dependentChildren(
+      final List<SpaceResourceRetrieve> dependentChildren) {
     this.dependentChildren = dependentChildren;
     return this;
   }
 
-  public SpaceResourceRetrieve addDependentChildrenItem(final SpaceResourceRetrieve dependentChildrenItem) {
+  public SpaceResourceRetrieve addDependentChildrenItem(
+      final SpaceResourceRetrieve dependentChildrenItem) {
     if (this.dependentChildren == null) {
       this.dependentChildren = new java.util.ArrayList<>();
     }
@@ -608,12 +614,14 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     this.dependentChildren = dependentChildren;
   }
 
-  public SpaceResourceRetrieve dependentAncestors(final List<SpaceResourceRetrieve> dependentAncestors) {
+  public SpaceResourceRetrieve dependentAncestors(
+      final List<SpaceResourceRetrieve> dependentAncestors) {
     this.dependentAncestors = dependentAncestors;
     return this;
   }
 
-  public SpaceResourceRetrieve addDependentAncestorsItem(final SpaceResourceRetrieve dependentAncestorsItem) {
+  public SpaceResourceRetrieve addDependentAncestorsItem(
+      final SpaceResourceRetrieve dependentAncestorsItem) {
     if (this.dependentAncestors == null) {
       this.dependentAncestors = new java.util.ArrayList<>();
     }

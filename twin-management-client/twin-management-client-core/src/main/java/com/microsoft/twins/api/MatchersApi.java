@@ -44,8 +44,8 @@ public interface MatchersApi extends TwinsApiClient.Api {
   @RequestLine("POST /api/v1.0/matchers")
   @Headers({"Accept: */*",})
   UUID matchersCreate(@Param("name") String name, @Param("description") String description,
-      @Param("friendlyName") String friendlyName, @Param("conditions") List<ConditionCreate> conditions,
-      @Param("spaceId") UUID spaceId);
+      @Param("friendlyName") String friendlyName,
+      @Param("conditions") List<ConditionCreate> conditions, @Param("spaceId") UUID spaceId);
 
   /**
    * Deletes the given matcher
@@ -66,8 +66,8 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers/{id}/evaluate/{sensorId}?enableLogging={enableLogging}")
   @Headers({"Accept: */*",})
-  MatcherEvaluationResults matchersEvaluate(@Param("id") String id, @Param("sensorId") String sensorId,
-      @Param("enableLogging") Boolean enableLogging);
+  MatcherEvaluationResults matchersEvaluate(@Param("id") String id,
+      @Param("sensorId") String sensorId, @Param("enableLogging") Boolean enableLogging);
 
   /**
    * Evaluates the matcher for a sensor
@@ -91,12 +91,13 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers/{id}/evaluate/{sensorId}?enableLogging={enableLogging}")
   @Headers({"Content-Type: */*",})
-  MatcherEvaluationResults matchersEvaluate(@Param("id") String id, @Param("sensorId") String sensorId,
+  MatcherEvaluationResults matchersEvaluate(@Param("id") String id,
+      @Param("sensorId") String sensorId,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>matchersEvaluate</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>matchersEvaluate</code>
+   * method in a fluent style.
    */
   public static class MatchersEvaluateQueryParams extends HashMap<String, Object> {
     public MatchersEvaluateQueryParams enableLogging(final Boolean value) {
@@ -125,9 +126,10 @@ public interface MatchersApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/matchers?ids={ids}&names={names}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<MatcherRetrieve> matchersRetrieve(@Param("ids") String ids, @Param("names") String names,
-      @Param("includes") String includes, @Param("spaceId") String spaceId, @Param("traverse") String traverse,
-      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
-      @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
+      @Param("includes") String includes, @Param("spaceId") String spaceId,
+      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel,
+      @Param("maxLevel") Integer maxLevel, @Param("minRelative") Boolean minRelative,
+      @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Retrieves matchers
@@ -163,8 +165,8 @@ public interface MatchersApi extends TwinsApiClient.Api {
   List<MatcherRetrieve> matchersRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>matchersRetrieve</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>matchersRetrieve</code>
+   * method in a fluent style.
    */
   public static class MatchersRetrieveQueryParams extends HashMap<String, Object> {
     public MatchersRetrieveQueryParams ids(final String value) {
@@ -229,8 +231,9 @@ public interface MatchersApi extends TwinsApiClient.Api {
    *
    * Note, this is equivalent to the other <code>matchersRetrieveById</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the {@link MatchersRetrieveByIdQueryParams}
-   * class that allows for building up this map in a fluent style.
+   * optional query parameters, especially when used with the
+   * {@link MatchersRetrieveByIdQueryParams} class that allows for building up this map in a fluent
+   * style.
    *
    * @param id Matcher identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -280,6 +283,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/matchers/{id}")
   @Headers({"Accept: */*",})
-  void matchersUpdate(@Param("id") String id, @Param("name") String name, @Param("description") String description,
-      @Param("friendlyName") String friendlyName, @Param("conditions") List<ConditionUpdate> conditions);
+  void matchersUpdate(@Param("id") String id, @Param("name") String name,
+      @Param("description") String description, @Param("friendlyName") String friendlyName,
+      @Param("conditions") List<ConditionUpdate> conditions);
 }
