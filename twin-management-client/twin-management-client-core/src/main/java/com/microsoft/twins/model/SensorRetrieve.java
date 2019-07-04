@@ -299,7 +299,8 @@ public class SensorRetrieve extends AbstractRetrieve<SensorRetrieve> {
   }
 
   /**
-   * Type of unit; for example CelsiusTemperature if DataType is set to Temperature. Defaults to None
+   * Type of unit; for example CelsiusTemperature if DataType is set to Temperature. Defaults to
+   * None
    *
    * @return dataUnitType
    **/

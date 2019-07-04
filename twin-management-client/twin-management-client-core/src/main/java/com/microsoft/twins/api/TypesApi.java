@@ -42,9 +42,10 @@ public interface TypesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/types")
   @Headers({"Accept: */*",})
-  Integer typesCreate(@Param("category") String category, @Param("spaceId") UUID spaceId, @Param("name") String name,
-      @Param("friendlyName") String friendlyName, @Param("description") String description,
-      @Param("disabled") Boolean disabled, @Param("logicalOrder") Integer logicalOrder);
+  Integer typesCreate(@Param("category") String category, @Param("spaceId") UUID spaceId,
+      @Param("name") String name, @Param("friendlyName") String friendlyName,
+      @Param("description") String description, @Param("disabled") Boolean disabled,
+      @Param("logicalOrder") Integer logicalOrder);
 
   /**
    * Deletes an extended type
@@ -58,9 +59,10 @@ public interface TypesApi extends TwinsApiClient.Api {
   /**
    * Gets a list of extended types
    *
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
-   * @param categories Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of categories to filter
-   *        by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
+   * @param categories Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of categories to
+   *        filter by (optional)
    * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names to filter by
    *        (optional)
    * @param system Optionally filter on objects that have a parent space. If true, only return
@@ -80,11 +82,13 @@ public interface TypesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/types?ids={ids}&categories={categories}&names={names}&system={system}&disabled={disabled}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<ExtendedTypeRetrieve> typesRetrieve(@Param("ids") String ids, @Param("categories") String categories,
-      @Param("names") String names, @Param("system") Boolean system, @Param("disabled") Boolean disabled,
-      @Param("includes") String includes, @Param("spaceId") String spaceId, @Param("traverse") String traverse,
-      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
-      @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
+  List<ExtendedTypeRetrieve> typesRetrieve(@Param("ids") String ids,
+      @Param("categories") String categories, @Param("names") String names,
+      @Param("system") Boolean system, @Param("disabled") Boolean disabled,
+      @Param("includes") String includes, @Param("spaceId") String spaceId,
+      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel,
+      @Param("maxLevel") Integer maxLevel, @Param("minRelative") Boolean minRelative,
+      @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Gets a list of extended types
@@ -106,7 +110,8 @@ public interface TypesApi extends TwinsApiClient.Api {
    *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of names to filter by
    *        (optional)</li>
    *        <li>system - Optionally filter on objects that have a parent space. If true, only return
-   *        unparented (system) types. If false, only return parented (custom) types. (optional)</li>
+   *        unparented (system) types. If false, only return parented (custom) types.
+   *        (optional)</li>
    *        <li>disabled - Optional filter on the disabled flag (optional)</li>
    *        <li>includes - Comma separated list of what to include, for example \&quot;Space\&quot;.
    *        Defaults to None (optional)</li>
@@ -124,11 +129,12 @@ public interface TypesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/types?ids={ids}&categories={categories}&names={names}&system={system}&disabled={disabled}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<ExtendedTypeRetrieve> typesRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<ExtendedTypeRetrieve> typesRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>typesRetrieve</code> method in
-   * a fluent style.
+   * A convenience class for generating query parameters for the <code>typesRetrieve</code> method
+   * in a fluent style.
    */
   public static class TypesRetrieveQueryParams extends HashMap<String, Object> {
     public TypesRetrieveQueryParams ids(final String value) {
@@ -202,7 +208,8 @@ public interface TypesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/types/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  ExtendedTypeRetrieve typesRetrieveById(@Param("id") Integer id, @Param("includes") String includes);
+  ExtendedTypeRetrieve typesRetrieveById(@Param("id") Integer id,
+      @Param("includes") String includes);
 
   /**
    * Gets a specific extended type
@@ -230,8 +237,8 @@ public interface TypesApi extends TwinsApiClient.Api {
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>typesRetrieveById</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>typesRetrieveById</code>
+   * method in a fluent style.
    */
   public static class TypesRetrieveByIdQueryParams extends HashMap<String, Object> {
     public TypesRetrieveByIdQueryParams includes(final String value) {
@@ -263,7 +270,8 @@ public interface TypesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/types/{id}")
   @Headers({"Accept: */*",})
-  void typesUpdate(@Param("id") Integer id, @Param("spaceId") UUID spaceId, @Param("name") String name,
-      @Param("friendlyName") String friendlyName, @Param("description") String description,
-      @Param("disabled") Boolean disabled, @Param("logicalOrder") Integer logicalOrder);
+  void typesUpdate(@Param("id") Integer id, @Param("spaceId") UUID spaceId,
+      @Param("name") String name, @Param("friendlyName") String friendlyName,
+      @Param("description") String description, @Param("disabled") Boolean disabled,
+      @Param("logicalOrder") Integer logicalOrder);
 }

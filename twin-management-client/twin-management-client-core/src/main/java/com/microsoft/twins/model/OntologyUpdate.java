@@ -142,10 +142,10 @@ public class OntologyUpdate {
   }
 
   /**
-   * Switching an ontology from loaded false to true switches all its associated extended types to not
-   * Disabled unless they are also associated with another not loaded ontology. Switching an ontology
-   * from loaded true to false switches all its associated extended types to Disabled unless they are
-   * also associated with another loaded ontology.
+   * Switching an ontology from loaded false to true switches all its associated extended types to
+   * not Disabled unless they are also associated with another not loaded ontology. Switching an
+   * ontology from loaded true to false switches all its associated extended types to Disabled
+   * unless they are also associated with another loaded ontology.
    *
    * @return loaded
    **/

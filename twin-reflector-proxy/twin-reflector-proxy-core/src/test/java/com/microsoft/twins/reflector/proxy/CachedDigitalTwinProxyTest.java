@@ -83,7 +83,8 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     CacheManager cacheManager() {
       final SimpleCacheManager cacheManager = new SimpleCacheManager();
       cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache(CACHE_GATEWAY_ID_BY_HARDWARE_ID),
-          new ConcurrentMapCache(CACHE_DEVICE_BY_ID), new ConcurrentMapCache(CACHE_DEVICE_BY_NAME)));
+          new ConcurrentMapCache(CACHE_DEVICE_BY_ID),
+          new ConcurrentMapCache(CACHE_DEVICE_BY_NAME)));
       return cacheManager;
     }
 
@@ -103,8 +104,10 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     }
 
     @Bean
-    CachedDigitalTwinProxy cachedDigitalTwinProxy(final CacheManager cacheManager, final EndpointsApi endpointsApi) {
-      return new CachedDigitalTwinProxy(sensorsApi, devicesApi, endpointsApi, properties, cacheManager);
+    CachedDigitalTwinProxy cachedDigitalTwinProxy(final CacheManager cacheManager,
+        final EndpointsApi endpointsApi) {
+      return new CachedDigitalTwinProxy(sensorsApi, devicesApi, endpointsApi, properties,
+          cacheManager);
     }
 
   }
@@ -127,28 +130,36 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     final String testSecondaryConnectionString =
         "Endpoint=sb://testHub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=foobar2";
 
-    testConfiguration.getProperties().getTopologyChangeRegistration().setConnectionString(testConnectionString);
+    testConfiguration.getProperties().getTopologyChangeRegistration()
+        .setConnectionString(testConnectionString);
     testConfiguration.getProperties().getTopologyChangeRegistration().setHubname(testHubname);
     testConfiguration.getProperties().getTopologyChangeRegistration()
         .setSecondaryConnectionString(testSecondaryConnectionString);
 
     cachedDigitalTwinProxy.registerForTopologyChanges();
-    verify(endpointsApi, times(2)).endpointsRetrieve(any(EndpointsApi.EndpointsRetrieveQueryParams.class));
-    final ArgumentCaptor<EndpointCreate> endpointCreateCaptor = ArgumentCaptor.forClass(EndpointCreate.class);
+    verify(endpointsApi, times(2))
+        .endpointsRetrieve(any(EndpointsApi.EndpointsRetrieveQueryParams.class));
+    final ArgumentCaptor<EndpointCreate> endpointCreateCaptor =
+        ArgumentCaptor.forClass(EndpointCreate.class);
     verify(endpointsApi).endpointsCreate(endpointCreateCaptor.capture());
 
     assertThat(endpointCreateCaptor.getValue().getPath()).isEqualTo(testHubname);
-    assertThat(endpointCreateCaptor.getValue().getConnectionString()).contains(testConnectionString);
-    assertThat(endpointCreateCaptor.getValue().getSecondaryConnectionString()).contains(testSecondaryConnectionString);
-    assertThat(endpointCreateCaptor.getValue().getEventTypes()).containsExactly(EventTypesEnum.TOPOLOGYOPERATION);
+    assertThat(endpointCreateCaptor.getValue().getConnectionString())
+        .contains(testConnectionString);
+    assertThat(endpointCreateCaptor.getValue().getSecondaryConnectionString())
+        .contains(testSecondaryConnectionString);
+    assertThat(endpointCreateCaptor.getValue().getEventTypes())
+        .containsExactly(EventTypesEnum.TOPOLOGYOPERATION);
   }
 
   @Test
   public void cacheIsFilledAsPartOfGetCall() {
     final ConcurrentHashMap<Object, Object> idCache =
-        (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_DEVICE_BY_ID).getNativeCache();
+        (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_DEVICE_BY_ID)
+            .getNativeCache();
     final ConcurrentHashMap<Object, Object> nameCache =
-        (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_DEVICE_BY_NAME).getNativeCache();
+        (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_DEVICE_BY_NAME)
+            .getNativeCache();
 
     assertThat(idCache).isEmpty();
     assertThat(nameCache).isEmpty();

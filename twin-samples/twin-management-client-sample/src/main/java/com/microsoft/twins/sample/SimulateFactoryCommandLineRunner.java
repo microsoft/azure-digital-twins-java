@@ -101,46 +101,51 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
   private void shiftVehicles(final UUID tenant, final String line, final int vehiclesToAssemble) {
     final SpacesApi spacesApi = client.getSpacesApi();
 
-    final List<SpaceRetrieveWithChildren> parkingSpaces = spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams()
-        .types(PARKING_TYPE).useParentSpace(true).spaceId(tenant.toString()).traverse("Down"));
+    final List<SpaceRetrieveWithChildren> parkingSpaces =
+        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().types(PARKING_TYPE)
+            .useParentSpace(true).spaceId(tenant.toString()).traverse("Down"));
 
-    final UUID lineId = spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name(line)).get(0).getId();
+    final UUID lineId =
+        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name(line)).get(0).getId();
 
     final NavigableSet<SpaceRetrieveWithChildren> stations =
         new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
-    stations.addAll(spacesApi.spacesRetrieve(
-        new SpacesRetrieveQueryParams().types(WORK_STATION_TYPE).useParentSpace(true).spaceId(lineId.toString())));
+    stations.addAll(spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams()
+        .types(WORK_STATION_TYPE).useParentSpace(true).spaceId(lineId.toString())));
 
     for (int i = 0; i < vehiclesToAssemble; i++) {
 
       final DevicesApi devicesApi = client.getDevicesApi();
-      final List<DeviceRetrieve> vehicles = devicesApi.devicesRetrieve(
-          new DevicesRetrieveQueryParams().types(VEHICLE_TYPE).spaceId(lineId.toString()).traverse("Down"));
+      final List<DeviceRetrieve> vehicles =
+          devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().types(VEHICLE_TYPE)
+              .spaceId(lineId.toString()).traverse("Down"));
 
-      vehicles.forEach(vehicle -> stations.stream().filter(space -> space.getId().equals(vehicle.getSpaceId()))
-          .findAny().ifPresent(currentStation -> {
-            final SpaceRetrieveWithChildren nextStation = stations.higher(currentStation);
+      vehicles.forEach(
+          vehicle -> stations.stream().filter(space -> space.getId().equals(vehicle.getSpaceId()))
+              .findAny().ifPresent(currentStation -> {
+                final SpaceRetrieveWithChildren nextStation = stations.higher(currentStation);
 
-            if (nextStation == null) {
-              final SpaceRetrieveWithChildren parkingSpace =
-                  parkingSpaces.get(((int) (parkingSpaces.size() * Math.random())));
+                if (nextStation == null) {
+                  final SpaceRetrieveWithChildren parkingSpace =
+                      parkingSpaces.get(((int) (parkingSpaces.size() * Math.random())));
 
-              final DeviceUpdate vehicleInSpace = new DeviceUpdate();
-              vehicleInSpace.setSpaceId(parkingSpace.getId());
+                  final DeviceUpdate vehicleInSpace = new DeviceUpdate();
+                  vehicleInSpace.setSpaceId(parkingSpace.getId());
 
-              devicesApi.devicesUpdate(vehicleInSpace, vehicle.getId().toString());
+                  devicesApi.devicesUpdate(vehicleInSpace, vehicle.getId().toString());
 
-              log.info("Vehicle [{}] has left the building is now in space [{}]", vehicle.getName(),
-                  parkingSpace.getName());
-            } else {
-              final DeviceUpdate newSpace = new DeviceUpdate();
-              newSpace.setSpaceId(nextStation.getId());
+                  log.info("Vehicle [{}] has left the building is now in space [{}]",
+                      vehicle.getName(), parkingSpace.getName());
+                } else {
+                  final DeviceUpdate newSpace = new DeviceUpdate();
+                  newSpace.setSpaceId(nextStation.getId());
 
-              devicesApi.devicesUpdate(newSpace, vehicle.getId().toString());
+                  devicesApi.devicesUpdate(newSpace, vehicle.getId().toString());
 
-              log.info("Vehicle [{}] is now pushed to [{}]", vehicle.getName(), nextStation.getName());
-            }
-          }));
+                  log.info("Vehicle [{}] is now pushed to [{}]", vehicle.getName(),
+                      nextStation.getName());
+                }
+              }));
 
       // Add new vehicle to line
       final DeviceCreate vehicle = new DeviceCreate();

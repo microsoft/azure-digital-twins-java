@@ -100,12 +100,16 @@ public class SpaceResourceCreate {
     WESTUS("WestUS"), WESTUS2("WestUS2"), CENTRALUSEUAP("CentralUSEUAP"), EASTUS("EastUS"), EASTUS2(
         "EastUS2"), CENTRALUS("CentralUS"), SOUTHCENTRALUS("SouthCentralUS"), WESTCENTRALUS(
             "WestCentralUS"), CANADAEAST("CanadaEast"), CANADACENTRAL("CanadaCentral"), BRAZILSOUTH(
-                "BrazilSouth"), AUSTRALIAEAST("AustraliaEast"), AUSTRALIASOUTHEAST("AustraliaSoutheast"), SOUTHEASTASIA(
-                    "SoutheastAsia"), EASTASIA("EastAsia"), CENTRALINDIA(
-                        "CentralIndia"), SOUTHINDIA("SouthIndia"), JAPANEAST("JapanEast"), JAPANWEST(
-                            "JapanWest"), KOREACENTRAL("KoreaCentral"), KOREASOUTH("KoreaSouth"), NORTHEUROPE(
-                                "NorthEurope"), WESTEUROPE("WestEurope"), UKWEST("UKWest"), UKSOUTH(
-                                    "UKSouth"), GERMANYCENTRAL("GermanyCentral"), GERMANYNORTHEAST("GermanyNortheast");
+                "BrazilSouth"), AUSTRALIAEAST("AustraliaEast"), AUSTRALIASOUTHEAST(
+                    "AustraliaSoutheast"), SOUTHEASTASIA("SoutheastAsia"), EASTASIA(
+                        "EastAsia"), CENTRALINDIA(
+                            "CentralIndia"), SOUTHINDIA("SouthIndia"), JAPANEAST(
+                                "JapanEast"), JAPANWEST("JapanWest"), KOREACENTRAL(
+                                    "KoreaCentral"), KOREASOUTH("KoreaSouth"), NORTHEUROPE(
+                                        "NorthEurope"), WESTEUROPE("WestEurope"), UKWEST(
+                                            "UKWest"), UKSOUTH("UKSouth"), GERMANYCENTRAL(
+                                                "GermanyCentral"), GERMANYNORTHEAST(
+                                                    "GermanyNortheast");
     private final String value;
 
     RegionEnum(final String value) {
@@ -146,8 +150,8 @@ public class SpaceResourceCreate {
    * Resource status
    */
   public enum StatusEnum {
-    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED("Failed"), DELETING(
-        "Deleting");
+    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED(
+        "Failed"), DELETING("Deleting");
     private final String value;
 
     StatusEnum(final String value) {

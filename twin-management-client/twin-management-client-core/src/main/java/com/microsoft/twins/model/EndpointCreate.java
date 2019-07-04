@@ -176,8 +176,8 @@ public class EndpointCreate {
    * Gets or Sets eventTypes
    */
   public enum EventTypesEnum {
-    SENSORCHANGE("SensorChange"), SPACECHANGE("SpaceChange"), TOPOLOGYOPERATION("TopologyOperation"), DEVICEMESSAGE(
-        "DeviceMessage"), UDFCUSTOM("UdfCustom");
+    SENSORCHANGE("SensorChange"), SPACECHANGE("SpaceChange"), TOPOLOGYOPERATION(
+        "TopologyOperation"), DEVICEMESSAGE("DeviceMessage"), UDFCUSTOM("UdfCustom");
     private final String value;
 
     EventTypesEnum(final String value) {

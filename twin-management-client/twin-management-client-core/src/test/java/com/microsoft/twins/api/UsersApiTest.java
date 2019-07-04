@@ -26,8 +26,8 @@ public class UsersApiTest extends AbstractApiTest {
    * Creates a blob
    *
    * This is a multi-part request. For more information, see sample app or doc examples. Key value
-   * pairs specified in the Content-Disposition header in the blob-chunk of the multipart request will
-   * be preserved as meta-data on the stored blob.
+   * pairs specified in the Content-Disposition header in the blob-chunk of the multipart request
+   * will be preserved as meta-data on the stored blob.
    */
   @Test
   public void usersCreateBlobTest() {
@@ -186,10 +186,10 @@ public class UsersApiTest extends AbstractApiTest {
    */
   @Test
   public void usersRetrieveTestQueryMap() {
-    final UsersApi.UsersRetrieveQueryParams queryParams =
-        new UsersApi.UsersRetrieveQueryParams().upn(null).firstName(null).lastName(null).includes(null)
-            .propertyKey(null).propertyValue(null).propertyValueSearchType(null).spaceId(null).traverse(null)
-            .minLevel(null).maxLevel(null).minRelative(null).maxRelative(null);
+    final UsersApi.UsersRetrieveQueryParams queryParams = new UsersApi.UsersRetrieveQueryParams()
+        .upn(null).firstName(null).lastName(null).includes(null).propertyKey(null)
+        .propertyValue(null).propertyValueSearchType(null).spaceId(null).traverse(null)
+        .minLevel(null).maxLevel(null).minRelative(null).maxRelative(null);
     // List<UserRetrieve> response =
     // api.usersRetrieve(queryParams);
     // TODO: test validations
@@ -232,9 +232,9 @@ public class UsersApiTest extends AbstractApiTest {
   @Test
   public void usersRetrieveBlobMetadataTestQueryMap() {
     final UsersApi.UsersRetrieveBlobMetadataQueryParams queryParams =
-        new UsersApi.UsersRetrieveBlobMetadataQueryParams().names(null).ids(null).sharings(null).types(null)
-            .subtypes(null).includes(null).spaceId(null).traverse(null).minLevel(null).maxLevel(null).minRelative(null)
-            .maxRelative(null);
+        new UsersApi.UsersRetrieveBlobMetadataQueryParams().names(null).ids(null).sharings(null)
+            .types(null).subtypes(null).includes(null).spaceId(null).traverse(null).minLevel(null)
+            .maxLevel(null).minRelative(null).maxRelative(null);
     // List<BlobMetadataRetrieve> response =
     // api.usersRetrieveBlobMetadata(queryParams);
     // TODO: test validations

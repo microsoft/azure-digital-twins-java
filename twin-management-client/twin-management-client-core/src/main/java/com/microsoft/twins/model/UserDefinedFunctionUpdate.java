@@ -156,8 +156,8 @@ public class UserDefinedFunctionUpdate {
   }
 
   /**
-   * Parent space Id. A UDF is available to all sensors within the specified space topology that match
-   * one of its linked matchers
+   * Parent space Id. A UDF is available to all sensors within the specified space topology that
+   * match one of its linked matchers
    *
    * @return spaceId
    **/

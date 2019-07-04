@@ -415,7 +415,8 @@ public class SpaceRetrieveWithChildren extends AbstractRetrieve<SpaceRetrieveWit
     return this;
   }
 
-  public SpaceRetrieveWithChildren addPropertiesItem(final ExtendedPropertyRetrieve propertiesItem) {
+  public SpaceRetrieveWithChildren addPropertiesItem(
+      final ExtendedPropertyRetrieve propertiesItem) {
     if (this.properties == null) {
       this.properties = new java.util.ArrayList<>();
     }

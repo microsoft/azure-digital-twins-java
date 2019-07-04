@@ -31,17 +31,20 @@ public class IngressMessageListener {
     topologyUpdater.updateTopologyElementPartial(message, correlationId);
 
     if (message.getTelemetry() != null) {
-      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), correlationId, message.getId());
+      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), correlationId,
+          message.getId());
     }
   }
 
-  @StreamListener(target = ReflectorIngressSink.INPUT, condition = "headers['TwinReflectorProxy-MessageType']=='full'")
+  @StreamListener(target = ReflectorIngressSink.INPUT,
+      condition = "headers['TwinReflectorProxy-MessageType']=='full'")
   void getCompleteTopologyUpdate(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
     topologyUpdater.updateTopologyElementComplete(message, correlationId);
 
     if (message.getTelemetry() != null) {
-      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), correlationId, message.getId());
+      telemetryForwarder.sendMessage(String.valueOf(message.getTelemetry()), correlationId,
+          message.getId());
     }
   }
 

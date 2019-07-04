@@ -30,12 +30,14 @@ public class ExtendedTypeRetrieve {
    * The type&#x27;s category, for example SensorPortType
    */
   public enum CategoryEnum {
-    DEVICESUBTYPE("DeviceSubtype"), DEVICETYPE("DeviceType"), DEVICEBLOBSUBTYPE("DeviceBlobSubtype"), DEVICEBLOBTYPE(
-        "DeviceBlobType"), SENSORDATASUBTYPE("SensorDataSubtype"), SENSORDATATYPE("SensorDataType"), SENSORDATAUNITTYPE(
-            "SensorDataUnitType"), SENSORPORTTYPE("SensorPortType"), SENSORTYPE(
-                "SensorType"), SPACEBLOBSUBTYPE("SpaceBlobSubtype"), SPACEBLOBTYPE("SpaceBlobType"), SPACESTATUS(
-                    "SpaceStatus"), SPACESUBTYPE("SpaceSubtype"), SPACETYPE(
-                        "SpaceType"), USERBLOBSUBTYPE("UserBlobSubtype"), USERBLOBTYPE("UserBlobType");
+    DEVICESUBTYPE("DeviceSubtype"), DEVICETYPE("DeviceType"), DEVICEBLOBSUBTYPE(
+        "DeviceBlobSubtype"), DEVICEBLOBTYPE("DeviceBlobType"), SENSORDATASUBTYPE(
+            "SensorDataSubtype"), SENSORDATATYPE("SensorDataType"), SENSORDATAUNITTYPE(
+                "SensorDataUnitType"), SENSORPORTTYPE("SensorPortType"), SENSORTYPE(
+                    "SensorType"), SPACEBLOBSUBTYPE("SpaceBlobSubtype"), SPACEBLOBTYPE(
+                        "SpaceBlobType"), SPACESTATUS("SpaceStatus"), SPACESUBTYPE(
+                            "SpaceSubtype"), SPACETYPE("SpaceType"), USERBLOBSUBTYPE(
+                                "UserBlobSubtype"), USERBLOBTYPE("UserBlobType");
     private final String value;
 
     CategoryEnum(final String value) {
@@ -185,8 +187,8 @@ public class ExtendedTypeRetrieve {
 
   /**
    * If disabled, a type cannot be be referenced. This can be used to remove types from loaded
-   * ontologies or to prevent \&quot;wrong\&quot; type names from being created. For example, creating
-   * a disabled type called &#x27;Temp&#x27; will enforce using Temperature instead
+   * ontologies or to prevent \&quot;wrong\&quot; type names from being created. For example,
+   * creating a disabled type called &#x27;Temp&#x27; will enforce using Temperature instead
    *
    * @return disabled
    **/

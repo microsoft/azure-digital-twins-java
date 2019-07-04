@@ -178,7 +178,8 @@ public class SpaceRetrieveWithProperties extends AbstractRetrieve<SpaceRetrieveW
     return this;
   }
 
-  public SpaceRetrieveWithProperties addPropertiesItem(final ExtendedPropertyRetrieve propertiesItem) {
+  public SpaceRetrieveWithProperties addPropertiesItem(
+      final ExtendedPropertyRetrieve propertiesItem) {
     if (this.properties == null) {
       this.properties = new java.util.ArrayList<>();
     }

@@ -151,8 +151,8 @@ public class SensorValue {
   }
 
   /**
-   * Value type, for example motion or temperature. Maps to Sensor.DataType TODO: should we rename to
-   * dataType?
+   * Value type, for example motion or temperature. Maps to Sensor.DataType TODO: should we rename
+   * to dataType?
    *
    * @return type
    **/

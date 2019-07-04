@@ -133,7 +133,8 @@ import com.fasterxml.jackson.databind.util.ISO8601Utils;
 public class RFC3339DateFormat extends ISO8601DateFormat {
   // Same as ISO8601DateFormat but serializing milliseconds.
   @Override
-  public StringBuffer format(final Date date, final StringBuffer toAppendTo, final FieldPosition fieldPosition) {
+  public StringBuffer format(final Date date, final StringBuffer toAppendTo,
+      final FieldPosition fieldPosition) {
     final String value = ISO8601Utils.format(date, true, TimeZone.getTimeZone("GMT"), Locale.US);
     toAppendTo.append(value);
     return toAppendTo;

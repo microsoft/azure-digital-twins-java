@@ -42,8 +42,9 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    *
    * Note, this is equivalent to the other <code>roleAssignmentsCheck</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the {@link RoleAssignmentsCheckQueryParams}
-   * class that allows for building up this map in a fluent style.
+   * optional query parameters, especially when used with the
+   * {@link RoleAssignmentsCheckQueryParams} class that allows for building up this map in a fluent
+   * style.
    *
    * @param queryParams Map of query parameters as name-value pairs
    *        <p>
@@ -54,11 +55,11 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    *        <li>userId - The AAD user ObjectId (required)</li>
    *        <li>accessType - The access type (required)</li>
    *        <li>resourceType - The resource type (required)</li>
-   *        <li>domain - The domain to check preceded by the &#x27;@&#x27; character, or the upn that
-   *        belongs to the user. Examples: &#x60;user@example.com&#x60;, &#x60;@example.com&#x60;
-   *        (optional)</li>
-   *        <li>tenantId - The AAD tenantId of the user, disallowed for GatewayDevice role assignments
-   *        (optional)</li>
+   *        <li>domain - The domain to check preceded by the &#x27;@&#x27; character, or the upn
+   *        that belongs to the user. Examples: &#x60;user@example.com&#x60;,
+   *        &#x60;@example.com&#x60; (optional)</li>
+   *        <li>tenantId - The AAD tenantId of the user, disallowed for GatewayDevice role
+   *        assignments (optional)</li>
    *        </ul>
    * @return Boolean
    *
@@ -126,7 +127,8 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
   @RequestLine("POST /api/v1.0/roleassignments")
   @Headers({"Accept: */*",})
   UUID roleAssignmentsCreate(@Param("roleId") UUID roleId, @Param("objectId") String objectId,
-      @Param("objectIdType") String objectIdType, @Param("tenantId") UUID tenantId, @Param("path") String path);
+      @Param("objectIdType") String objectIdType, @Param("tenantId") UUID tenantId,
+      @Param("path") String path);
 
   /**
    * Deletes a role assignment
@@ -151,8 +153,9 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/roleassignments?path={path}&objectId={objectId}&personal={personal}&traverse={traverse}")
   @Headers({"Accept: */*",})
-  List<RoleAssignmentRetrieve> roleAssignmentsRetrieve(@Param("path") String path, @Param("objectId") String objectId,
-      @Param("personal") Boolean personal, @Param("traverse") String traverse);
+  List<RoleAssignmentRetrieve> roleAssignmentsRetrieve(@Param("path") String path,
+      @Param("objectId") String objectId, @Param("personal") Boolean personal,
+      @Param("traverse") String traverse);
 
   /**
    * Gets role assignments under a given path
@@ -160,8 +163,8 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    * Note, this is equivalent to the other <code>roleAssignmentsRetrieve</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
    * optional query parameters, especially when used with the
-   * {@link RoleAssignmentsRetrieveQueryParams} class that allows for building up this map in a fluent
-   * style.
+   * {@link RoleAssignmentsRetrieveQueryParams} class that allows for building up this map in a
+   * fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
    *        <p>
@@ -169,8 +172,8 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    *        </p>
    *        <ul>
    *        <li>path - The path under which role assignments are searched (required)</li>
-   *        <li>objectId - Optional object id filter. This corresponds to an object id used in a role
-   *        assignment creation. (optional)</li>
+   *        <li>objectId - Optional object id filter. This corresponds to an object id used in a
+   *        role assignment creation. (optional)</li>
    *        <li>personal - Optionally make the search return only the role assignments that are
    *        applicable to the user sending the request (optional)</li>
    *        <li>traverse - Optionally specify if you want to recursively include children (Down) of
@@ -181,11 +184,12 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/roleassignments?path={path}&objectId={objectId}&personal={personal}&traverse={traverse}")
   @Headers({"Content-Type: */*",})
-  List<RoleAssignmentRetrieve> roleAssignmentsRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<RoleAssignmentRetrieve> roleAssignmentsRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>roleAssignmentsRetrieve</code>
-   * method in a fluent style.
+   * A convenience class for generating query parameters for the
+   * <code>roleAssignmentsRetrieve</code> method in a fluent style.
    */
   public static class RoleAssignmentsRetrieveQueryParams extends HashMap<String, Object> {
     public RoleAssignmentsRetrieveQueryParams path(final String value) {

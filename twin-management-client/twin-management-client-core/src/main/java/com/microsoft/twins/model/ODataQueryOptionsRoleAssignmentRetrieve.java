@@ -224,7 +224,8 @@ public class ODataQueryOptionsRoleAssignmentRetrieve {
     this.rawValues = rawValues;
   }
 
-  public ODataQueryOptionsRoleAssignmentRetrieve selectExpand(final SelectExpandQueryOption selectExpand) {
+  public ODataQueryOptionsRoleAssignmentRetrieve selectExpand(
+      final SelectExpandQueryOption selectExpand) {
     this.selectExpand = selectExpand;
     return this;
   }
@@ -319,7 +320,8 @@ public class ODataQueryOptionsRoleAssignmentRetrieve {
     this.top = top;
   }
 
-  public ODataQueryOptionsRoleAssignmentRetrieve inlineCount(final InlineCountQueryOption inlineCount) {
+  public ODataQueryOptionsRoleAssignmentRetrieve inlineCount(
+      final InlineCountQueryOption inlineCount) {
     this.inlineCount = inlineCount;
     return this;
   }

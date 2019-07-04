@@ -181,8 +181,8 @@ public class PropertiesAndTreeFiltersModel {
   private UUID spaceId;
 
   /**
-   * None (the default) for the specified spaceId only, Down for space and descendants, Up for spaceId
-   * and ancestors, Any for both
+   * None (the default) for the specified spaceId only, Down for space and descendants, Up for
+   * spaceId and ancestors, Any for both
    */
   public enum TraverseEnum {
     NONE("None"), DOWN("Down"), UP("Up"), SPAN("Span");
@@ -275,7 +275,8 @@ public class PropertiesAndTreeFiltersModel {
     return propertyValueSearchType;
   }
 
-  public void setPropertyValueSearchType(final PropertyValueSearchTypeEnum propertyValueSearchType) {
+  public void setPropertyValueSearchType(
+      final PropertyValueSearchTypeEnum propertyValueSearchType) {
     this.propertyValueSearchType = propertyValueSearchType;
   }
 
@@ -305,8 +306,8 @@ public class PropertiesAndTreeFiltersModel {
   }
 
   /**
-   * None (the default) for the specified spaceId only, Down for space and descendants, Up for spaceId
-   * and ancestors, Any for both
+   * None (the default) for the specified spaceId only, Down for space and descendants, Up for
+   * spaceId and ancestors, Any for both
    *
    * @return traverse
    **/

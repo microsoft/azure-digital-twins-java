@@ -16,7 +16,8 @@ public class RetryOnStatusHandler extends ErrorDecoder.Default {
     switch (response.status()) {
       case 404:
       case 409:
-        return new RetryableException(response.status(), response.status() + " will retry", null, null);
+        return new RetryableException(response.status(), response.status() + " will retry", null,
+            null);
       case 429:
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, 1);

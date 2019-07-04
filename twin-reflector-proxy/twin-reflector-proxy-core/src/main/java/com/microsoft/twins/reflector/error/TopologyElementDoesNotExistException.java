@@ -15,7 +15,8 @@ public class TopologyElementDoesNotExistException extends AbstractIngressFailedE
     super("Topology element with id " + id + " does not exist", correlationId, ERROR_CODE);
   }
 
-  public TopologyElementDoesNotExistException(final String id, final UUID correlationId, final Throwable cause) {
+  public TopologyElementDoesNotExistException(final String id, final UUID correlationId,
+      final Throwable cause) {
     super("Topology element with id " + id + " does not exist", correlationId, cause, ERROR_CODE);
   }
 }

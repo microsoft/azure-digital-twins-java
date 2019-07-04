@@ -44,10 +44,11 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/propertykeys")
   @Headers({"Accept: */*",})
-  Integer propertyKeysCreate(@Param("name") String name, @Param("primitiveDataType") String primitiveDataType,
-      @Param("category") String category, @Param("description") String description, @Param("spaceId") UUID spaceId,
-      @Param("scope") String scope, @Param("validationData") String validationData, @Param("min") String min,
-      @Param("max") String max);
+  Integer propertyKeysCreate(@Param("name") String name,
+      @Param("primitiveDataType") String primitiveDataType, @Param("category") String category,
+      @Param("description") String description, @Param("spaceId") UUID spaceId,
+      @Param("scope") String scope, @Param("validationData") String validationData,
+      @Param("min") String min, @Param("max") String max);
 
   /**
    * Adds or updates a property key using SpaceId, Name and Scope as lookup keys
@@ -75,10 +76,11 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/propertykeys")
   @Headers({"Accept: */*",})
-  Integer propertyKeysCreateOrUpdate(@Param("name") String name, @Param("primitiveDataType") String primitiveDataType,
-      @Param("category") String category, @Param("description") String description, @Param("spaceId") UUID spaceId,
-      @Param("scope") String scope, @Param("validationData") String validationData, @Param("min") String min,
-      @Param("max") String max);
+  Integer propertyKeysCreateOrUpdate(@Param("name") String name,
+      @Param("primitiveDataType") String primitiveDataType, @Param("category") String category,
+      @Param("description") String description, @Param("spaceId") UUID spaceId,
+      @Param("scope") String scope, @Param("validationData") String validationData,
+      @Param("min") String min, @Param("max") String max);
 
   /**
    * Deletes the given property key
@@ -104,9 +106,9 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
   /**
    * Deletes property keys for child objects of the given space
    *
-   * Note, this is equivalent to the other <code>propertyKeysDeleteBySpace</code> method, but with the
-   * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
+   * Note, this is equivalent to the other <code>propertyKeysDeleteBySpace</code> method, but with
+   * the query parameters collected into a single Map parameter. This is convenient for services
+   * with optional query parameters, especially when used with the
    * {@link PropertyKeysDeleteBySpaceQueryParams} class that allows for building up this map in a
    * fluent style.
    *
@@ -167,8 +169,9 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/propertykeys?scope={scope}&category={category}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<ExtendedPropertyKeyRetrieve> propertyKeysRetrieve(@Param("scope") String scope,
-      @Param("category") String category, @Param("includes") String includes, @Param("spaceId") String spaceId,
-      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
+      @Param("category") String category, @Param("includes") String includes,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
@@ -176,8 +179,9 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    *
    * Note, this is equivalent to the other <code>propertyKeysRetrieve</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the {@link PropertyKeysRetrieveQueryParams}
-   * class that allows for building up this map in a fluent style.
+   * optional query parameters, especially when used with the
+   * {@link PropertyKeysRetrieveQueryParams} class that allows for building up this map in a fluent
+   * style.
    *
    * @param queryParams Map of query parameters as name-value pairs
    *        <p>
@@ -202,7 +206,8 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/propertykeys?scope={scope}&category={category}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<ExtendedPropertyKeyRetrieve> propertyKeysRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<ExtendedPropertyKeyRetrieve> propertyKeysRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
    * A convenience class for generating query parameters for the <code>propertyKeysRetrieve</code>
@@ -265,14 +270,15 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/propertykeys/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  ExtendedPropertyKeyRetrieve propertyKeysRetrieveById(@Param("id") Integer id, @Param("includes") String includes);
+  ExtendedPropertyKeyRetrieve propertyKeysRetrieveById(@Param("id") Integer id,
+      @Param("includes") String includes);
 
   /**
    * Retrieves a property key
    *
-   * Note, this is equivalent to the other <code>propertyKeysRetrieveById</code> method, but with the
-   * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
+   * Note, this is equivalent to the other <code>propertyKeysRetrieveById</code> method, but with
+   * the query parameters collected into a single Map parameter. This is convenient for services
+   * with optional query parameters, especially when used with the
    * {@link PropertyKeysRetrieveByIdQueryParams} class that allows for building up this map in a
    * fluent style.
    *
@@ -294,8 +300,8 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>propertyKeysRetrieveById</code>
-   * method in a fluent style.
+   * A convenience class for generating query parameters for the
+   * <code>propertyKeysRetrieveById</code> method in a fluent style.
    */
   public static class PropertyKeysRetrieveByIdQueryParams extends HashMap<String, Object> {
     public PropertyKeysRetrieveByIdQueryParams includes(final String value) {
@@ -328,7 +334,8 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/propertykeys/{id}")
   @Headers({"Accept: */*",})
-  void propertyKeysUpdate(@Param("id") Integer id, @Param("name") String name, @Param("category") String category,
-      @Param("description") String description, @Param("spaceId") UUID spaceId,
-      @Param("validationData") String validationData, @Param("min") String min, @Param("max") String max);
+  void propertyKeysUpdate(@Param("id") Integer id, @Param("name") String name,
+      @Param("category") String category, @Param("description") String description,
+      @Param("spaceId") UUID spaceId, @Param("validationData") String validationData,
+      @Param("min") String min, @Param("max") String max);
 }

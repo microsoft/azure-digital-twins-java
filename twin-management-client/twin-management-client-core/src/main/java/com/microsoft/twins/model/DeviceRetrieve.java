@@ -502,7 +502,8 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
     this.connectionState = connectionState;
   }
 
-  public DeviceRetrieve connectionStateUpdatedTime(final OffsetDateTime connectionStateUpdatedTime) {
+  public DeviceRetrieve connectionStateUpdatedTime(
+      final OffsetDateTime connectionStateUpdatedTime) {
     this.connectionStateUpdatedTime = connectionStateUpdatedTime;
     return this;
   }

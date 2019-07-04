@@ -290,7 +290,8 @@ public class SensorCreate {
   }
 
   /**
-   * Type of unit; for example CelsiusTemperature if DataType is set to Temperature. Defaults to None
+   * Type of unit; for example CelsiusTemperature if DataType is set to Temperature. Defaults to
+   * None
    *
    * @return dataUnitType
    **/
@@ -308,8 +309,8 @@ public class SensorCreate {
   }
 
   /**
-   * Subtype for the data; for example OutsideTemperature if DataType is set to Temperature. Defaults
-   * to None
+   * Subtype for the data; for example OutsideTemperature if DataType is set to Temperature.
+   * Defaults to None
    *
    * @return dataSubtype
    **/

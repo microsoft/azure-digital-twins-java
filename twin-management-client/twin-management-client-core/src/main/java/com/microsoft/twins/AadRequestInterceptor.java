@@ -71,12 +71,13 @@ public class AadRequestInterceptor implements RequestInterceptor {
         return Optional.empty();
       }
 
-      log.debug("Got token of type '{}' from AAD that expires after {}s", response.getAccessTokenType(),
-          response.getExpiresAfter());
+      log.debug("Got token of type '{}' from AAD that expires after {}s",
+          response.getAccessTokenType(), response.getExpiresAfter());
       rwLock.writeLock().lock();
       try {
         accessToken = response.getAccessToken();
-        accessTokenExpiresAt = Instant.now().plusSeconds(response.getExpiresAfter()).minusMillis(BUFFER.toMillis());
+        accessTokenExpiresAt =
+            Instant.now().plusSeconds(response.getExpiresAfter()).minusMillis(BUFFER.toMillis());
       } finally {
         rwLock.writeLock().unlock();
       }
@@ -95,7 +96,8 @@ public class AadRequestInterceptor implements RequestInterceptor {
     }
   }
 
-  private AuthenticationResult acquireToken() throws ExecutionException, TimeoutException, MalformedURLException {
+  private AuthenticationResult acquireToken()
+      throws ExecutionException, TimeoutException, MalformedURLException {
     try {
       return getContext().acquireToken(resource, new ClientCredential(clientId, clientSecret), null)
           .get(timeout.get(ChronoUnit.SECONDS), TimeUnit.SECONDS);
@@ -114,7 +116,8 @@ public class AadRequestInterceptor implements RequestInterceptor {
   public Optional<String> getAccessToken() {
     rwLock.readLock().lock();
     try {
-      if (accessToken != null && accessTokenExpiresAt != null && accessTokenExpiresAt.isAfter(Instant.now())) {
+      if (accessToken != null && accessTokenExpiresAt != null
+          && accessTokenExpiresAt.isAfter(Instant.now())) {
         log.debug("Retieved bearer token from cache.");
         return Optional.of(accessToken);
       }
@@ -133,7 +136,8 @@ public class AadRequestInterceptor implements RequestInterceptor {
       log.debug("Constructing Header {} for Token {}", AUTHORIZATION_HEADER, BEARER_TOKEN_TYPE);
 
       getAccessToken().ifPresentOrElse(
-          token -> template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, token)),
+          token -> template.header(AUTHORIZATION_HEADER,
+              String.format("%s %s", BEARER_TOKEN_TYPE, token)),
           () -> log.error("No bearer token available from AAD for {}!", template));
     }
   }

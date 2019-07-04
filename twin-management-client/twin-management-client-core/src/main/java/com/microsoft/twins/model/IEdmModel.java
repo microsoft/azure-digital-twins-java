@@ -190,7 +190,8 @@ public class IEdmModel {
     return directValueAnnotationsManager;
   }
 
-  public void setDirectValueAnnotationsManager(final IEdmDirectValueAnnotationsManager directValueAnnotationsManager) {
+  public void setDirectValueAnnotationsManager(
+      final IEdmDirectValueAnnotationsManager directValueAnnotationsManager) {
     this.directValueAnnotationsManager = directValueAnnotationsManager;
   }
 

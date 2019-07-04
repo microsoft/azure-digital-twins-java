@@ -224,7 +224,8 @@ public class ODataQueryOptionsUserDefinedFunction {
     this.rawValues = rawValues;
   }
 
-  public ODataQueryOptionsUserDefinedFunction selectExpand(final SelectExpandQueryOption selectExpand) {
+  public ODataQueryOptionsUserDefinedFunction selectExpand(
+      final SelectExpandQueryOption selectExpand) {
     this.selectExpand = selectExpand;
     return this;
   }
@@ -319,7 +320,8 @@ public class ODataQueryOptionsUserDefinedFunction {
     this.top = top;
   }
 
-  public ODataQueryOptionsUserDefinedFunction inlineCount(final InlineCountQueryOption inlineCount) {
+  public ODataQueryOptionsUserDefinedFunction inlineCount(
+      final InlineCountQueryOption inlineCount) {
     this.inlineCount = inlineCount;
     return this;
   }

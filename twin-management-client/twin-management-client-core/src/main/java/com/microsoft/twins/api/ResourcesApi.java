@@ -43,10 +43,12 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/resources")
   @Headers({"Accept: */*",})
-  UUID resourcesCreate(@Param("spaceId") UUID spaceId, @Param("type") String type, @Param("size") String size,
-      @Param("region") String region, @Param("isExternallyCreated") Boolean isExternallyCreated,
+  UUID resourcesCreate(@Param("spaceId") UUID spaceId, @Param("type") String type,
+      @Param("size") String size, @Param("region") String region,
+      @Param("isExternallyCreated") Boolean isExternallyCreated,
       @Param("parameters") Map<String, String> parameters,
-      @Param("resourceDependencies") List<UUID> resourceDependencies, @Param("status") String status);
+      @Param("resourceDependencies") List<UUID> resourceDependencies,
+      @Param("status") String status);
 
   /**
    * Deletes the specified resource
@@ -78,9 +80,9 @@ public interface ResourcesApi extends TwinsApiClient.Api {
   @Headers({"Accept: */*",})
   List<SpaceResourceRetrieve> resourcesRetrieve(@Param("type") String type,
       @Param("isExternallyCreated") Boolean isExternallyCreated, @Param("includes") String includes,
-      @Param("spaceId") String spaceId, @Param("traverse") String traverse, @Param("minLevel") Integer minLevel,
-      @Param("maxLevel") Integer maxLevel, @Param("minRelative") Boolean minRelative,
-      @Param("maxRelative") Boolean maxRelative);
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
+      @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Retrieves resources
@@ -113,11 +115,12 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/resources?type={type}&isExternallyCreated={isExternallyCreated}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<SpaceResourceRetrieve> resourcesRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<SpaceResourceRetrieve> resourcesRetrieve(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>resourcesRetrieve</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>resourcesRetrieve</code>
+   * method in a fluent style.
    */
   public static class ResourcesRetrieveQueryParams extends HashMap<String, Object> {
     public ResourcesRetrieveQueryParams type(final String value) {
@@ -176,7 +179,8 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/resources/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") String id, @Param("includes") String includes);
+  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Retrieves the specified resource
@@ -193,8 +197,9 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    *
    * Note, this is equivalent to the other <code>resourcesRetrieveById</code> method, but with the
    * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the {@link ResourcesRetrieveByIdQueryParams}
-   * class that allows for building up this map in a fluent style.
+   * optional query parameters, especially when used with the
+   * {@link ResourcesRetrieveByIdQueryParams} class that allows for building up this map in a fluent
+   * style.
    *
    * @param id Resource Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -245,6 +250,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/resources/{id}")
   @Headers({"Accept: */*",})
-  void resourcesUpdate(@Param("id") String id, @Param("spaceId") UUID spaceId, @Param("size") String size,
-      @Param("parameters") Map<String, String> parameters, @Param("status") String status);
+  void resourcesUpdate(@Param("id") String id, @Param("spaceId") UUID spaceId,
+      @Param("size") String size, @Param("parameters") Map<String, String> parameters,
+      @Param("status") String status);
 }

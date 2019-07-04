@@ -15,7 +15,8 @@ public class InconsistentTopologyException extends AbstractIngressFailedExceptio
     super(message, correlationId, ERROR_CODE);
   }
 
-  public InconsistentTopologyException(final String message, final UUID correlationId, final Throwable cause) {
+  public InconsistentTopologyException(final String message, final UUID correlationId,
+      final Throwable cause) {
     super(message, correlationId, cause, ERROR_CODE);
   }
 }

@@ -14,8 +14,8 @@ import lombok.Setter;
 @Setter
 @Validated
 public class TwinReflectorProxyProperties {
-
-  private final TopologyChangeRegistration topologyChangeRegistration = new TopologyChangeRegistration();
+  private final TopologyChangeRegistration topologyChangeRegistration =
+      new TopologyChangeRegistration();
 
   @Getter
   @Setter

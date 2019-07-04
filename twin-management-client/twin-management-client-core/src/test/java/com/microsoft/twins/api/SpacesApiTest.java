@@ -39,8 +39,8 @@ public class SpacesApiTest extends AbstractApiTest {
    * Creates a blob
    *
    * This is a multi-part request. For more information, see sample app or doc examples. Key value
-   * pairs specified in the Content-Disposition header in the blob-chunk of the multipart request will
-   * be preserved as meta-data on the stored blob.
+   * pairs specified in the Content-Disposition header in the blob-chunk of the multipart request
+   * will be preserved as meta-data on the stored blob.
    */
   @Test
   public void spacesCreateBlobTest() {
@@ -79,10 +79,10 @@ public class SpacesApiTest extends AbstractApiTest {
   /**
    * Deletes a space and its children, such as devices, sensors, users, ...
    *
-   * Deleting a space will fail if one of these objects belongs in the space tree about to be deleted:
-   * - Space resource: These need to be deleted first. - Sensors attached to devices that do **not**
-   * belong in the space tree about to be deleted: these (or their parent device) need to be deleted
-   * first.
+   * Deleting a space will fail if one of these objects belongs in the space tree about to be
+   * deleted: - Space resource: These need to be deleted first. - Sensors attached to devices that
+   * do **not** belong in the space tree about to be deleted: these (or their parent device) need to
+   * be deleted first.
    */
   @Test
   public void spacesDeleteTest() {
@@ -288,10 +288,11 @@ public class SpacesApiTest extends AbstractApiTest {
    */
   @Test
   public void spacesRetrieveTestQueryMap() {
-    final SpacesApi.SpacesRetrieveQueryParams queryParams = new SpacesApi.SpacesRetrieveQueryParams().ids(null)
-        .name(null).types(null).subtypes(null).statuses(null).useParentSpace(null).userUpn(null).sensorDataTypes(null)
-        .includes(null).propertyKey(null).propertyValue(null).propertyValueSearchType(null).spaceId(null).traverse(null)
-        .minLevel(null).maxLevel(null).minRelative(null).maxRelative(null);
+    final SpacesApi.SpacesRetrieveQueryParams queryParams =
+        new SpacesApi.SpacesRetrieveQueryParams().ids(null).name(null).types(null).subtypes(null)
+            .statuses(null).useParentSpace(null).userUpn(null).sensorDataTypes(null).includes(null)
+            .propertyKey(null).propertyValue(null).propertyValueSearchType(null).spaceId(null)
+            .traverse(null).minLevel(null).maxLevel(null).minRelative(null).maxRelative(null);
     // List<SpaceRetrieveWithChildren> response =
     // api.spacesRetrieve(queryParams);
     // TODO: test validations
@@ -334,9 +335,9 @@ public class SpacesApiTest extends AbstractApiTest {
   @Test
   public void spacesRetrieveBlobMetadataTestQueryMap() {
     final SpacesApi.SpacesRetrieveBlobMetadataQueryParams queryParams =
-        new SpacesApi.SpacesRetrieveBlobMetadataQueryParams().names(null).ids(null).sharings(null).types(null)
-            .subtypes(null).includes(null).spaceId(null).traverse(null).minLevel(null).maxLevel(null).minRelative(null)
-            .maxRelative(null);
+        new SpacesApi.SpacesRetrieveBlobMetadataQueryParams().names(null).ids(null).sharings(null)
+            .types(null).subtypes(null).includes(null).spaceId(null).traverse(null).minLevel(null)
+            .maxLevel(null).minRelative(null).maxRelative(null);
     // List<BlobMetadataRetrieve> response =
     // api.spacesRetrieveBlobMetadata(queryParams);
     // TODO: test validations
@@ -466,7 +467,8 @@ public class SpacesApiTest extends AbstractApiTest {
   public void spacesRetrieveParentTestQueryMap() {
     final String id;
     final SpacesApi.SpacesRetrieveParentQueryParams queryParams =
-        new SpacesApi.SpacesRetrieveParentQueryParams().spaceType(null).includes(null).sensorDataTypes(null);
+        new SpacesApi.SpacesRetrieveParentQueryParams().spaceType(null).includes(null)
+            .sensorDataTypes(null);
     // SpaceRetrieveWithChildren response = api.spacesRetrieveParent(id,
     // queryParams);
     // TODO: test validations
@@ -587,8 +589,9 @@ public class SpacesApiTest extends AbstractApiTest {
   public void spacesRetrieveUsersTestQueryMap() {
     final String id;
     final SpacesApi.SpacesRetrieveUsersQueryParams queryParams =
-        new SpacesApi.SpacesRetrieveUsersQueryParams().traverse(null).unmapped(null).firstName(null).lastName(null)
-            .includes(null).propertyKey(null).propertyValue(null).propertyValueSearchType(null);
+        new SpacesApi.SpacesRetrieveUsersQueryParams().traverse(null).unmapped(null).firstName(null)
+            .lastName(null).includes(null).propertyKey(null).propertyValue(null)
+            .propertyValueSearchType(null);
     // List<UserRetrieve> response = api.spacesRetrieveUsers(id,
     // queryParams);
     // TODO: test validations

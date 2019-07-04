@@ -61,8 +61,9 @@ public interface UsersApi extends TwinsApiClient.Api {
   @RequestLine("PUT /api/v1.0/users")
   @Headers({"Accept: */*",})
   UUID usersCreateOrUpdate(@Param("spaceId") UUID spaceId, @Param("upn") String upn,
-      @Param("location") Location location, @Param("firstName") String firstName, @Param("lastName") String lastName,
-      @Param("managerName") String managerName, @Param("metadata") Map<String, String> metadata,
+      @Param("location") Location location, @Param("firstName") String firstName,
+      @Param("lastName") String lastName, @Param("managerName") String managerName,
+      @Param("metadata") Map<String, String> metadata,
       @Param("properties") List<ExtendedPropertyCreate> properties);
 
   /**
@@ -86,7 +87,8 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/users/{id}/properties")
   @Headers({"Accept: */*",})
-  String usersCreateProperty(@Param("id") String id, @Param("name") String name, @Param("value") String value);
+  String usersCreateProperty(@Param("id") String id, @Param("name") String name,
+      @Param("value") String value);
 
   /**
    * Deletes a user
@@ -168,7 +170,8 @@ public interface UsersApi extends TwinsApiClient.Api {
    *        Defaults to None. A user can request their own RoleAssignments by passing in the
    *        \&quot;RoleAssigments\&quot; include parameter, but they cannot request the role
    *        assignments of others (optional)
-   * @param propertyKey Optional filter on objects that have the given property key defined (optional)
+   * @param propertyKey Optional filter on objects that have the given property key defined
+   *        (optional)
    * @param propertyValue Optional filter on the value of the given property key (optional)
    * @param propertyValueSearchType Optional type of search on property value. Contains or Equals.
    *        Defaults to Equals (optional)
@@ -185,11 +188,12 @@ public interface UsersApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/users?upn={upn}&firstName={firstName}&lastName={lastName}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<UserRetrieve> usersRetrieve(@Param("upn") String upn, @Param("firstName") String firstName,
-      @Param("lastName") String lastName, @Param("includes") String includes, @Param("propertyKey") String propertyKey,
-      @Param("propertyValue") String propertyValue, @Param("propertyValueSearchType") String propertyValueSearchType,
-      @Param("spaceId") String spaceId, @Param("traverse") String traverse, @Param("minLevel") Integer minLevel,
-      @Param("maxLevel") Integer maxLevel, @Param("minRelative") Boolean minRelative,
-      @Param("maxRelative") Boolean maxRelative);
+      @Param("lastName") String lastName, @Param("includes") String includes,
+      @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
+      @Param("propertyValueSearchType") String propertyValueSearchType,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
+      @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Gets a list of users
@@ -213,7 +217,8 @@ public interface UsersApi extends TwinsApiClient.Api {
    *        assignments of others (optional)</li>
    *        <li>propertyKey - Optional filter on objects that have the given property key defined
    *        (optional)</li>
-   *        <li>propertyValue - Optional filter on the value of the given property key (optional)</li>
+   *        <li>propertyValue - Optional filter on the value of the given property key
+   *        (optional)</li>
    *        <li>propertyValueSearchType - Optional type of search on property value. Contains or
    *        Equals. Defaults to Equals (optional)</li>
    *        <li>spaceId - Optionally filter on objects based on their location in the topology
@@ -233,8 +238,8 @@ public interface UsersApi extends TwinsApiClient.Api {
   List<UserRetrieve> usersRetrieve(@QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>usersRetrieve</code> method in
-   * a fluent style.
+   * A convenience class for generating query parameters for the <code>usersRetrieve</code> method
+   * in a fluent style.
    */
   public static class UsersRetrieveQueryParams extends HashMap<String, Object> {
     public UsersRetrieveQueryParams upn(final String value) {
@@ -308,9 +313,10 @@ public interface UsersApi extends TwinsApiClient.Api {
    *
    * @param names Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter by
    *        (optional)
-   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by (optional)
-   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to filter
-   *        by (optional)
+   * @param ids Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
+   *        (optional)
+   * @param sharings Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
+   *        filter by (optional)
    * @param types Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
    *        (optional)
    * @param subtypes Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to filter by
@@ -329,18 +335,19 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<BlobMetadataRetrieve> usersRetrieveBlobMetadata(@Param("names") String names, @Param("ids") String ids,
-      @Param("sharings") String sharings, @Param("types") String types, @Param("subtypes") String subtypes,
-      @Param("includes") String includes, @Param("spaceId") String spaceId, @Param("traverse") String traverse,
+  List<BlobMetadataRetrieve> usersRetrieveBlobMetadata(@Param("names") String names,
+      @Param("ids") String ids, @Param("sharings") String sharings, @Param("types") String types,
+      @Param("subtypes") String subtypes, @Param("includes") String includes,
+      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Gets a list of blobs
    *
-   * Note, this is equivalent to the other <code>usersRetrieveBlobMetadata</code> method, but with the
-   * query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
+   * Note, this is equivalent to the other <code>usersRetrieveBlobMetadata</code> method, but with
+   * the query parameters collected into a single Map parameter. This is convenient for services
+   * with optional query parameters, especially when used with the
    * {@link UsersRetrieveBlobMetadataQueryParams} class that allows for building up this map in a
    * fluent style.
    *
@@ -349,12 +356,12 @@ public interface UsersApi extends TwinsApiClient.Api {
    *        The following elements may be specified in the query map:
    *        </p>
    *        <ul>
-   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to filter
-   *        by (optional)</li>
+   *        <li>names - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of blob names to
+   *        filter by (optional)</li>
    *        <li>ids - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of ids to filter by
    *        (optional)</li>
-   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes to
-   *        filter by (optional)</li>
+   *        <li>sharings - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of Sharing modes
+   *        to filter by (optional)</li>
    *        <li>types - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of types to filter by
    *        (optional)</li>
    *        <li>subtypes - Optional &#x27;;&#x27; or &#x27;,&#x27; delimited list of subtypes to
@@ -375,7 +382,8 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Content-Type: */*",})
-  List<BlobMetadataRetrieve> usersRetrieveBlobMetadata(@QueryMap(encoded = true) Map<String, Object> queryParams);
+  List<BlobMetadataRetrieve> usersRetrieveBlobMetadata(
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
    * A convenience class for generating query parameters for the
@@ -453,16 +461,17 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  BlobMetadataRetrieve usersRetrieveBlobMetadataById(@Param("id") String id, @Param("includes") String includes);
+  BlobMetadataRetrieve usersRetrieveBlobMetadataById(@Param("id") String id,
+      @Param("includes") String includes);
 
   /**
    * Gets a blob
    *
-   * Note, this is equivalent to the other <code>usersRetrieveBlobMetadataById</code> method, but with
-   * the query parameters collected into a single Map parameter. This is convenient for services with
-   * optional query parameters, especially when used with the
-   * {@link UsersRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map in a
-   * fluent style.
+   * Note, this is equivalent to the other <code>usersRetrieveBlobMetadataById</code> method, but
+   * with the query parameters collected into a single Map parameter. This is convenient for
+   * services with optional query parameters, especially when used with the
+   * {@link UsersRetrieveBlobMetadataByIdQueryParams} class that allows for building up this map in
+   * a fluent style.
    *
    * @param id Blob Id (required)
    * @param queryParams Map of query parameters as name-value pairs
@@ -530,11 +539,12 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  UserRetrieve usersRetrieveById(@Param("id") String id, @QueryMap(encoded = true) Map<String, Object> queryParams);
+  UserRetrieve usersRetrieveById(@Param("id") String id,
+      @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
-   * A convenience class for generating query parameters for the <code>usersRetrieveById</code> method
-   * in a fluent style.
+   * A convenience class for generating query parameters for the <code>usersRetrieveById</code>
+   * method in a fluent style.
    */
   public static class UsersRetrieveByIdQueryParams extends HashMap<String, Object> {
     public UsersRetrieveByIdQueryParams includes(final String value) {
@@ -580,8 +590,9 @@ public interface UsersApi extends TwinsApiClient.Api {
   @RequestLine("PATCH /api/v1.0/users/{id}")
   @Headers({"Accept: */*",})
   void usersUpdate(@Param("id") String id, @Param("spaceId") UUID spaceId, @Param("upn") String upn,
-      @Param("location") Location location, @Param("firstName") String firstName, @Param("lastName") String lastName,
-      @Param("managerName") String managerName, @Param("metadata") Map<String, String> metadata,
+      @Param("location") Location location, @Param("firstName") String firstName,
+      @Param("lastName") String lastName, @Param("managerName") String managerName,
+      @Param("metadata") Map<String, String> metadata,
       @Param("properties") List<ExtendedPropertyCreate> properties);
 
   /**
@@ -594,7 +605,8 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/users/blobs/{id}")
   @Headers({"Accept: */*",})
-  void usersUpdateBlob(@Param("id") String id, @Param("metadata") String metadata, @Param("contents") File contents);
+  void usersUpdateBlob(@Param("id") String id, @Param("metadata") String metadata,
+      @Param("contents") File contents);
 
   /**
    * Creates or updates property values
