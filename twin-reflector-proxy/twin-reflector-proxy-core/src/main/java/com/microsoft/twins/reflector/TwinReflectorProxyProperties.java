@@ -3,6 +3,7 @@
  */
 package com.microsoft.twins.reflector;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -14,13 +15,14 @@ import lombok.Setter;
 @Setter
 @Validated
 public class TwinReflectorProxyProperties {
-  private final TopologyChangeRegistration topologyChangeRegistration =
-      new TopologyChangeRegistration();
+
+  private final EventHubs eventHubs = new EventHubs();
+
 
   @Getter
   @Setter
   @Validated
-  public static class TopologyChangeRegistration {
+  public static class EventHubs {
 
     @NotEmpty
     private String connectionString;
@@ -29,7 +31,23 @@ public class TwinReflectorProxyProperties {
     private String secondaryConnectionString;
 
     @NotEmpty
-    private String hubname;
+    private String namespace;
+
+    @Valid
+    private final Hub topologyOperations = new Hub();
+
+    @Valid
+    private final Hub ingress = new Hub();
+
+    @Getter
+    @Setter
+    public static class Hub {
+      @NotEmpty
+      private String hubname;
+
+      @NotEmpty
+      private String consumerGroup;
+    }
   }
 
 }

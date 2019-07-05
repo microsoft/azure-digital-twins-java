@@ -15,6 +15,10 @@ adt:
     tenant:
     clientId:
     clientSecret:
+eventHubs:
+  connectionString:
+  secondaryConnectionString:
+  namespace:
 
 nameOverride: ""
 fullnameOverride: ""

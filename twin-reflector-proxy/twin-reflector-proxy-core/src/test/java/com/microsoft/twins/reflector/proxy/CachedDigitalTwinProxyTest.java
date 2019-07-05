@@ -93,8 +93,9 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
       final EndpointsApi endpointsApi = mock(EndpointsApi.class);
 
       final EndpointRetrieve existing = new EndpointRetrieve();
-      properties.getTopologyChangeRegistration().setHubname(RandomStringUtils.randomAscii(10));
-      existing.setPath(properties.getTopologyChangeRegistration().getHubname());
+      properties.getEventHubs().getTopologyOperations()
+          .setHubname(RandomStringUtils.randomAscii(10));
+      existing.setPath(properties.getEventHubs().getTopologyOperations().getHubname());
 
 
       when(endpointsApi.endpointsRetrieve(any(EndpointsApi.EndpointsRetrieveQueryParams.class)))
@@ -130,10 +131,10 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     final String testSecondaryConnectionString =
         "Endpoint=sb://testHub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=foobar2";
 
-    testConfiguration.getProperties().getTopologyChangeRegistration()
-        .setConnectionString(testConnectionString);
-    testConfiguration.getProperties().getTopologyChangeRegistration().setHubname(testHubname);
-    testConfiguration.getProperties().getTopologyChangeRegistration()
+    testConfiguration.getProperties().getEventHubs().setConnectionString(testConnectionString);
+    testConfiguration.getProperties().getEventHubs().getTopologyOperations()
+        .setHubname(testHubname);
+    testConfiguration.getProperties().getEventHubs()
         .setSecondaryConnectionString(testSecondaryConnectionString);
 
     cachedDigitalTwinProxy.registerForTopologyChanges();

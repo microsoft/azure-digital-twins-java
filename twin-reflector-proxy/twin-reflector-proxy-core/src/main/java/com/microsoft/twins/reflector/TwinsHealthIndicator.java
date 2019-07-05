@@ -10,19 +10,17 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.util.CollectionUtils;
 import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.RoleDefinitionRetrieve;
+import lombok.RequiredArgsConstructor;
 
 
 /**
- * Spring {@link HealthIndicator} for Azure Active Directory access.
+ * Spring {@link HealthIndicator} for Azure Digital Twins access.
  *
  */
+@RequiredArgsConstructor
 public class TwinsHealthIndicator extends AbstractHealthIndicator {
 
   private final TwinsApiClient twinsApiClient;
-
-  public TwinsHealthIndicator(final TwinsApiClient twinsApiClient) {
-    this.twinsApiClient = twinsApiClient;
-  }
 
   @Override
   protected void doHealthCheck(final Builder builder) throws Exception {

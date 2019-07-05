@@ -29,14 +29,14 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /actuator/health
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /actuator/health
               port: http
           env:
-            - name: COM_MICROSOFT_TWINS_TWINSURL
+            - name: COM_MICROSOFT_TWINS_TWINS-URL
               valueFrom:
                 secretKeyRef:
                   name: twins
@@ -46,16 +46,31 @@ spec:
                 secretKeyRef:
                   name: twins
                   key: aad-tenant
-            - name: COM_MICROSOFT_TWINS_AAD_CLIENTID
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-ID
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: aad-client-id
-            - name: COM_MICROSOFT_TWINS_AAD_CLIENTSECRET
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-SECRET
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: aad-client-secret
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_CONNECTION-STRING
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: event-hubs-connection-string
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_SECONDARY-CONNECTION-STRING
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: event-hubs-secondary-connection-string
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: event-hubs-namespace
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

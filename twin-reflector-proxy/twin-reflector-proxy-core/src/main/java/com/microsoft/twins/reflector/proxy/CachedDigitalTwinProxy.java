@@ -139,8 +139,9 @@ public class CachedDigitalTwinProxy {
         new EndpointsApi.EndpointsRetrieveQueryParams().types(TypeEnum.EVENTHUB.toString())
             .eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
 
-    if (!CollectionUtils.isEmpty(existing) && existing.stream().anyMatch(endpoint -> endpoint
-        .getPath().equalsIgnoreCase(properties.getTopologyChangeRegistration().getHubname()))) {
+    if (!CollectionUtils.isEmpty(existing)
+        && existing.stream().anyMatch(endpoint -> endpoint.getPath()
+            .equalsIgnoreCase(properties.getEventHubs().getTopologyOperations().getHubname()))) {
       return;
     }
 
@@ -148,12 +149,11 @@ public class CachedDigitalTwinProxy {
     final EndpointCreate eventHub = new EndpointCreate();
     eventHub.addEventTypesItem(EventTypesEnum.TOPOLOGYOPERATION);
     eventHub.setType(TypeEnum.EVENTHUB);
-    eventHub.setConnectionString(properties.getTopologyChangeRegistration().getConnectionString()
-        + ";EntityPath=" + properties.getTopologyChangeRegistration().getHubname());
-    eventHub.setSecondaryConnectionString(
-        properties.getTopologyChangeRegistration().getSecondaryConnectionString() + ";EntityPath="
-            + properties.getTopologyChangeRegistration().getHubname());
-    eventHub.setPath(properties.getTopologyChangeRegistration().getHubname());
+    eventHub.setConnectionString(properties.getEventHubs().getConnectionString() + ";EntityPath="
+        + properties.getEventHubs().getTopologyOperations().getHubname());
+    eventHub.setSecondaryConnectionString(properties.getEventHubs().getSecondaryConnectionString()
+        + ";EntityPath=" + properties.getEventHubs().getTopologyOperations().getHubname());
+    eventHub.setPath(properties.getEventHubs().getTopologyOperations().getHubname());
 
     endpointsApi.endpointsCreate(eventHub);
   }

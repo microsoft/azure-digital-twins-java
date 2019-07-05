@@ -8,19 +8,17 @@ import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import com.microsoft.twins.TwinsApiClient;
+import lombok.RequiredArgsConstructor;
 
 
 /**
  * Spring {@link HealthIndicator} for Azure Active Directory access.
  *
  */
+@RequiredArgsConstructor
 public class AadHealthIndicator extends AbstractHealthIndicator {
 
   private final TwinsApiClient twinsApiClient;
-
-  public AadHealthIndicator(final TwinsApiClient twinsApiClient) {
-    this.twinsApiClient = twinsApiClient;
-  }
 
   @Override
   protected void doHealthCheck(final Builder builder) throws Exception {
