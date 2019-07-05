@@ -3,6 +3,16 @@
  */
 package com.microsoft.twins.reflector;
 
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.SensorsApi;
@@ -12,14 +22,6 @@ import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxy;
 import com.microsoft.twins.reflector.proxy.TopologyOperationSink;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
 import com.microsoft.twins.reflector.topology.TopologyUpdater;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @EnableBinding({ReflectorIngressSink.class, TopologyOperationSink.class})
@@ -54,6 +56,18 @@ public class TwinReflectorProxyAutoConfiguration {
   IngressMessageListener ingressMessageListener(final TopologyUpdater topologyUpdater,
       final TelemetryForwarder telemetryForwarder) {
     return new IngressMessageListener(topologyUpdater, telemetryForwarder);
+  }
+
+  @Bean
+  @ConditionalOnEnabledHealthIndicator("aad")
+  AadHealthIndicator aadHealthIndicator(final TwinsApiClient twinsApiClient) {
+    return new AadHealthIndicator(twinsApiClient);
+  }
+
+  @Bean
+  @ConditionalOnEnabledHealthIndicator("twins")
+  TwinsHealthIndicator twinsHealthIndicator(final TwinsApiClient twinsApiClient) {
+    return new TwinsHealthIndicator(twinsApiClient);
   }
 
 }

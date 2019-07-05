@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twin-reflector-proxy.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twin-reflector-proxy.name" . }}
+    helm.sh/chart: {{ include "twin-reflector-proxy.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twin-reflector-proxy.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twin-reflector-proxy.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+          env:
+            - name: COM_MICROSOFT_TWINS_TWINS-URL
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: twins-url
+            - name: COM_MICROSOFT_TWINS_AAD_TENANT
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: aad-tenant
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-ID
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: aad-client-id
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: aad-client-secret
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_CONNECTION-STRING
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: event-hubs-connection-string
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_SECONDARY-CONNECTION-STRING
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: event-hubs-secondary-connection-string
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: event-hubs-namespace
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

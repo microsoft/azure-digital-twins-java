@@ -75,6 +75,9 @@ public abstract class AbstractIntegrationTest {
   protected TypesApi typesApi;
 
   @Autowired
+  private TwinReflectorProxyProperties twinReflectorProxyProperties;
+
+  @Autowired
   private TestConfigurationProperties testConfigurationProperties;
 
   protected UUID tenant;
@@ -152,8 +155,8 @@ public abstract class AbstractIntegrationTest {
 
     createTypes();
     createResources();
-    addDeviceEventEndPoint(testConfigurationProperties.getConnectionString(),
-        testConfigurationProperties.getSecondaryConnectionString(),
+    addDeviceEventEndPoint(twinReflectorProxyProperties.getEventHubs().getConnectionString(),
+        twinReflectorProxyProperties.getEventHubs().getSecondaryConnectionString(),
         testConfigurationProperties.getDevicesHubname());
   }
 

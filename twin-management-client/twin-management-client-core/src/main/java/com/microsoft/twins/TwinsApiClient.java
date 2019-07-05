@@ -6,6 +6,7 @@ package com.microsoft.twins;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,15 +44,16 @@ public class TwinsApiClient {
   protected ObjectMapper objectMapper;
   private final String twinsUrl;
   private Feign.Builder feignBuilder;
+  private AadRequestInterceptor aadRequestInterceptor;
 
   public TwinsApiClient(final String authorityHost, final String tenant, final String clientId,
       final String clientSecret, final Duration timeout, final String twinsUrl) {
     this(twinsUrl);
 
-    final AadRequestInterceptor handler = new AadRequestInterceptor(authorityHost, tenant,
+    aadRequestInterceptor = new AadRequestInterceptor(authorityHost, tenant,
         "0b07f429-9f4b-4714-9392-cc5e8e80c8b0", clientId, clientSecret, timeout);
 
-    feignBuilder.requestInterceptor(handler);
+    feignBuilder.requestInterceptor(aadRequestInterceptor);
   }
 
   public TwinsApiClient(final String twinsUrl, final Client client, final Retryer retryer) {
@@ -65,6 +67,14 @@ public class TwinsApiClient {
 
   public TwinsApiClient(final String twinsUrl) {
     this(twinsUrl, new ApacheHttpClient(), new Retryer.Default());
+  }
+
+  public Optional<String> getAccessTokenWithoutCache() {
+    if (aadRequestInterceptor == null) {
+      return Optional.empty();
+    }
+
+    return aadRequestInterceptor.getAccessTokenWithoutCache();
   }
 
   public Feign.Builder getFeignBuilder() {
