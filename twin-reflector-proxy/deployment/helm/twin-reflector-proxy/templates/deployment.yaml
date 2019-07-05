@@ -35,29 +35,29 @@ spec:
             httpGet:
               path: /
               port: http
+          env:
+            - name: COM_MICROSOFT_TWINS_TWINSURL
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: twins-url
+            - name: COM_MICROSOFT_TWINS_AAD_TENANT
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: aad-tenant
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENTID
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: aad-client-id
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: aad-client-secret
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          env:
-            - name: COM_MICROSOFT_TWINS_TWINS-URL
-                valueFrom:
-                  secretKeyRef:
-                    name: twins
-                    key: twins-url
-            - name: COM_MICROSOFT_TWINS_AAD_TENANT
-                valueFrom:
-                  secretKeyRef:
-                    name: twins
-                    key: aad-tenant
-            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-ID
-                valueFrom:
-                  secretKeyRef:
-                    name: twins
-                    key: aad-client-id
-            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-SECRET
-                valueFrom:
-                  secretKeyRef:
-                    name: twins
-                    key: aad-client-secret
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

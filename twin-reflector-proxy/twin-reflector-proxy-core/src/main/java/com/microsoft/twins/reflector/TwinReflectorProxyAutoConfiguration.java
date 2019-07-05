@@ -64,4 +64,10 @@ public class TwinReflectorProxyAutoConfiguration {
     return new AadHealthIndicator(twinsApiClient);
   }
 
+  @Bean
+  @ConditionalOnEnabledHealthIndicator("twins")
+  TwinsHealthIndicator twinsHealthIndicator(final TwinsApiClient twinsApiClient) {
+    return new TwinsHealthIndicator(twinsApiClient);
+  }
+
 }
