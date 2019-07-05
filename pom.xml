@@ -103,6 +103,8 @@
                      <exclude>.git*</exclude>
                      <exclude>.sonar</exclude>
                      <exclude>**/LICENSE*</exclude>
+                     <exclude>**/helm/**</exclude>
+                     <exclude>**/Dockerfile</exclude>
                   </excludes>
                   <mapping>
                      <scss>JAVADOC_STYLE</scss>
