@@ -12,15 +12,20 @@
   </parent>
   <artifactId>twin-reflector-proxy-app</artifactId>
   <name>Twin Reflector Proxy :: Spring Boot Application</name>
-  
+
   <dependencies>
       <dependency>
          <groupId>com.microsoft.twins</groupId>
          <artifactId>twin-reflector-proxy-starter</artifactId>
          <version>${project.version}</version>
       </dependency>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-actuator</artifactId>
+      </dependency>
+
   </dependencies>
-  
+
   <build>
       <plugins>
          <plugin>
