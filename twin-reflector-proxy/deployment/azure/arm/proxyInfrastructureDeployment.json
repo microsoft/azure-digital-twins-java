@@ -95,7 +95,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/kaizimmerm/azure-digital-twins-java/twin-reflector-proxy/deployment/azure/arm/templates/kubernetesDeploy.json"
+                    "uri": "https://raw.githubusercontent.com/kaizimmerm/azure-digital-twins-java/arm/twin-reflector-proxy/deployment/azure/arm/templates/kubernetesDeploy.json"
                 },
                 "parameters": {
                     "clusterName": {
@@ -141,7 +141,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/kaizimmerm/azure-digital-twins-java/twin-reflector-proxy/deployment/azure/arm/templates/vnetDeploy.json"
+                    "uri": "https://raw.githubusercontent.com/kaizimmerm/azure-digital-twins-java/arm/twin-reflector-proxy/deployment/azure/arm/templates/vnetDeploy.json"
                 },
                 "parameters": {
                     "vnetName": {
