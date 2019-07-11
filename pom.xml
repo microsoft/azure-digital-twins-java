@@ -105,6 +105,7 @@
                      <exclude>**/LICENSE*</exclude>
                      <exclude>**/helm/**</exclude>
                      <exclude>**/Dockerfile</exclude>
+                     <exclude>**/azure/**</exclude>
                   </excludes>
                   <mapping>
                      <scss>JAVADOC_STYLE</scss>
