@@ -58,7 +58,7 @@
       <feign.version>10.2.3</feign.version>
       <lombok.version>1.18.8</lombok.version>
       <adal4j.version>1.6.4</adal4j.version>
-      <iot-device-client.version>1.17.3</iot-device-client.version>
+      <iot-device-client.version>1.17.5</iot-device-client.version>
       <awaitility.version>3.1.6</awaitility.version>
 
       <jupiter.version>5.3.2</jupiter.version>
