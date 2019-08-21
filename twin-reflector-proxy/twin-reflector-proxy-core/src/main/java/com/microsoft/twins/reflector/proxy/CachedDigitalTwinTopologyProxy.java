@@ -30,28 +30,32 @@ import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
 import com.microsoft.twins.model.EndpointCreate.TypeEnum;
 import com.microsoft.twins.model.EndpointRetrieve;
+import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
+import com.microsoft.twins.reflector.model.Property;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class CachedDigitalTwinProxy {
+public class CachedDigitalTwinTopologyProxy {
 
   private static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
   private static final String CACHE_DEVICE_BY_ID = "deviceById";
   private static final String CACHE_DEVICE_BY_NAME = "deviceByName";
 
 
+  private final CachedDigitalTwinMetadataProxy metadataProxy;
   private final SensorsApi sensorsApi;
   private final DevicesApi devicesApi;
   private final EndpointsApi endpointsApi;
   private final TwinReflectorProxyProperties properties;
   private final CacheManager cacheManager;
 
-  public UUID createDevice(final String name, final UUID parent, final UUID gateway) {
+  public UUID createDevice(@NotEmpty final String name, @NotNull final UUID parent,
+      @NotNull final UUID gateway, final List<Property> properties) {
     final DeviceCreate device = new DeviceCreate();
     device.setName(name);
     device.setSpaceId(parent);
@@ -59,8 +63,16 @@ public class CachedDigitalTwinProxy {
     device.setGatewayId(gateway.toString());
     device.setCreateIoTHubDevice(false);
 
+    if (!CollectionUtils.isEmpty(properties)) {
+      properties.stream()
+          .map(p -> new ExtendedPropertyCreate()
+              .name(metadataProxy.getPropertykey(p.getName(), "devices")).value(p.getValue()))
+          .forEach(device::addPropertiesItem);
+    }
+
     return devicesApi.devicesCreate(device);
   }
+
 
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},

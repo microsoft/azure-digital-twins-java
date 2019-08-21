@@ -57,7 +57,7 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
   private EndpointsApi endpointsApi;
 
   @Autowired
-  private CachedDigitalTwinProxy cachedDigitalTwinProxy;
+  private CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy;
 
   @Autowired
   private CachedDigitalTwinProxyTestConfiguration testConfiguration;
@@ -76,6 +76,9 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
 
     @MockBean
     private DevicesApi devicesApi;
+
+    @MockBean
+    private CachedDigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy;
 
     private final TwinReflectorProxyProperties properties = new TwinReflectorProxyProperties();
 
@@ -105,10 +108,10 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     }
 
     @Bean
-    CachedDigitalTwinProxy cachedDigitalTwinProxy(final CacheManager cacheManager,
+    CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy(final CacheManager cacheManager,
         final EndpointsApi endpointsApi) {
-      return new CachedDigitalTwinProxy(sensorsApi, devicesApi, endpointsApi, properties,
-          cacheManager);
+      return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, sensorsApi,
+          devicesApi, endpointsApi, properties, cacheManager);
     }
 
   }

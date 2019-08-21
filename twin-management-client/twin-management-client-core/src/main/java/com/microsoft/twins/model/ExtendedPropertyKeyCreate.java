@@ -208,7 +208,7 @@ public class ExtendedPropertyKeyCreate {
     @JsonCreator
     public static ScopeEnum fromValue(final String text) {
       for (final ScopeEnum b : ScopeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

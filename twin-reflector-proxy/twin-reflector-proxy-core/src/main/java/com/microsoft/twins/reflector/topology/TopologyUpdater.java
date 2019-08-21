@@ -13,7 +13,7 @@ import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.reflector.error.InconsistentTopologyException;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Relationship;
-import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxy;
+import com.microsoft.twins.reflector.proxy.CachedDigitalTwinTopologyProxy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class TopologyUpdater {
 
-  private final CachedDigitalTwinProxy cachedDigitalTwinProxy;
+  private final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy;
 
 
   // Note: for the time being we assume the ID is stored in the name fields and we only handle the
@@ -37,26 +37,13 @@ public class TopologyUpdater {
     // TODO implement
   }
 
-  private static Optional<UUID> getParent(final List<Relationship> relationShips) {
-    return relationShips.stream()
-        .filter(relationShip -> "space".equalsIgnoreCase(relationShip.getEntityType())
-            && "parent".equalsIgnoreCase(relationShip.getName()))
-        .findAny().map(Relationship::getTargetId).map(UUID::fromString);
-  }
-
-  private static Optional<UUID> getGateway(final List<Relationship> relationShips) {
-    return relationShips.stream()
-        .filter(relationShip -> "device".equalsIgnoreCase(relationShip.getEntityType())
-            && "gateway".equalsIgnoreCase(relationShip.getName()))
-        .findAny().map(Relationship::getTargetId).map(UUID::fromString);
-  }
 
   public void updateTopologyElementComplete(@Valid final IngressMessage update,
       final UUID correlationId) {
     log.trace("Got complete topology update: [{}] with correlation ID: [{}]", update,
         correlationId);
 
-    if ("device".equalsIgnoreCase(update.getEntityType())) {
+    if ("devices".equalsIgnoreCase(update.getEntityType())) {
       final Optional<DeviceRetrieve> existing =
           cachedDigitalTwinProxy.getDeviceByName(update.getId());
 
@@ -68,8 +55,11 @@ public class TopologyUpdater {
                     correlationId)),
             getGateway(update.getRelationships()).orElseThrow(
                 () -> new InconsistentTopologyException(update.getId() + " lacks a gateway",
-                    correlationId)));
+                    correlationId)),
+            update.getProperties());
       }
+
+
 
       // TODO implement update case
     }
@@ -82,6 +72,22 @@ public class TopologyUpdater {
         correlationId);
 
     cachedDigitalTwinProxy.deleteDeviceByName(id);
+  }
+
+
+
+  private static Optional<UUID> getParent(final List<Relationship> relationShips) {
+    return relationShips.stream()
+        .filter(relationShip -> "spaces".equalsIgnoreCase(relationShip.getEntityType())
+            && "parent".equalsIgnoreCase(relationShip.getName()))
+        .findAny().map(Relationship::getTargetId).map(UUID::fromString);
+  }
+
+  private static Optional<UUID> getGateway(final List<Relationship> relationShips) {
+    return relationShips.stream()
+        .filter(relationShip -> "devices".equalsIgnoreCase(relationShip.getEntityType())
+            && "gateway".equalsIgnoreCase(relationShip.getName()))
+        .findAny().map(Relationship::getTargetId).map(UUID::fromString);
   }
 
 }
