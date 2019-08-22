@@ -43,6 +43,8 @@ import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
+import com.microsoft.twins.reflector.TestConfiguration.TestTenantResolver;
+import com.microsoft.twins.reflector.proxy.TenantResolver;
 import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfiguration;
 
 @ExtendWith(SpringExtension.class)
@@ -55,6 +57,9 @@ public abstract class AbstractIntegrationTest {
   private static final String TEST_SPACE_TYPE = "TestSpaces";
   private static final String TEST_DEVICE_TYPE = "TestDevices";
   private static final String TEST_SENSOR_TYPE = "TestSensors";
+
+  @Autowired
+  private TenantResolver tenantResolver;
 
   @Autowired
   protected SpacesApi spacesApi;
@@ -132,6 +137,7 @@ public abstract class AbstractIntegrationTest {
         spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name("TEST_TENANT"));
     if (!found.isEmpty()) {
       tenant = found.get(0).getId();
+      ((TestTenantResolver) tenantResolver).setTenant(tenant);
 
       assertThat(resourcesApi
           .resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant.toString())))
@@ -152,6 +158,8 @@ public abstract class AbstractIntegrationTest {
     // TODO try to add gateway to tenant
 
     tenant = spacesApi.spacesCreate(tenantCreate);
+
+    ((TestTenantResolver) tenantResolver).setTenant(tenant);
 
     createTypes();
     createResources();

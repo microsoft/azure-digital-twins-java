@@ -14,10 +14,12 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.model.DeviceRetrieve;
+import com.microsoft.twins.model.ExtendedPropertyRetrieve;
 import com.microsoft.twins.reflector.AbstractIntegrationTest;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
+import com.microsoft.twins.reflector.model.Property;
 import com.microsoft.twins.reflector.model.Relationship;
 
 public class TopologyUpdaterIT extends AbstractIntegrationTest {
@@ -65,12 +67,14 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
-    testMessage.setEntityType("device");
+    testMessage.setEntityType("devices");
     testMessage.setRelationships(List.of(
-        Relationship.builder().entityType("space").name("parent").targetId(testSpace.toString())
+        Relationship.builder().entityType("spaces").name("parent").targetId(testSpace.toString())
             .build(),
-        Relationship.builder().entityType("device").name("gateway").targetId(testGateway.toString())
-            .build()));
+        Relationship.builder().entityType("devices").name("gateway")
+            .targetId(testGateway.toString()).build()));
+    testMessage
+        .setProperties(List.of(Property.builder().name("testName1").value("testValue1").build()));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -84,15 +88,17 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
         .untilAsserted(() -> assertThat(devicesApi.devicesRetrieve(
             new DevicesApi.DevicesRetrieveQueryParams().names(deviceId.toString()))).hasSize(1));
 
-    final DeviceRetrieve created = devicesApi
-        .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().names(deviceId.toString()))
-        .get(0);
+    final DeviceRetrieve created =
+        devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams()
+            .names(deviceId.toString()).includes("properties")).get(0);
     assertThat(created.getName()).isEqualTo(deviceId);
     assertThat(created.getHardwareId()).isEqualTo(deviceId);
     assertThat(created.getGatewayId()).isEqualTo(testGateway.toString());
     assertThat(created.getSpaceId()).isEqualTo(testSpace);
     assertThat(created.getIoTHubUrl()).isNullOrEmpty();
     assertThat(created.getConnectionString()).isNullOrEmpty();
+    assertThat(created.getProperties()).containsExactly(
+        new ExtendedPropertyRetrieve().name("testName1").value("testValue1").dataType("string"));
   }
 
 }

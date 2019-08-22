@@ -3,6 +3,7 @@
  */
 package com.microsoft.twins.reflector;
 
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,6 +16,8 @@ import lombok.Setter;
 @Setter
 @Validated
 public class TwinReflectorProxyProperties {
+
+  private UUID tenant;
 
   private final EventHubs eventHubs = new EventHubs();
 
