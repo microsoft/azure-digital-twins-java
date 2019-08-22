@@ -5,6 +5,7 @@ package com.microsoft.twins.reflector.topology;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.awaitility.Awaitility;
@@ -24,6 +25,8 @@ import com.microsoft.twins.reflector.model.Relationship;
 
 public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
+  private static final String TEST_PROP_VALUE = "testValue1";
+  private static final String TEST_PROP_KEY = "testName1";
   @Autowired
   private ReflectorIngressSink sink;
 
@@ -65,6 +68,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     final String deviceId = UUID.randomUUID().toString();
 
+    final String friendlyName = "a test device";
+
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
@@ -73,8 +78,10 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
             .build(),
         Relationship.builder().entityType("devices").name("gateway")
             .targetId(testGateway.toString()).build()));
-    testMessage
-        .setProperties(List.of(Property.builder().name("testName1").value("testValue1").build()));
+    testMessage.setProperties(
+        List.of(Property.builder().name(TEST_PROP_KEY).value(TEST_PROP_VALUE).build()));
+
+    testMessage.setAttributes(Map.of("status", "Provisioned", "friendlyName", friendlyName));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -97,8 +104,11 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(created.getSpaceId()).isEqualTo(testSpace);
     assertThat(created.getIoTHubUrl()).isNullOrEmpty();
     assertThat(created.getConnectionString()).isNullOrEmpty();
-    assertThat(created.getProperties()).containsExactly(
-        new ExtendedPropertyRetrieve().name("testName1").value("testValue1").dataType("string"));
+    assertThat(created.getProperties()).containsExactly(new ExtendedPropertyRetrieve()
+        .name(TEST_PROP_KEY).value(TEST_PROP_VALUE).dataType("string"));
+    assertThat(created.getFriendlyName()).isEqualTo(friendlyName);
+    assertThat(created.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+
   }
 
 }

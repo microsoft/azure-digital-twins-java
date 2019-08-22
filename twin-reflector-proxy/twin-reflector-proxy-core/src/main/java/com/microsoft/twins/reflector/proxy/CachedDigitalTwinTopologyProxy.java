@@ -4,6 +4,7 @@
 package com.microsoft.twins.reflector.proxy;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.model.DeviceCreate;
+import com.microsoft.twins.model.DeviceCreate.StatusEnum;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
@@ -55,7 +57,8 @@ public class CachedDigitalTwinTopologyProxy {
   private final CacheManager cacheManager;
 
   public UUID createDevice(@NotEmpty final String name, @NotNull final UUID parent,
-      @NotNull final UUID gateway, final List<Property> properties) {
+      @NotNull final UUID gateway, final List<Property> properties,
+      final Map<String, String> attributes) {
     final DeviceCreate device = new DeviceCreate();
     device.setName(name);
     device.setSpaceId(parent);
@@ -70,7 +73,37 @@ public class CachedDigitalTwinTopologyProxy {
           .forEach(device::addPropertiesItem);
     }
 
+    if (!CollectionUtils.isEmpty(attributes)) {
+      attributes.entrySet().forEach(e -> setAttribute(device, e));
+    }
+
     return devicesApi.devicesCreate(device);
+  }
+
+
+
+  private void setAttribute(final DeviceCreate device, final Map.Entry<String, String> attribute) {
+
+    switch (attribute.getKey()) {
+      case "description":
+        device.setDescription(attribute.getValue());
+        break;
+      case "friendlyName":
+        device.setFriendlyName(attribute.getValue());
+        break;
+      case "status":
+        device.setStatus(StatusEnum.fromValue(attribute.getValue()));
+        break;
+      default:
+        log.error("Attribute [{}] not supported", attribute.getKey());
+        break;
+    }
+    // TODO support device location
+    // device.setLocation(location);
+
+    // TODO support device types
+    // device.setType(type);
+    // device.setSubtype(subtype);
   }
 
 

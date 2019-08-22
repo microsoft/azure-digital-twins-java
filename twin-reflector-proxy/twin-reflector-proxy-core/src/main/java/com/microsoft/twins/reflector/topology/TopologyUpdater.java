@@ -56,7 +56,7 @@ public class TopologyUpdater {
             getGateway(update.getRelationships()).orElseThrow(
                 () -> new InconsistentTopologyException(update.getId() + " lacks a gateway",
                     correlationId)),
-            update.getProperties());
+            update.getProperties(), update.getAttributes());
       }
 
 
