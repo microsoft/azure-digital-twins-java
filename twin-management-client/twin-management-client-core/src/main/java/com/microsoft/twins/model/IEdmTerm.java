@@ -159,7 +159,7 @@ public class IEdmTerm {
     @JsonCreator
     public static TermKindEnum fromValue(final String text) {
       for (final TermKindEnum b : TermKindEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -194,7 +194,7 @@ public class IEdmTerm {
     @JsonCreator
     public static SchemaElementKindEnum fromValue(final String text) {
       for (final SchemaElementKindEnum b : SchemaElementKindEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

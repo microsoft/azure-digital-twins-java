@@ -165,7 +165,7 @@ public class InlineCountQueryOption {
     @JsonCreator
     public static ValueEnum fromValue(final String text) {
       for (final ValueEnum b : ValueEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

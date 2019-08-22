@@ -171,7 +171,7 @@ public class SecurityKeyRetrieve {
     @JsonCreator
     public static StatusEnum fromValue(final String text) {
       for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

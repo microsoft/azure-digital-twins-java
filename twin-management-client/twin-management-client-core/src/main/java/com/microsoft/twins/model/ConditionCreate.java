@@ -159,7 +159,7 @@ public class ConditionCreate {
     @JsonCreator
     public static TargetEnum fromValue(final String text) {
       for (final TargetEnum b : TargetEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -198,7 +198,7 @@ public class ConditionCreate {
     @JsonCreator
     public static ComparisonEnum fromValue(final String text) {
       for (final ComparisonEnum b : ComparisonEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

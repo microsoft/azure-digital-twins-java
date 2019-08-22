@@ -169,7 +169,7 @@ public class EndpointRetrieve extends AbstractRetrieve<EndpointRetrieve> {
     @JsonCreator
     public static StatusEnum fromValue(final String text) {
       for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -204,7 +204,7 @@ public class EndpointRetrieve extends AbstractRetrieve<EndpointRetrieve> {
     @JsonCreator
     public static TypeEnum fromValue(final String text) {
       for (final TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -240,7 +240,7 @@ public class EndpointRetrieve extends AbstractRetrieve<EndpointRetrieve> {
     @JsonCreator
     public static EventTypesEnum fromValue(final String text) {
       for (final EventTypesEnum b : EventTypesEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

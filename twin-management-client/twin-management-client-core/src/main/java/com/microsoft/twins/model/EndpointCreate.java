@@ -161,7 +161,7 @@ public class EndpointCreate {
     @JsonCreator
     public static TypeEnum fromValue(final String text) {
       for (final TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -197,7 +197,7 @@ public class EndpointCreate {
     @JsonCreator
     public static EventTypesEnum fromValue(final String text) {
       for (final EventTypesEnum b : EventTypesEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

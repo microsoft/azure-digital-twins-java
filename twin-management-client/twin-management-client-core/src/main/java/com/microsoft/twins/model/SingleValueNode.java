@@ -166,7 +166,7 @@ public class SingleValueNode {
     @JsonCreator
     public static KindEnum fromValue(final String text) {
       for (final KindEnum b : KindEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

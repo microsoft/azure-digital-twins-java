@@ -176,7 +176,7 @@ public class BlobMetadataCreate {
     @JsonCreator
     public static SharingEnum fromValue(final String text) {
       for (final SharingEnum b : SharingEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

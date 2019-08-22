@@ -6,6 +6,7 @@ package com.microsoft.twins.reflector.model;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,7 @@ import lombok.ToString;
 public class IngressMessage {
   @JsonProperty(value = "id", required = true)
   @NotBlank
+  @Size(min = 3, max = 64)
   private String id;
 
   @JsonProperty("entity-type")
