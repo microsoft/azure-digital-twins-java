@@ -167,7 +167,7 @@ public class ExtendedPropertyKeyCreate {
     @JsonCreator
     public static PrimitiveDataTypeEnum fromValue(final String text) {
       for (final PrimitiveDataTypeEnum b : PrimitiveDataTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

@@ -165,7 +165,7 @@ public class OrderByClause {
     @JsonCreator
     public static DirectionEnum fromValue(final String text) {
       for (final DirectionEnum b : DirectionEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

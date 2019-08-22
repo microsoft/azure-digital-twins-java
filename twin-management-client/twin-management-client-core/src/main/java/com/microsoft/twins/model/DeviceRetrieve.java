@@ -185,7 +185,7 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
     @JsonCreator
     public static StatusEnum fromValue(final String text) {
       for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -223,7 +223,7 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
     @JsonCreator
     public static ConnectionStateEnum fromValue(final String text) {
       for (final ConnectionStateEnum b : ConnectionStateEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

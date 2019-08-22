@@ -165,7 +165,7 @@ public class TreeFilterModel {
     @JsonCreator
     public static TraverseEnum fromValue(final String text) {
       for (final TraverseEnum b : TraverseEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

@@ -175,7 +175,7 @@ public class ExtendedPropertyKeyRetrieve {
     @JsonCreator
     public static ScopeEnum fromValue(final String text) {
       for (final ScopeEnum b : ScopeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -217,7 +217,7 @@ public class ExtendedPropertyKeyRetrieve {
     @JsonCreator
     public static PrimitiveDataTypeEnum fromValue(final String text) {
       for (final PrimitiveDataTypeEnum b : PrimitiveDataTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

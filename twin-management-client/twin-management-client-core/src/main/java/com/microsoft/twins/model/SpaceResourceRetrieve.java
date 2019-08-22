@@ -169,7 +169,7 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     @JsonCreator
     public static TypeEnum fromValue(final String text) {
       for (final TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -204,7 +204,7 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     @JsonCreator
     public static SizeEnum fromValue(final String text) {
       for (final SizeEnum b : SizeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -251,7 +251,7 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     @JsonCreator
     public static RegionEnum fromValue(final String text) {
       for (final RegionEnum b : RegionEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
@@ -293,7 +293,7 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     @JsonCreator
     public static StatusEnum fromValue(final String text) {
       for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }

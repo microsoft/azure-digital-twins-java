@@ -186,7 +186,7 @@ public class RoleDefinitionRetrieve extends AbstractRetrieve<RoleDefinitionRetri
     @JsonCreator
     public static AccessControlTypeEnum fromValue(final String text) {
       for (final AccessControlTypeEnum b : AccessControlTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
           return b;
         }
       }
