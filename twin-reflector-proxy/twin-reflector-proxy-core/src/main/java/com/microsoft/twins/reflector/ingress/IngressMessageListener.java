@@ -52,7 +52,7 @@ public class IngressMessageListener {
       condition = "headers['TwinReflectorProxy-MessageType']=='delete'")
   void getDeleteTopologyElement(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
-    topologyUpdater.deleteTopologyElement(message.getId(), correlationId);
+    topologyUpdater.deleteTopologyElement(message.getId(), correlationId, message.getEntityType());
   }
 
 }

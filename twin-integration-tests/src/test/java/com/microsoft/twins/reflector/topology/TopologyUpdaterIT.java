@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import com.microsoft.twins.api.DevicesApi;
+import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.ExtendedPropertyRetrieve;
+import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.reflector.AbstractIntegrationTest;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.model.IngressMessage;
@@ -29,6 +31,35 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   private static final String TEST_PROP_KEY = "testName1";
   @Autowired
   private ReflectorIngressSink sink;
+
+  @Test
+  public void deleteSpace() {
+    final String spaceName = UUID.randomUUID().toString();
+    final UUID testSpace = createSpace(spaceName);
+
+    final UUID correlationId = UUID.randomUUID();
+
+    assertThat(spacesApi
+        .spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace.toString())))
+            .hasSize(1);
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(spaceName);
+    testMessage.setEntityType("spaces");
+
+    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
+            MessageType.DELETE.toString().toLowerCase())
+        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
+
+    sink.inputChannel().send(hubMessage);
+
+    Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
+        .untilAsserted(() -> assertThat(spacesApi
+            .spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace.toString())))
+                .isEmpty());
+  }
 
   @Test
   public void deleteDevice() {
@@ -45,6 +76,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
+    testMessage.setEntityType("devices");
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -70,6 +102,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     final String friendlyName = "a test device";
 
+    final String description = "a test descrption";
+
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
@@ -81,7 +115,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value(TEST_PROP_VALUE).build()));
 
-    testMessage.setAttributes(Map.of("status", "Provisioned", "friendlyName", friendlyName));
+    testMessage.setAttributes(
+        Map.of("status", "Provisioned", "friendlyName", friendlyName, "description", description));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -97,7 +132,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     final DeviceRetrieve created =
         devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams()
-            .names(deviceId.toString()).includes("properties")).get(0);
+            .names(deviceId.toString()).includes("properties,description")).get(0);
     assertThat(created.getName()).isEqualTo(deviceId);
     assertThat(created.getHardwareId()).isEqualTo(deviceId);
     assertThat(created.getGatewayId()).isEqualTo(testGateway.toString());
@@ -107,7 +142,50 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(created.getProperties()).containsExactly(new ExtendedPropertyRetrieve()
         .name(TEST_PROP_KEY).value(TEST_PROP_VALUE).dataType("string"));
     assertThat(created.getFriendlyName()).isEqualTo(friendlyName);
+    assertThat(created.getDescription()).isEqualTo(description);
     assertThat(created.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+
+  }
+
+  @Test
+  public void createSpaceFull() {
+    final UUID testParentSpace = createSpace("My Reflector Proxy create test parent space");
+
+    final UUID correlationId = UUID.randomUUID();
+
+    final String spaceId = UUID.randomUUID().toString();
+
+    final String friendlyName = "a test device";
+
+    final String description = "a test descrption";
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(spaceId);
+    testMessage.setEntityType("spaces");
+    testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("parent")
+        .targetId(testParentSpace.toString()).build()));
+
+    testMessage.setAttributes(Map.of("friendlyName", friendlyName, "description", description));
+
+    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
+            MessageType.FULL.toString().toLowerCase())
+        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
+
+    sink.inputChannel().send(hubMessage);
+
+    Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
+        .untilAsserted(() -> assertThat(spacesApi
+            .spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().name(spaceId.toString())))
+                .hasSize(1));
+
+    final SpaceRetrieve created = spacesApi.spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams()
+        .name(spaceId.toString()).includes("properties,description")).get(0);
+    assertThat(created.getName()).isEqualTo(spaceId);
+    assertThat(created.getParentSpaceId()).isEqualTo(testParentSpace);
+    assertThat(created.getFriendlyName()).isEqualTo(friendlyName);
+    assertThat(created.getDescription()).isEqualTo(description);
 
   }
 

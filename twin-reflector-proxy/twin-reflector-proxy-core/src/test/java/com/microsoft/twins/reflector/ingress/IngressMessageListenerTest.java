@@ -11,13 +11,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import java.util.UUID;
-import com.microsoft.twins.reflector.AbstractTest;
-import com.microsoft.twins.reflector.ingress.IngressMessageListenerTest.IngressMessageListenerTestConfiguration;
-import com.microsoft.twins.reflector.model.IngressMessage;
-import com.microsoft.twins.reflector.model.MessageType;
-import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
-import com.microsoft.twins.reflector.topology.TopologyUpdater;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -26,6 +22,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.test.context.ContextConfiguration;
+import com.microsoft.twins.reflector.AbstractTest;
+import com.microsoft.twins.reflector.ingress.IngressMessageListenerTest.IngressMessageListenerTestConfiguration;
+import com.microsoft.twins.reflector.model.IngressMessage;
+import com.microsoft.twins.reflector.model.MessageType;
+import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
+import com.microsoft.twins.reflector.topology.TopologyUpdater;
 import lombok.Getter;
 
 @ContextConfiguration(classes = {IngressMessageListenerTestConfiguration.class})
@@ -54,12 +56,14 @@ public class IngressMessageListenerTest extends AbstractTest {
 
   }
 
-  @Test
-  public void partialUpdateCalled() {
+  @ParameterizedTest
+  @ValueSource(strings = {"devices", "spaces"})
+  public void partialUpdateCalled(final String topoType) {
     final String testId = UUID.randomUUID().toString();
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(testId);
+    testMessage.setEntityType(topoType);
 
     sink.inputChannel().send(
         MessageBuilder.withPayload(testMessage).setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -79,12 +83,14 @@ public class IngressMessageListenerTest extends AbstractTest {
         .updateTopologyElementPartial(testMessage, correlationId);
   }
 
-  @Test
-  public void completeUpdateCalled() {
+  @ParameterizedTest
+  @ValueSource(strings = {"devices", "spaces"})
+  public void completeUpdateCalled(final String topoType) {
     final String testId = UUID.randomUUID().toString();
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(testId);
+    testMessage.setEntityType(topoType);
 
     sink.inputChannel().send(
         MessageBuilder.withPayload(testMessage).setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -104,19 +110,21 @@ public class IngressMessageListenerTest extends AbstractTest {
         .updateTopologyElementComplete(testMessage, correlationId);
   }
 
-  @Test
-  public void deleteElementCalled() {
+  @ParameterizedTest
+  @ValueSource(strings = {"devices", "spaces"})
+  public void deleteElementCalled(final String topoType) {
     final String testId = UUID.randomUUID().toString();
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(testId);
+    testMessage.setEntityType(topoType);
 
     sink.inputChannel().send(
         MessageBuilder.withPayload(testMessage).setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
             MessageType.DELETE.toString().toLowerCase()).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).deleteTopologyElement(testId,
-        null);
+        null, topoType);
 
     final UUID correlationId = UUID.randomUUID();
     sink.inputChannel()
@@ -126,7 +134,7 @@ public class IngressMessageListenerTest extends AbstractTest {
             .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build());
 
     verify(testConfiguration.getTopologyUpdater(), timeout(2_000)).deleteTopologyElement(testId,
-        correlationId);
+        correlationId, topoType);
   }
 
   @Test
@@ -139,7 +147,8 @@ public class IngressMessageListenerTest extends AbstractTest {
                 .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
                     MessageType.DELETE.toString().toLowerCase())
                 .build()));
-    verify(testConfiguration.getTopologyUpdater(), never()).deleteTopologyElement(any(), any());
+    verify(testConfiguration.getTopologyUpdater(), never()).deleteTopologyElement(any(), any(),
+        any());
   }
 
   @Test
@@ -150,6 +159,7 @@ public class IngressMessageListenerTest extends AbstractTest {
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(testId);
     testMessage.setTelemetry(testTelemetry);
+    testMessage.setEntityType("devices");
 
     sink.inputChannel().send(
         MessageBuilder.withPayload(testMessage).setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -182,6 +192,7 @@ public class IngressMessageListenerTest extends AbstractTest {
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(testId);
     testMessage.setTelemetry(testTelemetry);
+    testMessage.setEntityType("devices");
 
     sink.inputChannel().send(
         MessageBuilder.withPayload(testMessage).setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,

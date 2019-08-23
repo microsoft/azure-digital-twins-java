@@ -17,6 +17,7 @@ import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.PropertyKeysApi;
 import com.microsoft.twins.api.SensorsApi;
+import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.reflector.ingress.IngressMessageListener;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.proxy.CachedDigitalTwinMetadataProxy;
@@ -58,9 +59,10 @@ public class TwinReflectorProxyAutoConfiguration {
   @ConditionalOnMissingBean
   CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy(
       final CachedDigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy,
-      final SensorsApi sensorsApi, final DevicesApi devicesApi, final EndpointsApi endpointsApi,
-      final TwinReflectorProxyProperties properties, final CacheManager cacheManager) {
-    return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, sensorsApi,
+      final SpacesApi spacesApi, final SensorsApi sensorsApi, final DevicesApi devicesApi,
+      final EndpointsApi endpointsApi, final TwinReflectorProxyProperties properties,
+      final CacheManager cacheManager) {
+    return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, spacesApi, sensorsApi,
         devicesApi, endpointsApi, properties, cacheManager);
   }
 
