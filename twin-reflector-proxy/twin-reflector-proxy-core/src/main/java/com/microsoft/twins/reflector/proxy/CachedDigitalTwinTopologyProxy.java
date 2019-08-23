@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.cache.Cache.ValueWrapper;
@@ -24,6 +25,8 @@ import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.SensorsApi;
+import com.microsoft.twins.api.SpacesApi;
+import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceCreate.StatusEnum;
@@ -34,6 +37,8 @@ import com.microsoft.twins.model.EndpointCreate.TypeEnum;
 import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SensorRetrieve;
+import com.microsoft.twins.model.SpaceCreate;
+import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import com.microsoft.twins.reflector.model.Property;
 import lombok.RequiredArgsConstructor;
@@ -47,9 +52,12 @@ public class CachedDigitalTwinTopologyProxy {
   private static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
   private static final String CACHE_DEVICE_BY_ID = "deviceById";
   private static final String CACHE_DEVICE_BY_NAME = "deviceByName";
+  private static final String CACHE_SPACE_BY_NAME = "spaceByName";
+  private static final String CACHE_SPACE_BY_ID = "spaceById";
 
 
   private final CachedDigitalTwinMetadataProxy metadataProxy;
+  private final SpacesApi spacesApi;
   private final SensorsApi sensorsApi;
   private final DevicesApi devicesApi;
   private final EndpointsApi endpointsApi;
@@ -74,7 +82,7 @@ public class CachedDigitalTwinTopologyProxy {
     }
 
     if (!CollectionUtils.isEmpty(attributes)) {
-      attributes.entrySet().forEach(e -> setAttribute(device, e));
+      attributes.entrySet().forEach(e -> setDeviceAttribute(device, e));
     }
 
     return devicesApi.devicesCreate(device);
@@ -82,7 +90,25 @@ public class CachedDigitalTwinTopologyProxy {
 
 
 
-  private void setAttribute(final DeviceCreate device, final Map.Entry<String, String> attribute) {
+  public UUID createSpace(@NotEmpty final String name, @NotNull final UUID parent,
+      final Map<String, String> attributes) {
+
+    final SpaceCreate space = new SpaceCreate();
+    space.setName(name);
+    space.setParentSpaceId(parent);
+
+    if (!CollectionUtils.isEmpty(attributes)) {
+      attributes.entrySet().forEach(e -> setSpaceAttribute(space, e));
+    }
+
+    return spacesApi.spacesCreate(space);
+
+  }
+
+
+
+  private void setDeviceAttribute(final DeviceCreate device,
+      final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
       case "description":
@@ -106,34 +132,65 @@ public class CachedDigitalTwinTopologyProxy {
     // device.setSubtype(subtype);
   }
 
+  private void setSpaceAttribute(final SpaceCreate space,
+      final Map.Entry<String, String> attribute) {
+
+    switch (attribute.getKey()) {
+      case "description":
+        space.setDescription(attribute.getValue());
+        break;
+      case "friendlyName":
+        space.setFriendlyName(attribute.getValue());
+        break;
+      case "status":
+        space.setStatus(attribute.getValue());
+        break;
+      default:
+        log.error("Attribute [{}] not supported", attribute.getKey());
+        break;
+    }
+    // TODO support device location
+    // device.setLocation(location);
+
+    // TODO support device types
+    // device.setType(type);
+    // device.setSubtype(subtype);
+  }
+
 
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id",
           condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByName(@NotEmpty final String name) {
-    final List<DeviceRetrieve> devices = devicesApi
-        .devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"));
+    return devicesApi
+        .devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"))
+        .stream().findAny();
+  }
 
-    if (devices.isEmpty()) {
-      return Optional.empty();
-    }
-
-    return Optional.ofNullable(devices.get(0));
+  @Caching(cacheable = {@Cacheable(cacheNames = CACHE_SPACE_BY_NAME)}, put = {
+      @CachePut(cacheNames = CACHE_SPACE_BY_ID, key = "#result.id", condition = "#result != null")})
+  public Optional<SpaceRetrieve> getSpaceByName(@NotEmpty final String name) {
+    return spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name(name)).stream()
+        .map(srwc -> (SpaceRetrieve) srwc).findAny();
   }
 
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_ID)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name",
           condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByDeviceId(@NotNull final UUID deviceId) {
-    final List<DeviceRetrieve> devices = devicesApi.devicesRetrieve(
-        new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"));
+    return devicesApi
+        .devicesRetrieve(
+            new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"))
+        .stream().findAny();
+  }
 
-    if (devices.isEmpty()) {
-      return Optional.empty();
-    }
-
-    return Optional.ofNullable(devices.get(0));
+  @Caching(cacheable = {@Cacheable(cacheNames = CACHE_SPACE_BY_ID)},
+      put = {@CachePut(cacheNames = CACHE_SPACE_BY_NAME, key = "#result.name",
+          condition = "#result != null")})
+  public Optional<SpaceRetrieve> getSpaceBySpaceId(@NotNull final UUID deviceId) {
+    return spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().ids(deviceId.toString()))
+        .stream().map(srwc -> (SpaceRetrieve) srwc).findAny();
   }
 
   @CacheEvict(cacheNames = CACHE_DEVICE_BY_NAME)
@@ -147,6 +204,19 @@ public class CachedDigitalTwinTopologyProxy {
 
     devicesApi.devicesDelete(device.get().getId().toString());
     cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(device.get().getId());
+  }
+
+  @CacheEvict(cacheNames = CACHE_SPACE_BY_NAME)
+  public void deleteSpaceByName(@NotBlank final String name) {
+    final Optional<SpaceRetrieve> space = getSpaceByName(name);
+
+    if (space.isEmpty()) {
+      log.warn("Space with [{}] does not exist. Will silently ignore delition.");
+      return;
+    }
+
+    spacesApi.spacesDelete(space.get().getId().toString());
+    cacheManager.getCache(CACHE_SPACE_BY_ID).evict(space.get().getId());
   }
 
 
@@ -213,6 +283,9 @@ public class CachedDigitalTwinTopologyProxy {
         case DEVICE:
           evictDeviceCache(topologyOperationEvent.getId());
           break;
+        case SPACE:
+          evictSpaceCache(topologyOperationEvent.getId());
+          break;
         default:
           break;
       }
@@ -229,4 +302,16 @@ public class CachedDigitalTwinTopologyProxy {
       cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(deviceId);
     }
   }
+
+  private void evictSpaceCache(final UUID spaceId) {
+    final ValueWrapper inCache = cacheManager.getCache(CACHE_SPACE_BY_ID).get(spaceId);
+
+    if (inCache != null) {
+      cacheManager.getCache(CACHE_SPACE_BY_NAME).evict(((SpaceRetrieve) inCache.get()).getName());
+      cacheManager.getCache(CACHE_SPACE_BY_ID).evict(spaceId);
+    }
+  }
+
+
+
 }

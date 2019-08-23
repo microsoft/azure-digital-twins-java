@@ -69,8 +69,6 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
     final Set<TestMessage> sendMessages = new HashSet<>();
 
     for (int i = 0; i < 10; i++) {
-
-
       final String payload = RandomStringUtils.randomAlphanumeric(20);
       final UUID correlationId = UUID.randomUUID();
 
@@ -79,7 +77,6 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
 
       final String hardwareId = UUID.randomUUID().toString();
       createSensor(hardwareId, device, testSpace);
-
 
       final IngressMessage testMessage = new IngressMessage();
       testMessage.setId(hardwareId);

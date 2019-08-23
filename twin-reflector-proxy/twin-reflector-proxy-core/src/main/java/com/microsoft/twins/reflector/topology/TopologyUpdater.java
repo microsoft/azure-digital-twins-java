@@ -61,17 +61,31 @@ public class TopologyUpdater {
 
 
 
-      // TODO implement update case
+      // TODO implement device update case
+    } else if ("spaces".equalsIgnoreCase(update.getEntityType())) {
+      cachedDigitalTwinProxy
+          .createSpace(update.getId(),
+              getParent(update.getRelationships()).orElseThrow(
+                  () -> new InconsistentTopologyException(update.getId() + " lacks a parent",
+                      correlationId)),
+              update.getAttributes());
+
+      // TODO implement space update case
     }
 
 
   }
 
-  public void deleteTopologyElement(@NotBlank final String id, final UUID correlationId) {
+  public void deleteTopologyElement(@NotBlank final String id, final UUID correlationId,
+      final String entityType) {
     log.trace("Got delete topology element with ID: [{}] with correlation ID: [{}]", id,
         correlationId);
 
-    cachedDigitalTwinProxy.deleteDeviceByName(id);
+    if ("devices".equalsIgnoreCase(entityType)) {
+      cachedDigitalTwinProxy.deleteDeviceByName(id);
+    } else if ("spaces".equalsIgnoreCase(entityType)) {
+      cachedDigitalTwinProxy.deleteSpaceByName(id);
+    }
   }
 
 

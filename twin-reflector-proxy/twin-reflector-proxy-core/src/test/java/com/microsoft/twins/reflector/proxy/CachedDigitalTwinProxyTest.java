@@ -32,6 +32,8 @@ import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.SensorsApi;
+import com.microsoft.twins.api.SpacesApi;
+import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.event.model.TopologyOperationEvent.AccessType;
 import com.microsoft.twins.event.model.TopologyOperationEvent.Type;
@@ -39,6 +41,7 @@ import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
 import com.microsoft.twins.model.EndpointRetrieve;
+import com.microsoft.twins.model.SpaceRetrieveWithChildren;
 import com.microsoft.twins.reflector.AbstractTest;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxyTest.CachedDigitalTwinProxyTestConfiguration;
@@ -49,6 +52,8 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
   private static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
   private static final String CACHE_DEVICE_BY_ID = "deviceById";
   private static final String CACHE_DEVICE_BY_NAME = "deviceByName";
+  private static final String CACHE_SPACE_BY_NAME = "spaceByName";
+  private static final String CACHE_SPACE_BY_ID = "spaceById";
 
   @Autowired
   private CacheManager cacheManager;
@@ -72,6 +77,9 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
   static class CachedDigitalTwinProxyTestConfiguration {
 
     @MockBean
+    private SpacesApi spacesApi;
+
+    @MockBean
     private SensorsApi sensorsApi;
 
     @MockBean
@@ -86,8 +94,8 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     CacheManager cacheManager() {
       final SimpleCacheManager cacheManager = new SimpleCacheManager();
       cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache(CACHE_GATEWAY_ID_BY_HARDWARE_ID),
-          new ConcurrentMapCache(CACHE_DEVICE_BY_ID),
-          new ConcurrentMapCache(CACHE_DEVICE_BY_NAME)));
+          new ConcurrentMapCache(CACHE_DEVICE_BY_ID), new ConcurrentMapCache(CACHE_DEVICE_BY_NAME),
+          new ConcurrentMapCache(CACHE_SPACE_BY_ID), new ConcurrentMapCache(CACHE_SPACE_BY_NAME)));
       return cacheManager;
     }
 
@@ -110,8 +118,8 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     @Bean
     CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy(final CacheManager cacheManager,
         final EndpointsApi endpointsApi) {
-      return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, sensorsApi,
-          devicesApi, endpointsApi, properties, cacheManager);
+      return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, spacesApi,
+          sensorsApi, devicesApi, endpointsApi, properties, cacheManager);
     }
 
   }
@@ -157,7 +165,7 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
   }
 
   @Test
-  public void cacheIsFilledAsPartOfGetCall() {
+  public void deviceCacheIsFilledAsPartOfGetCall() {
     final ConcurrentHashMap<Object, Object> idCache =
         (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_DEVICE_BY_ID)
             .getNativeCache();
@@ -187,6 +195,45 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     cleanCacheEvent.setAccessType(AccessType.DELETE);
     cleanCacheEvent.setType(Type.DEVICE);
     cleanCacheEvent.setId(testDeviceId);
+
+    topologyOperationSink.inputChannel().send(MessageBuilder.withPayload(cleanCacheEvent).build());
+
+    assertThat(idCache).isEmpty();
+    assertThat(nameCache).isEmpty();
+  }
+
+  @Test
+  public void spaceCacheIsFilledAsPartOfGetCall() {
+    final ConcurrentHashMap<Object, Object> idCache =
+        (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_SPACE_BY_ID)
+            .getNativeCache();
+    final ConcurrentHashMap<Object, Object> nameCache =
+        (ConcurrentHashMap<Object, Object>) cacheManager.getCache(CACHE_SPACE_BY_NAME)
+            .getNativeCache();
+
+
+    final UUID testSpaceId = UUID.randomUUID();
+    assertThat(idCache).isEmpty();
+    assertThat(nameCache).isEmpty();
+
+
+    final String testSpaceName = "testSpaceName";
+    final SpaceRetrieveWithChildren testSpaceRetrieve = new SpaceRetrieveWithChildren();
+    testSpaceRetrieve.setId(testSpaceId);
+    testSpaceRetrieve.setName(testSpaceName);
+
+    when(testConfiguration.getSpacesApi().spacesRetrieve(any(SpacesRetrieveQueryParams.class)))
+        .thenReturn(List.of(testSpaceRetrieve));
+
+    cachedDigitalTwinProxy.getSpaceBySpaceId(testSpaceId);
+
+    assertThat(idCache).containsKey(testSpaceId).hasSize(1);
+    assertThat(nameCache).containsKey(testSpaceName).hasSize(1);
+
+    final TopologyOperationEvent cleanCacheEvent = new TopologyOperationEvent();
+    cleanCacheEvent.setAccessType(AccessType.DELETE);
+    cleanCacheEvent.setType(Type.SPACE);
+    cleanCacheEvent.setId(testSpaceId);
 
     topologyOperationSink.inputChannel().send(MessageBuilder.withPayload(cleanCacheEvent).build());
 
