@@ -124,7 +124,7 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public UserDefinedFunctionsRetrieveQueryParams ids(final String value) {
+    public UserDefinedFunctionsRetrieveQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }

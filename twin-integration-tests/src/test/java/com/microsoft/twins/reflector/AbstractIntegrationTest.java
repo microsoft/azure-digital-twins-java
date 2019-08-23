@@ -5,6 +5,7 @@ package com.microsoft.twins.reflector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.awaitility.Awaitility;
@@ -18,6 +19,7 @@ import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.CollectionUtils;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.EndpointsApi;
@@ -89,6 +91,8 @@ public abstract class AbstractIntegrationTest {
 
   protected UUID testGateway;
 
+  protected String testGatewayName = UUID.randomUUID().toString();
+
   @BeforeEach
   public void setup() {
     createTestTenantSetup();
@@ -96,8 +100,8 @@ public abstract class AbstractIntegrationTest {
     cleanTestDevices();
     cleanTestSpaces();
 
-    final String gatewayName = UUID.randomUUID().toString();
-    testGateway = createGateway(gatewayName, tenant);
+
+    testGateway = createGateway(testGatewayName, tenant);
   }
 
   @AfterEach
@@ -105,6 +109,28 @@ public abstract class AbstractIntegrationTest {
     cleanTestSensors();
     cleanTestDevices();
     cleanTestSpaces();
+  }
+
+  protected Optional<SpaceRetrieveWithChildren> getSpace(final UUID id) {
+    final List<SpaceRetrieveWithChildren> existing =
+        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().ids(id));
+
+    if (CollectionUtils.isEmpty(existing)) {
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(existing.get(0));
+  }
+
+  protected Optional<DeviceRetrieve> getDevice(final UUID id) {
+    final List<DeviceRetrieve> existing =
+        devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().ids(id));
+
+    if (CollectionUtils.isEmpty(existing)) {
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(existing.get(0));
   }
 
   private void cleanTestSpaces() {

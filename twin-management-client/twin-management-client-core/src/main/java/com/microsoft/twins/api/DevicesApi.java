@@ -391,7 +391,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
   public static class DevicesRetrieveQueryParams extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
-    public DevicesRetrieveQueryParams ids(final String value) {
+    public DevicesRetrieveQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }
@@ -566,7 +566,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public DevicesRetrieveBlobMetadataQueryParams ids(final String value) {
+    public DevicesRetrieveBlobMetadataQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }

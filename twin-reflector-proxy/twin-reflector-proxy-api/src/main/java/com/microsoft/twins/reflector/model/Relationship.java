@@ -3,7 +3,6 @@
  */
 package com.microsoft.twins.reflector.model;
 
-import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +27,5 @@ public class Relationship {
   private String name;
 
   @JsonProperty("target-id")
-  private UUID targetId;
+  private String targetId;
 }
