@@ -75,7 +75,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/sensors/{id}/properties")
   @Headers({"Accept: */*",})
-  String sensorsCreateProperty(ExtendedPropertyCreate body, @Param("id") String id);
+  String sensorsCreateProperty(ExtendedPropertyCreate body, @Param("id") UUID id);
 
   /**
    * Creates a property value
@@ -87,7 +87,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/sensors/{id}/properties")
   @Headers({"Accept: */*",})
-  String sensorsCreateProperty(@Param("id") String id, @Param("name") String name,
+  String sensorsCreateProperty(@Param("id") UUID id, @Param("name") String name,
       @Param("value") String value);
 
   /**
@@ -97,7 +97,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/sensors/{id}")
   @Headers({"Accept: */*",})
-  void sensorsDelete(@Param("id") String id);
+  void sensorsDelete(@Param("id") UUID id);
 
   /**
    * Deletes all property values
@@ -106,7 +106,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/sensors/{id}/properties")
   @Headers({"Accept: */*",})
-  void sensorsDeleteProperties(@Param("id") String id);
+  void sensorsDeleteProperties(@Param("id") UUID id);
 
   /**
    * Deletes the given property value
@@ -116,7 +116,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/sensors/{id}/properties/{name}")
   @Headers({"Accept: */*",})
-  void sensorsDeleteProperty(@Param("id") String id, @Param("name") String name);
+  void sensorsDeleteProperty(@Param("id") UUID id, @Param("name") String name);
 
   /**
    * Gets a sensor&#x27;s value
@@ -126,7 +126,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}/value")
   @Headers({"Accept: */*",})
-  SensorValue sensorsGetValue(@Param("id") String id);
+  SensorValue sensorsGetValue(@Param("id") UUID id);
 
   /**
    * Gets the matchers that match the given sensor
@@ -137,7 +137,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}/matchers?includes={includes}")
   @Headers({"Accept: */*",})
-  List<MatcherRetrieve> sensorsMatchers(@Param("id") String id, @Param("includes") String includes);
+  List<MatcherRetrieve> sensorsMatchers(@Param("id") UUID id, @Param("includes") String includes);
 
   /**
    * Gets the matchers that match the given sensor
@@ -160,7 +160,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}/matchers?includes={includes}")
   @Headers({"Content-Type: */*",})
-  List<MatcherRetrieve> sensorsMatchers(@Param("id") String id,
+  List<MatcherRetrieve> sensorsMatchers(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -204,7 +204,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors?ids={ids}&deviceIds={deviceIds}&types={types}&portTypes={portTypes}&dataTypes={dataTypes}&dataSubtypes={dataSubtypes}&dataUnitTypes={dataUnitTypes}&hardwareIds={hardwareIds}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<SensorRetrieve> sensorsRetrieve(@Param("ids") String ids,
+  List<SensorRetrieve> sensorsRetrieve(@Param("ids") UUID ids,
       @Param("deviceIds") String deviceIds, @Param("types") String types,
       @Param("portTypes") String portTypes, @Param("dataTypes") String dataTypes,
       @Param("dataSubtypes") String dataSubtypes, @Param("dataUnitTypes") String dataUnitTypes,
@@ -366,7 +366,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  SensorRetrieve sensorsRetrieveById(@Param("id") String id, @Param("includes") String includes);
+  SensorRetrieve sensorsRetrieveById(@Param("id") UUID id, @Param("includes") String includes);
 
   /**
    * Gets a sensor
@@ -389,7 +389,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  SensorRetrieve sensorsRetrieveById(@Param("id") String id,
+  SensorRetrieve sensorsRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -412,7 +412,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors/{id}/properties/{name}")
   @Headers({"Accept: */*",})
-  String sensorsRetrieveProperty(@Param("id") String id, @Param("name") String name);
+  String sensorsRetrieveProperty(@Param("id") UUID id, @Param("name") String name);
 
   /**
    * Updates a sensor
@@ -422,7 +422,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/sensors/{id}")
   @Headers({"Accept: */*",})
-  void sensorsUpdate(SensorUpdate body, @Param("id") String id);
+  void sensorsUpdate(SensorUpdate body, @Param("id") UUID id);
 
   /**
    * Updates a sensor
@@ -447,7 +447,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/sensors/{id}")
   @Headers({"Accept: */*",})
-  void sensorsUpdate(@Param("id") String id, @Param("port") String port,
+  void sensorsUpdate(@Param("id") UUID id, @Param("port") String port,
       @Param("pollRate") Integer pollRate, @Param("dataType") String dataType,
       @Param("dataSubtype") String dataSubtype, @Param("type") String type,
       @Param("deviceId") UUID deviceId, @Param("spaceId") UUID spaceId,
@@ -466,5 +466,5 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/sensors/{id}/properties")
   @Headers({"Accept: */*",})
-  Object sensorsUpdateProperties(List<ExtendedPropertyCreate> body, @Param("id") String id);
+  Object sensorsUpdateProperties(List<ExtendedPropertyCreate> body, @Param("id") UUID id);
 }

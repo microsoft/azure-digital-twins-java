@@ -157,7 +157,7 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
   @JsonProperty("hardwareId")
   private String hardwareId;
   @JsonProperty("gatewayId")
-  private String gatewayId;
+  private UUID gatewayId;
   @JsonProperty("spaceId")
   private UUID spaceId;
 
@@ -408,7 +408,7 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
     this.hardwareId = hardwareId;
   }
 
-  public DeviceRetrieve gatewayId(final String gatewayId) {
+  public DeviceRetrieve gatewayId(final UUID gatewayId) {
     this.gatewayId = gatewayId;
     return this;
   }
@@ -418,11 +418,11 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
    *
    * @return gatewayId
    **/
-  public String getGatewayId() {
+  public UUID getGatewayId() {
     return gatewayId;
   }
 
-  public void setGatewayId(final String gatewayId) {
+  public void setGatewayId(final UUID gatewayId) {
     this.gatewayId = gatewayId;
   }
 

@@ -51,7 +51,7 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/endpoints/{id}")
   @Headers({"Accept: */*",})
-  void endpointsDelete(@Param("id") String id);
+  void endpointsDelete(@Param("id") UUID id);
 
   /**
    * Modifies an existing endpoint. Does not create if it doesn&#x27;t exist.
@@ -62,7 +62,7 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/endpoints/{id}")
   @Headers({"Accept: */*",})
-  Object endpointsModify(EndpointCreate body, @Param("id") String id);
+  Object endpointsModify(EndpointCreate body, @Param("id") UUID id);
 
   /**
    * Modifies an existing endpoint. Does not create if it doesn&#x27;t exist.
@@ -77,7 +77,7 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/endpoints/{id}")
   @Headers({"Accept: */*",})
-  Object endpointsModify(@Param("id") String id, @Param("type") String type,
+  Object endpointsModify(@Param("id") UUID id, @Param("type") String type,
       @Param("eventTypes") List<String> eventTypes,
       @Param("connectionString") String connectionString,
       @Param("secondaryConnectionString") String secondaryConnectionString,
@@ -152,5 +152,5 @@ public interface EndpointsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/endpoints/{id}")
   @Headers({"Accept: */*",})
-  EndpointRetrieve endpointsRetrieveById(@Param("id") String id);
+  EndpointRetrieve endpointsRetrieveById(@Param("id") UUID id);
 }

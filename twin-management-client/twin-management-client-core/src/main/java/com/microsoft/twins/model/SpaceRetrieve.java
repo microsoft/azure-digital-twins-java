@@ -170,7 +170,35 @@ public class SpaceRetrieve extends AbstractRetrieve<SpaceRetrieve> {
   private Location effectiveLocation;
   @JsonProperty("effectiveTimeZoneId")
   private Integer effectiveTimeZoneId;
+  @JsonProperty("properties")
+  private List<ExtendedPropertyRetrieve> properties;
 
+  public SpaceRetrieve properties(final List<ExtendedPropertyRetrieve> properties) {
+    this.properties = properties;
+    return this;
+  }
+
+  public SpaceRetrieve addPropertiesItem(final ExtendedPropertyRetrieve propertiesItem) {
+    if (this.properties == null) {
+      this.properties = new java.util.ArrayList<>();
+    }
+    this.properties.add(propertiesItem);
+    return this;
+  }
+
+  /**
+   * Get properties
+   *
+   * @return properties
+   **/
+  @Valid
+  public List<ExtendedPropertyRetrieve> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(final List<ExtendedPropertyRetrieve> properties) {
+    this.properties = properties;
+  }
 
   public SpaceRetrieve name(final String name) {
     this.name = name;

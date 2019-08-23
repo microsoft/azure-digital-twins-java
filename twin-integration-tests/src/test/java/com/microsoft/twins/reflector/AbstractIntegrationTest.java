@@ -110,16 +110,16 @@ public abstract class AbstractIntegrationTest {
   private void cleanTestSpaces() {
     final List<SpaceRetrieveWithChildren> existing =
         spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().types(TEST_SPACE_TYPE)
-            .useParentSpace(true).spaceId(tenant.toString()).traverse("Down"));
+            .useParentSpace(true).spaceId(tenant.toString()).traverse("Down").maxLevel(1));
 
-    existing.forEach(space -> spacesApi.spacesDelete(space.getId().toString()));
+    existing.forEach(space -> spacesApi.spacesDelete(space.getId()));
   }
 
   private void cleanTestDevices() {
     final List<DeviceRetrieve> existing =
         devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().types(TEST_DEVICE_TYPE));
 
-    existing.forEach(device -> devicesApi.devicesDelete(device.getId().toString()));
+    existing.forEach(device -> devicesApi.devicesDelete(device.getId()));
 
   }
 
@@ -127,7 +127,7 @@ public abstract class AbstractIntegrationTest {
     final List<SensorRetrieve> existing =
         sensorsApi.sensorsRetrieve(new SensorsRetrieveQueryParams().types(TEST_SENSOR_TYPE));
 
-    existing.forEach(sensor -> sensorsApi.sensorsDelete(sensor.getId().toString()));
+    existing.forEach(sensor -> sensorsApi.sensorsDelete(sensor.getId()));
 
   }
 
@@ -182,8 +182,7 @@ public abstract class AbstractIntegrationTest {
     final UUID created = endpointsApi.endpointsCreate(eventHub);
 
     Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS)
-        .pollInterval(1, TimeUnit.SECONDS)
-        .until(() -> endpointsApi.endpointsRetrieveById(created.toString())
+        .pollInterval(1, TimeUnit.SECONDS).until(() -> endpointsApi.endpointsRetrieveById(created)
             .getStatus() == EndpointRetrieve.StatusEnum.READY);
   }
 
@@ -210,20 +209,23 @@ public abstract class AbstractIntegrationTest {
     final UUID created = resourcesApi.resourcesCreate(iotHub);
 
     Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS)
-        .pollInterval(1, TimeUnit.SECONDS)
-        .until(() -> resourcesApi.resourcesRetrieveById(created.toString())
+        .pollInterval(1, TimeUnit.SECONDS).until(() -> resourcesApi.resourcesRetrieveById(created)
             .getStatus() == SpaceResourceRetrieve.StatusEnum.RUNNING);
   }
 
-  protected UUID createSpace(final String spaceName) {
+  protected UUID createSpace(final String spaceName, final UUID parent) {
     final SpaceCreate deviceSpaceCreate = new SpaceCreate();
     deviceSpaceCreate.setName(spaceName);
     deviceSpaceCreate.setFriendlyName("Space " + spaceName);
     deviceSpaceCreate.setDescription("Space " + spaceName);
     deviceSpaceCreate.setType(TEST_SPACE_TYPE);
-    deviceSpaceCreate.setParentSpaceId(tenant);
+    deviceSpaceCreate.setParentSpaceId(parent);
 
     return spacesApi.spacesCreate(deviceSpaceCreate);
+  }
+
+  protected UUID createSpace(final String spaceName) {
+    return createSpace(spaceName, tenant);
   }
 
   protected UUID createGateway(final String deviceName, final UUID spaceId) {
@@ -233,7 +235,6 @@ public abstract class AbstractIntegrationTest {
     device.setType(TEST_DEVICE_TYPE);
     device.setSpaceId(spaceId);
     device.setHardwareId(deviceName);
-    device.setGatewayId(deviceName);
 
     final UUID createdDevice = devicesApi.devicesCreate(device);
     assertThat(createdDevice).isNotNull();
@@ -247,7 +248,7 @@ public abstract class AbstractIntegrationTest {
     device.setType(TEST_DEVICE_TYPE);
     device.setSpaceId(spaceId);
     device.setHardwareId(deviceName);
-    device.setGatewayId(gatewayId.toString());
+    device.setGatewayId(gatewayId);
     device.setCreateIoTHubDevice(false);
 
     final UUID createdDevice = devicesApi.devicesCreate(device);

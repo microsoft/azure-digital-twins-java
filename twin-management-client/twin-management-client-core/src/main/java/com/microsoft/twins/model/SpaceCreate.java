@@ -124,10 +124,7 @@
 package com.microsoft.twins.model;
 
 import java.util.List;
-import java.util.UUID;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -135,33 +132,10 @@ import lombok.ToString;
 /**
  * Space create model
  */
-@ToString
-@EqualsAndHashCode
-public class SpaceCreate {
-  @JsonProperty("name")
-  private String name;
-  @JsonProperty("description")
-  private String description;
-  @JsonProperty("friendlyName")
-  private String friendlyName;
-  @JsonProperty("type")
-  private String type;
-  @JsonProperty("typeId")
-  private Integer typeId;
-  @JsonProperty("parentSpaceId")
-  private UUID parentSpaceId;
-  @JsonProperty("subtype")
-  private String subtype;
-  @JsonProperty("subtypeId")
-  private Integer subtypeId;
-  @JsonProperty("location")
-  private Location location;
-  @JsonProperty("timeZoneId")
-  private Integer timeZoneId;
-  @JsonProperty("status")
-  private String status;
-  @JsonProperty("statusId")
-  private Integer statusId;
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class SpaceCreate extends SpaceUpdate {
+
   @JsonProperty("properties")
   private List<ExtendedPropertyCreate> properties;
   @JsonProperty("timeZoneName")
@@ -171,227 +145,6 @@ public class SpaceCreate {
   @JsonProperty("users")
   private List<UserCreate> users;
 
-  public SpaceCreate name(final String name) {
-    this.name = name;
-    return this;
-  }
-
-  /**
-   * Get name
-   *
-   * @return name
-   **/
-  @NotNull
-  @Size(min = 1, max = 64)
-  public String getName() {
-    return name;
-  }
-
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  public SpaceCreate description(final String description) {
-    this.description = description;
-    return this;
-  }
-
-  /**
-   * Get description
-   *
-   * @return description
-   **/
-  @Size(max = 4000)
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(final String description) {
-    this.description = description;
-  }
-
-  public SpaceCreate friendlyName(final String friendlyName) {
-    this.friendlyName = friendlyName;
-    return this;
-  }
-
-  /**
-   * Optional friendly name
-   *
-   * @return friendlyName
-   **/
-  @Size(max = 64)
-  public String getFriendlyName() {
-    return friendlyName;
-  }
-
-  public void setFriendlyName(final String friendlyName) {
-    this.friendlyName = friendlyName;
-  }
-
-  public SpaceCreate type(final String type) {
-    this.type = type;
-    return this;
-  }
-
-  /**
-   * Primary space type. Defaults to None if not specified
-   *
-   * @return type
-   **/
-  public String getType() {
-    return type;
-  }
-
-  public void setType(final String type) {
-    this.type = type;
-  }
-
-  public SpaceCreate typeId(final Integer typeId) {
-    this.typeId = typeId;
-    return this;
-  }
-
-  /**
-   * Type identifier. Cannot specify both Type and TypeId
-   *
-   * @return typeId
-   **/
-  public Integer getTypeId() {
-    return typeId;
-  }
-
-  public void setTypeId(final Integer typeId) {
-    this.typeId = typeId;
-  }
-
-  public SpaceCreate parentSpaceId(final UUID parentSpaceId) {
-    this.parentSpaceId = parentSpaceId;
-    return this;
-  }
-
-  /**
-   * The space&#x27;s parent space
-   *
-   * @return parentSpaceId
-   **/
-  @Valid
-  public UUID getParentSpaceId() {
-    return parentSpaceId;
-  }
-
-  public void setParentSpaceId(final UUID parentSpaceId) {
-    this.parentSpaceId = parentSpaceId;
-  }
-
-  public SpaceCreate subtype(final String subtype) {
-    this.subtype = subtype;
-    return this;
-  }
-
-  /**
-   * Space subtype. Defaults to None if not specified
-   *
-   * @return subtype
-   **/
-  public String getSubtype() {
-    return subtype;
-  }
-
-  public void setSubtype(final String subtype) {
-    this.subtype = subtype;
-  }
-
-  public SpaceCreate subtypeId(final Integer subtypeId) {
-    this.subtypeId = subtypeId;
-    return this;
-  }
-
-  /**
-   * Subtype identifier. Cannot specify both Subtype and SubtypeId
-   *
-   * @return subtypeId
-   **/
-  public Integer getSubtypeId() {
-    return subtypeId;
-  }
-
-  public void setSubtypeId(final Integer subtypeId) {
-    this.subtypeId = subtypeId;
-  }
-
-  public SpaceCreate location(final Location location) {
-    this.location = location;
-    return this;
-  }
-
-  /**
-   * Get location
-   *
-   * @return location
-   **/
-  @Valid
-  public Location getLocation() {
-    return location;
-  }
-
-  public void setLocation(final Location location) {
-    this.location = location;
-  }
-
-  public SpaceCreate timeZoneId(final Integer timeZoneId) {
-    this.timeZoneId = timeZoneId;
-    return this;
-  }
-
-  /**
-   * Optional time zone identifier for the space
-   *
-   * @return timeZoneId
-   **/
-  public Integer getTimeZoneId() {
-    return timeZoneId;
-  }
-
-  public void setTimeZoneId(final Integer timeZoneId) {
-    this.timeZoneId = timeZoneId;
-  }
-
-  public SpaceCreate status(final String status) {
-    this.status = status;
-    return this;
-  }
-
-  /**
-   * Optional status. Defaults to None if not specified
-   *
-   * @return status
-   **/
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(final String status) {
-    this.status = status;
-  }
-
-  public SpaceCreate statusId(final Integer statusId) {
-    this.statusId = statusId;
-    return this;
-  }
-
-  /**
-   * Status identifier. Cannot specify both Status and StatusId
-   *
-   * @return statusId
-   **/
-  public Integer getStatusId() {
-    return statusId;
-  }
-
-  public void setStatusId(final Integer statusId) {
-    this.statusId = statusId;
-  }
 
   public SpaceCreate properties(final List<ExtendedPropertyCreate> properties) {
     this.properties = properties;
@@ -420,6 +173,7 @@ public class SpaceCreate {
     this.properties = properties;
   }
 
+  @Override
   public SpaceCreate timeZoneName(final String timeZoneName) {
     this.timeZoneName = timeZoneName;
     return this;
@@ -430,10 +184,12 @@ public class SpaceCreate {
    *
    * @return timeZoneName
    **/
+  @Override
   public String getTimeZoneName() {
     return timeZoneName;
   }
 
+  @Override
   public void setTimeZoneName(final String timeZoneName) {
     this.timeZoneName = timeZoneName;
   }

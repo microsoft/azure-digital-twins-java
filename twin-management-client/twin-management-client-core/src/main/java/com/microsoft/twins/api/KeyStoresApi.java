@@ -51,7 +51,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/keystores/{id}/keys")
   @Headers({"Accept: */*",})
-  Integer keyStoresCreateKey(@Param("id") String id);
+  Integer keyStoresCreateKey(@Param("id") UUID id);
 
   /**
    * Deletes a key store
@@ -60,7 +60,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/keystores/{id}")
   @Headers({"Accept: */*",})
-  void keyStoresDelete(@Param("id") String id);
+  void keyStoresDelete(@Param("id") UUID id);
 
   /**
    * Deletes the given key
@@ -70,7 +70,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  void keyStoresDeleteKey(@Param("id") String id, @Param("key") Integer key);
+  void keyStoresDeleteKey(@Param("id") UUID id, @Param("key") Integer key);
 
   /**
    * Gets a token for the specified device using the specified key
@@ -82,7 +82,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/{key}/token?deviceMac={deviceMac}")
   @Headers({"Accept: */*",})
-  String keyStoresGenerateTokenFromKeyById(@Param("id") String id, @Param("key") Integer key,
+  String keyStoresGenerateTokenFromKeyById(@Param("id") UUID id, @Param("key") Integer key,
       @Param("deviceMac") String deviceMac);
 
   /**
@@ -108,7 +108,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/{key}/token?deviceMac={deviceMac}")
   @Headers({"Content-Type: */*",})
-  String keyStoresGenerateTokenFromKeyById(@Param("id") String id, @Param("key") Integer key,
+  String keyStoresGenerateTokenFromKeyById(@Param("id") UUID id, @Param("key") Integer key,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -133,7 +133,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/last/token?deviceMac={deviceMac}")
   @Headers({"Accept: */*",})
-  String keyStoresGenerateTokenFromLastKey(@Param("id") String id,
+  String keyStoresGenerateTokenFromLastKey(@Param("id") UUID id,
       @Param("deviceMac") String deviceMac);
 
   /**
@@ -158,7 +158,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/last/token?deviceMac={deviceMac}")
   @Headers({"Content-Type: */*",})
-  String keyStoresGenerateTokenFromLastKey(@Param("id") String id,
+  String keyStoresGenerateTokenFromLastKey(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -240,7 +240,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") String id,
+  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") UUID id,
       @Param("includes") String includes);
 
   /**
@@ -266,7 +266,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") String id,
+  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -291,7 +291,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  SecurityKeyRetrieve keyStoresRetrieveKeyById(@Param("id") String id, @Param("key") Integer key);
+  SecurityKeyRetrieve keyStoresRetrieveKeyById(@Param("id") UUID id, @Param("key") Integer key);
 
   /**
    * Retrieves the store&#x27;s keys
@@ -301,7 +301,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys")
   @Headers({"Accept: */*",})
-  List<SecurityKeyRetrieve> keyStoresRetrieveKeys(@Param("id") String id);
+  List<SecurityKeyRetrieve> keyStoresRetrieveKeys(@Param("id") UUID id);
 
   /**
    * Retrieves the most recent valid key from the key store
@@ -311,7 +311,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/keystores/{id}/keys/last")
   @Headers({"Accept: */*",})
-  SecurityKeyRetrieve keyStoresRetrieveKeysLast(@Param("id") String id);
+  SecurityKeyRetrieve keyStoresRetrieveKeysLast(@Param("id") UUID id);
 
   /**
    * Updates a key store
@@ -321,7 +321,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdate(KeyStoreUpdate body, @Param("id") String id);
+  void keyStoresUpdate(KeyStoreUpdate body, @Param("id") UUID id);
 
   /**
    * Updates a key store
@@ -332,7 +332,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdate(@Param("id") String id, @Param("name") String name,
+  void keyStoresUpdate(@Param("id") UUID id, @Param("name") String name,
       @Param("description") String description);
 
   /**
@@ -344,7 +344,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdateKey(SecurityKeyUpdate body, @Param("id") String id,
+  void keyStoresUpdateKey(SecurityKeyUpdate body, @Param("id") UUID id,
       @Param("key") Integer key);
 
   /**
@@ -356,6 +356,6 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdateKey(@Param("id") String id, @Param("key") Integer key,
+  void keyStoresUpdateKey(@Param("id") UUID id, @Param("key") Integer key,
       @Param("status") String status);
 }

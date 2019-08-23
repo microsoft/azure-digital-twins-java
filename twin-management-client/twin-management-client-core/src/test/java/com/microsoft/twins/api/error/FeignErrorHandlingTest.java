@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +56,7 @@ public class FeignErrorHandlingTest {
     when(client.execute(any(Request.class), any(Options.class))).thenReturn(Response.builder()
         .status(200).headers(Collections.emptyMap()).request(dummyRequest).build());
 
-    devicesApi.devicesDelete("test");
+    devicesApi.devicesDelete(UUID.randomUUID());
 
     verify(client, times(1)).execute(any(Request.class), any(Options.class));
   }
@@ -67,7 +68,7 @@ public class FeignErrorHandlingTest {
         .thenThrow(new UnknownHostException());
 
     try {
-      devicesApi.devicesDelete("test");
+      devicesApi.devicesDelete(UUID.randomUUID());
       fail("not failing");
     } catch (final RetryableException e) {
       assertThat(e.getCause()).isInstanceOf(UnknownHostException.class);
@@ -88,7 +89,7 @@ public class FeignErrorHandlingTest {
         .getDevicesApi();
 
     try {
-      devicesApi.devicesDelete("test");
+      devicesApi.devicesDelete(UUID.randomUUID());
       fail("not failing");
     } catch (final RetryableException e) {
       assertThat(e.getCause()).isInstanceOf(UnknownHostException.class);
@@ -106,7 +107,7 @@ public class FeignErrorHandlingTest {
         Response.builder().status(200).headers(Collections.emptyMap()).request(dummyRequest)
             .build());
 
-    devicesApi.devicesDelete("test");
+    devicesApi.devicesDelete(UUID.randomUUID());
 
     verify(client, times(2)).execute(any(Request.class), any(Options.class));
 
@@ -123,7 +124,7 @@ public class FeignErrorHandlingTest {
 
 
     final Instant start = Instant.now();
-    devicesApi.devicesDelete("test");
+    devicesApi.devicesDelete(UUID.randomUUID());
     final Instant finish = Instant.now();
     final long timeElapsed = Duration.between(start, finish).toMillis();
     assertThat(timeElapsed).isGreaterThanOrEqualTo(Duration.ofMillis(800).toMillis());
@@ -147,7 +148,7 @@ public class FeignErrorHandlingTest {
                     .build());
 
 
-    devicesApi.devicesDelete("test");
+    devicesApi.devicesDelete(UUID.randomUUID());
 
     verify(client, times(2)).execute(any(Request.class), any(Options.class));
 
