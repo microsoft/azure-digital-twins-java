@@ -137,7 +137,7 @@ public interface RoleAssignmentsApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/roleassignments/{id}")
   @Headers({"Accept: */*",})
-  void roleAssignmentsDelete(@Param("id") String id);
+  void roleAssignmentsDelete(@Param("id") UUID id);
 
   /**
    * Gets role assignments under a given path

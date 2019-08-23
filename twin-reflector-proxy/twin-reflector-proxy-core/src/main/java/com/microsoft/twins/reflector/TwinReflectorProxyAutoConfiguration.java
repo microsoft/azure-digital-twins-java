@@ -43,8 +43,9 @@ public class TwinReflectorProxyAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  TopologyUpdater topologyUpdater(final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy) {
-    return new TopologyUpdater(cachedDigitalTwinProxy);
+  TopologyUpdater topologyUpdater(final TenantResolver tenantResolver,
+      final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy) {
+    return new TopologyUpdater(tenantResolver, cachedDigitalTwinProxy);
   }
 
   @Bean

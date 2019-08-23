@@ -75,7 +75,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/users/{id}/properties")
   @Headers({"Accept: */*",})
-  String usersCreateProperty(ExtendedPropertyCreate body, @Param("id") String id);
+  String usersCreateProperty(ExtendedPropertyCreate body, @Param("id") UUID id);
 
   /**
    * Creates a property value
@@ -87,7 +87,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/users/{id}/properties")
   @Headers({"Accept: */*",})
-  String usersCreateProperty(@Param("id") String id, @Param("name") String name,
+  String usersCreateProperty(@Param("id") UUID id, @Param("name") String name,
       @Param("value") String value);
 
   /**
@@ -97,7 +97,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/users/{id}")
   @Headers({"Accept: */*",})
-  void usersDelete(@Param("id") String id);
+  void usersDelete(@Param("id") UUID id);
 
   /**
    * Deletes a blob Deleting a blob will delete its metadata, its content (all versions) and its
@@ -107,7 +107,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/users/blobs/{id}")
   @Headers({"Accept: */*",})
-  void usersDeleteBlob(@Param("id") String id);
+  void usersDeleteBlob(@Param("id") UUID id);
 
   /**
    * Delete the contents of the given version of the given blob Delete will fail if this version has
@@ -118,7 +118,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/users/blobs/{id}/contents/{version}")
   @Headers({"Accept: */*",})
-  void usersDeleteBlobContents(@Param("id") String id, @Param("version") Integer version);
+  void usersDeleteBlobContents(@Param("id") UUID id, @Param("version") Integer version);
 
   /**
    * Deletes all property values
@@ -127,7 +127,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/users/{id}/properties")
   @Headers({"Accept: */*",})
-  void usersDeleteProperties(@Param("id") String id);
+  void usersDeleteProperties(@Param("id") UUID id);
 
   /**
    * Deletes the given property value
@@ -137,7 +137,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/users/{id}/properties/{name}")
   @Headers({"Accept: */*",})
-  void usersDeleteProperty(@Param("id") String id, @Param("name") String name);
+  void usersDeleteProperty(@Param("id") UUID id, @Param("name") String name);
 
   /**
    * Gets the contents of the given version of the given blob
@@ -148,7 +148,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs/{id}/contents/{version}")
   @Headers({"Accept: */*",})
-  File usersGetBlobContents(@Param("id") String id, @Param("version") Integer version);
+  File usersGetBlobContents(@Param("id") UUID id, @Param("version") Integer version);
 
   /**
    * Gets the contents of the latest version of the given blob
@@ -158,7 +158,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs/{id}/contents/latest")
   @Headers({"Accept: */*",})
-  File usersGetLatestBlobContents(@Param("id") String id);
+  File usersGetLatestBlobContents(@Param("id") UUID id);
 
   /**
    * Gets a list of users
@@ -336,7 +336,7 @@ public interface UsersApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/users/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<BlobMetadataRetrieve> usersRetrieveBlobMetadata(@Param("names") String names,
-      @Param("ids") String ids, @Param("sharings") String sharings, @Param("types") String types,
+      @Param("ids") UUID ids, @Param("sharings") String sharings, @Param("types") String types,
       @Param("subtypes") String subtypes, @Param("includes") String includes,
       @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
@@ -461,7 +461,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  BlobMetadataRetrieve usersRetrieveBlobMetadataById(@Param("id") String id,
+  BlobMetadataRetrieve usersRetrieveBlobMetadataById(@Param("id") UUID id,
       @Param("includes") String includes);
 
   /**
@@ -487,7 +487,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/blobs/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  BlobMetadataRetrieve usersRetrieveBlobMetadataById(@Param("id") String id,
+  BlobMetadataRetrieve usersRetrieveBlobMetadataById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -513,7 +513,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  UserRetrieve usersRetrieveById(@Param("id") String id, @Param("includes") String includes);
+  UserRetrieve usersRetrieveById(@Param("id") UUID id, @Param("includes") String includes);
 
   /**
    * Gets a specific user
@@ -539,7 +539,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  UserRetrieve usersRetrieveById(@Param("id") String id,
+  UserRetrieve usersRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -562,7 +562,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/users/{id}/properties/{name}")
   @Headers({"Accept: */*",})
-  String usersRetrieveProperty(@Param("id") String id, @Param("name") String name);
+  String usersRetrieveProperty(@Param("id") UUID id, @Param("name") String name);
 
   /**
    * Updates a user
@@ -572,7 +572,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/users/{id}")
   @Headers({"Accept: */*",})
-  void usersUpdate(UserUpdate body, @Param("id") String id);
+  void usersUpdate(UserUpdate body, @Param("id") UUID id);
 
   /**
    * Updates a user
@@ -589,7 +589,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/users/{id}")
   @Headers({"Accept: */*",})
-  void usersUpdate(@Param("id") String id, @Param("spaceId") UUID spaceId, @Param("upn") String upn,
+  void usersUpdate(@Param("id") UUID id, @Param("spaceId") UUID spaceId, @Param("upn") String upn,
       @Param("location") Location location, @Param("firstName") String firstName,
       @Param("lastName") String lastName, @Param("managerName") String managerName,
       @Param("metadata") Map<String, String> metadata,
@@ -605,7 +605,7 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/users/blobs/{id}")
   @Headers({"Accept: */*",})
-  void usersUpdateBlob(@Param("id") String id, @Param("metadata") String metadata,
+  void usersUpdateBlob(@Param("id") UUID id, @Param("metadata") String metadata,
       @Param("contents") File contents);
 
   /**
@@ -617,5 +617,5 @@ public interface UsersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/users/{id}/properties")
   @Headers({"Accept: */*",})
-  Object usersUpdateProperties(List<ExtendedPropertyCreate> body, @Param("id") String id);
+  Object usersUpdateProperties(List<ExtendedPropertyCreate> body, @Param("id") UUID id);
 }

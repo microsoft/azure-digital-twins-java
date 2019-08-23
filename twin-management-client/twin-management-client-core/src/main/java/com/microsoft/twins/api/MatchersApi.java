@@ -54,7 +54,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/matchers/{id}")
   @Headers({"Accept: */*",})
-  void matchersDelete(@Param("id") String id);
+  void matchersDelete(@Param("id") UUID id);
 
   /**
    * Evaluates the matcher for a sensor
@@ -66,7 +66,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers/{id}/evaluate/{sensorId}?enableLogging={enableLogging}")
   @Headers({"Accept: */*",})
-  MatcherEvaluationResults matchersEvaluate(@Param("id") String id,
+  MatcherEvaluationResults matchersEvaluate(@Param("id") UUID id,
       @Param("sensorId") String sensorId, @Param("enableLogging") Boolean enableLogging);
 
   /**
@@ -92,7 +92,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers/{id}/evaluate/{sensorId}?enableLogging={enableLogging}")
   @Headers({"Content-Type: */*",})
-  MatcherEvaluationResults matchersEvaluate(@Param("id") String id,
+  MatcherEvaluationResults matchersEvaluate(@Param("id") UUID id,
       @Param("sensorId") String sensorId,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
@@ -128,7 +128,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers?ids={ids}&names={names}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<MatcherRetrieve> matchersRetrieve(@Param("ids") String ids, @Param("names") String names,
+  List<MatcherRetrieve> matchersRetrieve(@Param("ids") UUID ids, @Param("names") String names,
       @Param("includes") String includes, @Param("spaceId") String spaceId,
       @Param("traverse") String traverse, @Param("minLevel") Integer minLevel,
       @Param("maxLevel") Integer maxLevel, @Param("minRelative") Boolean minRelative,
@@ -230,7 +230,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  MatcherRetrieve matchersRetrieveById(@Param("id") String id, @Param("includes") String includes);
+  MatcherRetrieve matchersRetrieveById(@Param("id") UUID id, @Param("includes") String includes);
 
   /**
    * Retrieves a matcher
@@ -254,7 +254,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/matchers/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  MatcherRetrieve matchersRetrieveById(@Param("id") String id,
+  MatcherRetrieve matchersRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -276,7 +276,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/matchers/{id}")
   @Headers({"Accept: */*",})
-  void matchersUpdate(MatcherUpdate body, @Param("id") String id);
+  void matchersUpdate(MatcherUpdate body, @Param("id") UUID id);
 
   /**
    * Update a matcher
@@ -289,7 +289,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/matchers/{id}")
   @Headers({"Accept: */*",})
-  void matchersUpdate(@Param("id") String id, @Param("name") String name,
+  void matchersUpdate(@Param("id") UUID id, @Param("name") String name,
       @Param("description") String description, @Param("friendlyName") String friendlyName,
       @Param("conditions") List<ConditionUpdate> conditions);
 }

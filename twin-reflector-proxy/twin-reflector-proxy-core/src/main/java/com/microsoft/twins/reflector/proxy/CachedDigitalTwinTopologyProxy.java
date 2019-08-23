@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -29,8 +30,9 @@ import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.model.DeviceCreate;
-import com.microsoft.twins.model.DeviceCreate.StatusEnum;
 import com.microsoft.twins.model.DeviceRetrieve;
+import com.microsoft.twins.model.DeviceUpdate;
+import com.microsoft.twins.model.DeviceUpdate.StatusEnum;
 import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
 import com.microsoft.twins.model.EndpointCreate.TypeEnum;
@@ -39,6 +41,7 @@ import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceRetrieve;
+import com.microsoft.twins.model.SpaceUpdate;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import com.microsoft.twins.reflector.model.Property;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +74,7 @@ public class CachedDigitalTwinTopologyProxy {
     device.setName(name);
     device.setSpaceId(parent);
     device.setHardwareId(name);
-    device.setGatewayId(gateway.toString());
+    device.setGatewayId(gateway);
     device.setCreateIoTHubDevice(false);
 
     if (!CollectionUtils.isEmpty(properties)) {
@@ -88,14 +91,42 @@ public class CachedDigitalTwinTopologyProxy {
     return devicesApi.devicesCreate(device);
   }
 
+  public void updateDevice(@NotNull final UUID id, @NotNull final UUID parent,
+      @NotNull final UUID gateway, final List<Property> properties,
+      final Map<String, String> attributes) {
+    final DeviceUpdate device = new DeviceUpdate();
+    device.setSpaceId(parent);
+    device.setGatewayId(gateway);
+
+    if (!CollectionUtils.isEmpty(properties)) {
+      devicesApi.devicesUpdateProperties(properties.stream()
+          .map(p -> new ExtendedPropertyCreate()
+              .name(metadataProxy.getPropertykey(p.getName(), "devices")).value(p.getValue()))
+          .collect(Collectors.toList()), id);
+    }
+
+    if (!CollectionUtils.isEmpty(attributes)) {
+      attributes.entrySet().forEach(e -> setDeviceAttribute(device, e));
+    }
+
+    devicesApi.devicesUpdate(device, id);
+  }
+
 
 
   public UUID createSpace(@NotEmpty final String name, @NotNull final UUID parent,
-      final Map<String, String> attributes) {
+      final List<Property> properties, final Map<String, String> attributes) {
 
     final SpaceCreate space = new SpaceCreate();
     space.setName(name);
     space.setParentSpaceId(parent);
+
+    if (!CollectionUtils.isEmpty(properties)) {
+      properties.stream()
+          .map(p -> new ExtendedPropertyCreate()
+              .name(metadataProxy.getPropertykey(p.getName(), "spaces")).value(p.getValue()))
+          .forEach(space::addPropertiesItem);
+    }
 
     if (!CollectionUtils.isEmpty(attributes)) {
       attributes.entrySet().forEach(e -> setSpaceAttribute(space, e));
@@ -105,9 +136,29 @@ public class CachedDigitalTwinTopologyProxy {
 
   }
 
+  public void updateSpace(@NotNull final UUID id, @NotNull final UUID parent,
+      final List<Property> properties, final Map<String, String> attributes) {
+
+    final SpaceUpdate space = new SpaceUpdate();
+    space.setParentSpaceId(parent);
+
+    if (!CollectionUtils.isEmpty(properties)) {
+      spacesApi.spacesUpdateProperties(properties.stream()
+          .map(p -> new ExtendedPropertyCreate()
+              .name(metadataProxy.getPropertykey(p.getName(), "spaces")).value(p.getValue()))
+          .collect(Collectors.toList()), id);
+    }
+
+    if (!CollectionUtils.isEmpty(attributes)) {
+      attributes.entrySet().forEach(e -> setSpaceAttribute(space, e));
+    }
+
+    spacesApi.spacesUpdate(space, id);
+  }
 
 
-  private void setDeviceAttribute(final DeviceCreate device,
+
+  private void setDeviceAttribute(final DeviceUpdate device,
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
@@ -132,7 +183,7 @@ public class CachedDigitalTwinTopologyProxy {
     // device.setSubtype(subtype);
   }
 
-  private void setSpaceAttribute(final SpaceCreate space,
+  private void setSpaceAttribute(final SpaceUpdate space,
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
@@ -202,7 +253,7 @@ public class CachedDigitalTwinTopologyProxy {
       return;
     }
 
-    devicesApi.devicesDelete(device.get().getId().toString());
+    devicesApi.devicesDelete(device.get().getId());
     cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(device.get().getId());
   }
 
@@ -215,7 +266,7 @@ public class CachedDigitalTwinTopologyProxy {
       return;
     }
 
-    spacesApi.spacesDelete(space.get().getId().toString());
+    spacesApi.spacesDelete(space.get().getId());
     cacheManager.getCache(CACHE_SPACE_BY_ID).evict(space.get().getId());
   }
 
@@ -230,7 +281,7 @@ public class CachedDigitalTwinTopologyProxy {
       if (StringUtils.isEmpty(sensors.get(0).getDevice().getGatewayId())) {
         return Optional.of(sensors.get(0).getDevice().getId());
       }
-      return Optional.of(UUID.fromString(sensors.get(0).getDevice().getGatewayId()));
+      return Optional.of(sensors.get(0).getDevice().getGatewayId());
     }
 
     // Check next if hardware ID belongs to device
@@ -245,7 +296,7 @@ public class CachedDigitalTwinTopologyProxy {
       return Optional.of(devices.get(0).getId());
     }
 
-    return Optional.of(UUID.fromString(devices.get(0).getGatewayId()));
+    return Optional.of(devices.get(0).getGatewayId());
   }
 
   @PostConstruct

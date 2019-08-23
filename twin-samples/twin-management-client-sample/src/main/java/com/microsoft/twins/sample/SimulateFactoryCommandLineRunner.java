@@ -69,7 +69,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
 
     if (!existing.isEmpty()) {
       if (DELETE_EXISTING) {
-        existing.forEach(space -> spacesApi.spacesDelete(space.getId().toString()));
+        existing.forEach(space -> spacesApi.spacesDelete(space.getId()));
       } else {
         return;
       }
@@ -132,7 +132,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
                   final DeviceUpdate vehicleInSpace = new DeviceUpdate();
                   vehicleInSpace.setSpaceId(parkingSpace.getId());
 
-                  devicesApi.devicesUpdate(vehicleInSpace, vehicle.getId().toString());
+                  devicesApi.devicesUpdate(vehicleInSpace, vehicle.getId());
 
                   log.info("Vehicle [{}] has left the building is now in space [{}]",
                       vehicle.getName(), parkingSpace.getName());
@@ -140,7 +140,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
                   final DeviceUpdate newSpace = new DeviceUpdate();
                   newSpace.setSpaceId(nextStation.getId());
 
-                  devicesApi.devicesUpdate(newSpace, vehicle.getId().toString());
+                  devicesApi.devicesUpdate(newSpace, vehicle.getId());
 
                   log.info("Vehicle [{}] is now pushed to [{}]", vehicle.getName(),
                       nextStation.getName());
@@ -228,7 +228,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
 
     if (!existing.isEmpty()) {
       if (DELETE_EXISTING) {
-        existing.forEach(space -> spacesApi.spacesDelete(space.getId().toString()));
+        existing.forEach(space -> spacesApi.spacesDelete(space.getId()));
       } else {
         return;
       }

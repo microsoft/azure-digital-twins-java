@@ -147,7 +147,7 @@ public class DeviceUpdate {
   @JsonProperty("hardwareId")
   private String hardwareId;
   @JsonProperty("gatewayId")
-  private String gatewayId;
+  private UUID gatewayId;
   @JsonProperty("spaceId")
   private UUID spaceId;
 
@@ -272,7 +272,7 @@ public class DeviceUpdate {
     this.hardwareId = hardwareId;
   }
 
-  public DeviceUpdate gatewayId(final String gatewayId) {
+  public DeviceUpdate gatewayId(final UUID gatewayId) {
     this.gatewayId = gatewayId;
     return this;
   }
@@ -283,11 +283,11 @@ public class DeviceUpdate {
    * @return gatewayId
    **/
   @Size(max = 36)
-  public String getGatewayId() {
+  public UUID getGatewayId() {
     return gatewayId;
   }
 
-  public void setGatewayId(final String gatewayId) {
+  public void setGatewayId(final UUID gatewayId) {
     this.gatewayId = gatewayId;
   }
 

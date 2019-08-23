@@ -38,7 +38,7 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/userdefinedfunctions/{id}")
   @Headers({"Accept: */*",})
-  void userDefinedFunctionsDelete(@Param("id") String id);
+  void userDefinedFunctionsDelete(@Param("id") UUID id);
 
   /**
    * Gets the contents of a udf
@@ -48,7 +48,7 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/userdefinedfunctions/{id}/contents")
   @Headers({"Accept: */*",})
-  File userDefinedFunctionsGetBlobContents(@Param("id") String id);
+  File userDefinedFunctionsGetBlobContents(@Param("id") UUID id);
 
   /**
    * Gets a list of udfs
@@ -72,7 +72,7 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/userdefinedfunctions?names={names}&ids={ids}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<UserDefinedFunctionRetrieve> userDefinedFunctionsRetrieve(@Param("names") String names,
-      @Param("ids") String ids, @Param("includes") String includes,
+      @Param("ids") UUID ids, @Param("includes") String includes,
       @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
       @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
@@ -175,7 +175,7 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/userdefinedfunctions/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  UserDefinedFunctionRetrieve userDefinedFunctionsRetrieveById(@Param("id") String id,
+  UserDefinedFunctionRetrieve userDefinedFunctionsRetrieveById(@Param("id") UUID id,
       @Param("includes") String includes);
 
   /**
@@ -201,7 +201,7 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/userdefinedfunctions/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  UserDefinedFunctionRetrieve userDefinedFunctionsRetrieveById(@Param("id") String id,
+  UserDefinedFunctionRetrieve userDefinedFunctionsRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -224,6 +224,6 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/userdefinedfunctions/{id}")
   @Headers({"Accept: */*",})
-  void userDefinedFunctionsUpdate(@Param("id") String id, @Param("metadata") String metadata,
+  void userDefinedFunctionsUpdate(@Param("id") UUID id, @Param("metadata") String metadata,
       @Param("contents") File contents);
 }

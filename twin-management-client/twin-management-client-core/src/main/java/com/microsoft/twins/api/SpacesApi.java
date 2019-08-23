@@ -92,7 +92,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/spaces/{id}/users")
   @Headers({"Accept: */*",})
-  String spacesCreateOrUpdateUser(UserCreate body, @Param("id") String id);
+  String spacesCreateOrUpdateUser(UserCreate body, @Param("id") UUID id);
 
   /**
    * Adds or updates a user associated to the given space
@@ -109,7 +109,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/spaces/{id}/users")
   @Headers({"Accept: */*",})
-  String spacesCreateOrUpdateUser(@Param("id") String id, @Param("upn") String upn,
+  String spacesCreateOrUpdateUser(@Param("id") UUID id, @Param("upn") String upn,
       @Param("location") Location location, @Param("firstName") String firstName,
       @Param("lastName") String lastName, @Param("managerName") String managerName,
       @Param("metadata") Map<String, String> metadata,
@@ -124,7 +124,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/spaces/{id}/properties")
   @Headers({"Accept: */*",})
-  String spacesCreateProperty(ExtendedPropertyCreate body, @Param("id") String id);
+  String spacesCreateProperty(ExtendedPropertyCreate body, @Param("id") UUID id);
 
   /**
    * Creates a property value
@@ -136,7 +136,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/spaces/{id}/properties")
   @Headers({"Accept: */*",})
-  String spacesCreateProperty(@Param("id") String id, @Param("name") String name,
+  String spacesCreateProperty(@Param("id") UUID id, @Param("name") String name,
       @Param("value") String value);
 
   /**
@@ -149,7 +149,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/spaces/{id}")
   @Headers({"Accept: */*",})
-  void spacesDelete(@Param("id") String id);
+  void spacesDelete(@Param("id") UUID id);
 
   /**
    * Deletes a blob Deleting a blob will delete its metadata, its content (all versions) and its
@@ -159,7 +159,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/spaces/blobs/{id}")
   @Headers({"Accept: */*",})
-  void spacesDeleteBlob(@Param("id") String id);
+  void spacesDeleteBlob(@Param("id") UUID id);
 
   /**
    * Delete the contents of the given version of the given blob Delete will fail if this version has
@@ -170,7 +170,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/spaces/blobs/{id}/contents/{version}")
   @Headers({"Accept: */*",})
-  void spacesDeleteBlobContents(@Param("id") String id, @Param("version") Integer version);
+  void spacesDeleteBlobContents(@Param("id") UUID id, @Param("version") Integer version);
 
   /**
    * Deletes all property values
@@ -179,7 +179,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/spaces/{id}/properties")
   @Headers({"Accept: */*",})
-  void spacesDeleteProperties(@Param("id") String id);
+  void spacesDeleteProperties(@Param("id") UUID id);
 
   /**
    * Deletes the given property value
@@ -189,7 +189,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/spaces/{id}/properties/{name}")
   @Headers({"Accept: */*",})
-  void spacesDeleteProperty(@Param("id") String id, @Param("name") String name);
+  void spacesDeleteProperty(@Param("id") UUID id, @Param("name") String name);
 
   /**
    * Removes a user from the given space
@@ -199,7 +199,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/spaces/{id}/users/{upn}")
   @Headers({"Accept: */*",})
-  void spacesDeleteUser(@Param("id") String id, @Param("upn") String upn);
+  void spacesDeleteUser(@Param("id") UUID id, @Param("upn") String upn);
 
   /**
    * Gets the contents of the given version of the given blob
@@ -210,7 +210,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs/{id}/contents/{version}")
   @Headers({"Accept: */*",})
-  File spacesGetBlobContents(@Param("id") String id, @Param("version") Integer version);
+  File spacesGetBlobContents(@Param("id") UUID id, @Param("version") Integer version);
 
   /**
    * Gets the contents of the latest version of the given blob
@@ -220,7 +220,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs/{id}/contents/latest")
   @Headers({"Accept: */*",})
-  File spacesGetLatestBlobContents(@Param("id") String id);
+  File spacesGetLatestBlobContents(@Param("id") UUID id);
 
   /**
    * Gets the aggregate of the values of the child sensors of the given type
@@ -233,7 +233,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/values?sensorDataTypes={sensorDataTypes}")
   @Headers({"Accept: */*",})
-  List<SensorValue> spacesGetValue(@Param("id") String id,
+  List<SensorValue> spacesGetValue(@Param("id") UUID id,
       @Param("sensorDataTypes") String sensorDataTypes);
 
   /**
@@ -259,7 +259,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/values?sensorDataTypes={sensorDataTypes}")
   @Headers({"Content-Type: */*",})
-  List<SensorValue> spacesGetValue(@Param("id") String id,
+  List<SensorValue> spacesGetValue(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -285,7 +285,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
   @RequestLine("POST /api/v1.0/spaces/{id}/users/move?toSpaceId={toSpaceId}&resetLocation={resetLocation}")
   @Headers({"Accept: */*",})
   Object spacesMoveUsersToSpace(List<UserCreate> body, @Param("toSpaceId") String toSpaceId,
-      @Param("id") String id, @Param("resetLocation") Boolean resetLocation);
+      @Param("id") UUID id, @Param("resetLocation") Boolean resetLocation);
 
   /**
    * Moves the users with provided UPNs from one space to another
@@ -311,7 +311,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("POST /api/v1.0/spaces/{id}/users/move?toSpaceId={toSpaceId}&resetLocation={resetLocation}")
   @Headers({"Content-Type: */*",})
-  Object spacesMoveUsersToSpace(List<UserCreate> body, @Param("id") String id,
+  Object spacesMoveUsersToSpace(List<UserCreate> body, @Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -367,7 +367,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces?ids={ids}&name={name}&types={types}&subtypes={subtypes}&statuses={statuses}&useParentSpace={useParentSpace}&userUpn={userUpn}&sensorDataTypes={sensorDataTypes}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<SpaceRetrieveWithChildren> spacesRetrieve(@Param("ids") String ids,
+  List<SpaceRetrieveWithChildren> spacesRetrieve(@Param("ids") UUID ids,
       @Param("name") String name, @Param("types") String types, @Param("subtypes") String subtypes,
       @Param("statuses") String statuses, @Param("useParentSpace") Boolean useParentSpace,
       @Param("userUpn") String userUpn, @Param("sensorDataTypes") String sensorDataTypes,
@@ -555,7 +555,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/spaces/blobs?names={names}&ids={ids}&sharings={sharings}&types={types}&subtypes={subtypes}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<BlobMetadataRetrieve> spacesRetrieveBlobMetadata(@Param("names") String names,
-      @Param("ids") String ids, @Param("sharings") String sharings, @Param("types") String types,
+      @Param("ids") UUID ids, @Param("sharings") String sharings, @Param("types") String types,
       @Param("subtypes") String subtypes, @Param("includes") String includes,
       @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
@@ -680,7 +680,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  BlobMetadataRetrieve spacesRetrieveBlobMetadataById(@Param("id") String id,
+  BlobMetadataRetrieve spacesRetrieveBlobMetadataById(@Param("id") UUID id,
       @Param("includes") String includes);
 
   /**
@@ -706,7 +706,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/blobs/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  BlobMetadataRetrieve spacesRetrieveBlobMetadataById(@Param("id") String id,
+  BlobMetadataRetrieve spacesRetrieveBlobMetadataById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -733,7 +733,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}?includes={includes}&sensorDataTypes={sensorDataTypes}")
   @Headers({"Accept: */*",})
-  SpaceRetrieveWithChildren spacesRetrieveById(@Param("id") String id,
+  SpaceRetrieveWithChildren spacesRetrieveById(@Param("id") UUID id,
       @Param("includes") String includes, @Param("sensorDataTypes") String sensorDataTypes);
 
   /**
@@ -761,7 +761,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}?includes={includes}&sensorDataTypes={sensorDataTypes}")
   @Headers({"Content-Type: */*",})
-  SpaceRetrieveWithChildren spacesRetrieveById(@Param("id") String id,
+  SpaceRetrieveWithChildren spacesRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -790,7 +790,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/keystore?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") String id,
+  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") UUID id,
       @Param("includes") String includes);
 
   /**
@@ -816,7 +816,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/keystore?includes={includes}")
   @Headers({"Content-Type: */*",})
-  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") String id,
+  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -844,7 +844,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/parent?spaceType={spaceType}&includes={includes}&sensorDataTypes={sensorDataTypes}")
   @Headers({"Accept: */*",})
-  SpaceRetrieveWithChildren spacesRetrieveParent(@Param("id") String id,
+  SpaceRetrieveWithChildren spacesRetrieveParent(@Param("id") UUID id,
       @Param("spaceType") String spaceType, @Param("includes") String includes,
       @Param("sensorDataTypes") String sensorDataTypes);
 
@@ -875,7 +875,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/parent?spaceType={spaceType}&includes={includes}&sensorDataTypes={sensorDataTypes}")
   @Headers({"Content-Type: */*",})
-  SpaceRetrieveWithChildren spacesRetrieveParent(@Param("id") String id,
+  SpaceRetrieveWithChildren spacesRetrieveParent(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -908,7 +908,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/properties/{name}")
   @Headers({"Accept: */*",})
-  String spacesRetrieveProperty(@Param("id") String id, @Param("name") String name);
+  String spacesRetrieveProperty(@Param("id") UUID id, @Param("name") String name);
 
   /**
    * Gets the first resource of the given type by walking up the spaces hierarchy
@@ -921,7 +921,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/resources/{type}?includes={includes}")
   @Headers({"Accept: */*",})
-  SpaceResourceRetrieve spacesRetrieveResource(@Param("id") String id, @Param("type") String type,
+  SpaceResourceRetrieve spacesRetrieveResource(@Param("id") UUID id, @Param("type") String type,
       @Param("includes") String includes);
 
   /**
@@ -948,7 +948,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/resources/{type}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  SpaceResourceRetrieve spacesRetrieveResource(@Param("id") String id, @Param("type") String type,
+  SpaceResourceRetrieve spacesRetrieveResource(@Param("id") UUID id, @Param("type") String type,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -973,7 +973,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/users/{upn}?includes={includes}")
   @Headers({"Accept: */*",})
-  UserRetrieve spacesRetrieveUserByUpn(@Param("id") String id, @Param("upn") String upn,
+  UserRetrieve spacesRetrieveUserByUpn(@Param("id") UUID id, @Param("upn") String upn,
       @Param("includes") String includes);
 
   /**
@@ -1000,7 +1000,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/users/{upn}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  UserRetrieve spacesRetrieveUserByUpn(@Param("id") String id, @Param("upn") String upn,
+  UserRetrieve spacesRetrieveUserByUpn(@Param("id") UUID id, @Param("upn") String upn,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -1034,7 +1034,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/users?traverse={traverse}&unmapped={unmapped}&firstName={firstName}&lastName={lastName}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}")
   @Headers({"Accept: */*",})
-  List<UserRetrieve> spacesRetrieveUsers(@Param("id") String id, @Param("traverse") String traverse,
+  List<UserRetrieve> spacesRetrieveUsers(@Param("id") UUID id, @Param("traverse") String traverse,
       @Param("unmapped") Boolean unmapped, @Param("firstName") String firstName,
       @Param("lastName") String lastName, @Param("includes") String includes,
       @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
@@ -1073,7 +1073,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/users?traverse={traverse}&unmapped={unmapped}&firstName={firstName}&lastName={lastName}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}")
   @Headers({"Content-Type: */*",})
-  List<UserRetrieve> spacesRetrieveUsers(@Param("id") String id,
+  List<UserRetrieve> spacesRetrieveUsers(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -1130,7 +1130,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/spaces/{id}")
   @Headers({"Accept: */*",})
-  void spacesUpdate(SpaceUpdate body, @Param("id") String id);
+  void spacesUpdate(SpaceUpdate body, @Param("id") UUID id);
 
   /**
    * Updates a space
@@ -1152,7 +1152,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/spaces/{id}")
   @Headers({"Accept: */*",})
-  void spacesUpdate(@Param("id") String id, @Param("name") String name,
+  void spacesUpdate(@Param("id") UUID id, @Param("name") String name,
       @Param("description") String description, @Param("friendlyName") String friendlyName,
       @Param("type") String type, @Param("typeId") Integer typeId,
       @Param("parentSpaceId") UUID parentSpaceId, @Param("subtype") String subtype,
@@ -1170,7 +1170,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/spaces/blobs/{id}")
   @Headers({"Accept: */*",})
-  void spacesUpdateBlob(@Param("id") String id, @Param("metadata") String metadata,
+  void spacesUpdateBlob(@Param("id") UUID id, @Param("metadata") String metadata,
       @Param("contents") File contents);
 
   /**
@@ -1182,5 +1182,5 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PUT /api/v1.0/spaces/{id}/properties")
   @Headers({"Accept: */*",})
-  Object spacesUpdateProperties(List<ExtendedPropertyCreate> body, @Param("id") String id);
+  Object spacesUpdateProperties(List<ExtendedPropertyCreate> body, @Param("id") UUID id);
 }

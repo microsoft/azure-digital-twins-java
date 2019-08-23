@@ -57,7 +57,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("DELETE /api/v1.0/resources/{id}")
   @Headers({"Accept: */*",})
-  void resourcesDelete(@Param("id") String id);
+  void resourcesDelete(@Param("id") UUID id);
 
   /**
    * Retrieves resources
@@ -179,7 +179,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/resources/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") String id,
+  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") UUID id,
       @Param("includes") String includes);
 
   /**
@@ -190,7 +190,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/resources/{id}")
   @Headers({"Accept: */*",})
-  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") String id);
+  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") UUID id);
 
   /**
    * Retrieves the specified resource
@@ -215,7 +215,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/resources/{id}?includes={includes}")
   @Headers({"Content-Type: */*",})
-  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") String id,
+  SpaceResourceRetrieve resourcesRetrieveById(@Param("id") UUID id,
       @QueryMap(encoded = true) Map<String, Object> queryParams);
 
   /**
@@ -237,7 +237,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/resources/{id}")
   @Headers({"Accept: */*",})
-  void resourcesUpdate(SpaceResourceUpdate body, @Param("id") String id);
+  void resourcesUpdate(SpaceResourceUpdate body, @Param("id") UUID id);
 
   /**
    * Updates the specified resource
@@ -250,7 +250,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    */
   @RequestLine("PATCH /api/v1.0/resources/{id}")
   @Headers({"Accept: */*",})
-  void resourcesUpdate(@Param("id") String id, @Param("spaceId") UUID spaceId,
+  void resourcesUpdate(@Param("id") UUID id, @Param("spaceId") UUID spaceId,
       @Param("size") String size, @Param("parameters") Map<String, String> parameters,
       @Param("status") String status);
 }

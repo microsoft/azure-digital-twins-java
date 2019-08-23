@@ -82,7 +82,7 @@ public interface TypesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/types?ids={ids}&categories={categories}&names={names}&system={system}&disabled={disabled}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<ExtendedTypeRetrieve> typesRetrieve(@Param("ids") String ids,
+  List<ExtendedTypeRetrieve> typesRetrieve(@Param("ids") UUID ids,
       @Param("categories") String categories, @Param("names") String names,
       @Param("system") Boolean system, @Param("disabled") Boolean disabled,
       @Param("includes") String includes, @Param("spaceId") String spaceId,
