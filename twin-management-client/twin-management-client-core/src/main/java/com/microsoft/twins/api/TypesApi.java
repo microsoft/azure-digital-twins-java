@@ -137,7 +137,7 @@ public interface TypesApi extends TwinsApiClient.Api {
    * in a fluent style.
    */
   public static class TypesRetrieveQueryParams extends HashMap<String, Object> {
-    public TypesRetrieveQueryParams ids(final String value) {
+    public TypesRetrieveQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }

@@ -20,8 +20,6 @@ import com.microsoft.twins.reflector.proxy.TenantResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-
-// TODO handle child relationship, i.e. update parent field of specified child element
 @RequiredArgsConstructor
 @Slf4j
 @Validated
@@ -60,13 +58,24 @@ public class TopologyUpdater {
     final Optional<SpaceRetrieve> existing = cachedDigitalTwinProxy.getSpaceByName(update.getId());
 
     if (existing.isPresent()) {
-      cachedDigitalTwinProxy.updateSpace(existing.get().getId(),
-          getParent(update.getRelationships()).orElseGet(() -> tenantResolver.getTenant()),
-          update.getProperties(), update.getAttributes());
+      cachedDigitalTwinProxy
+          .updateSpace(existing.get().getId(),
+              getParent(update.getRelationships(), correlationId)
+                  .orElseGet(() -> tenantResolver.getTenant()),
+              update.getProperties(), update.getAttributes());
+
+      // TODO support removing childs as well
+      updateChildSpaces(existing.get().getId(), update.getRelationships(), correlationId);
+      updateChildDevices(existing.get().getId(), update.getRelationships(), correlationId);
     } else {
-      cachedDigitalTwinProxy.createSpace(update.getId(),
-          getParent(update.getRelationships()).orElseGet(() -> tenantResolver.getTenant()),
-          update.getProperties(), update.getAttributes());
+      final UUID created =
+          cachedDigitalTwinProxy.createSpace(update.getId(),
+              getParent(update.getRelationships(), correlationId)
+                  .orElseGet(() -> tenantResolver.getTenant()),
+              update.getProperties(), update.getAttributes());
+
+      updateChildSpaces(created, update.getRelationships(), correlationId);
+      updateChildDevices(created, update.getRelationships(), correlationId);
     }
   }
 
@@ -77,15 +86,17 @@ public class TopologyUpdater {
 
     if (existing.isPresent()) {
       cachedDigitalTwinProxy.updateDevice(existing.get().getId(),
-          getParent(update.getRelationships()).orElseGet(() -> tenantResolver.getTenant()),
-          getGateway(update.getRelationships()).orElseThrow(
+          getParent(update.getRelationships(), correlationId)
+              .orElseGet(() -> tenantResolver.getTenant()),
+          getGateway(update.getRelationships(), correlationId).orElseThrow(
               () -> new InconsistentTopologyException(update.getId() + " lacks a gateway",
                   correlationId)),
           update.getProperties(), update.getAttributes());
     } else {
       cachedDigitalTwinProxy.createDevice(update.getId(),
-          getParent(update.getRelationships()).orElseGet(() -> tenantResolver.getTenant()),
-          getGateway(update.getRelationships()).orElseThrow(
+          getParent(update.getRelationships(), correlationId)
+              .orElseGet(() -> tenantResolver.getTenant()),
+          getGateway(update.getRelationships(), correlationId).orElseThrow(
               () -> new InconsistentTopologyException(update.getId() + " lacks a gateway",
                   correlationId)),
           update.getProperties(), update.getAttributes());
@@ -105,26 +116,67 @@ public class TopologyUpdater {
   }
 
 
-  private static Optional<UUID> getParent(final List<Relationship> relationShips) {
+  private Optional<UUID> getParent(final List<Relationship> relationShips,
+      final UUID correlationId) {
     if (CollectionUtils.isEmpty(relationShips)) {
       return Optional.empty();
     }
 
     return relationShips.stream()
-        .filter(relationShip -> "spaces".equalsIgnoreCase(relationShip.getEntityType())
-            && "parent".equalsIgnoreCase(relationShip.getName()))
-        .findAny().map(Relationship::getTargetId);
+        .filter(
+            relationShip -> "spaces".equalsIgnoreCase(relationShip.getEntityType()))
+        .filter(relationShip -> "parent".equalsIgnoreCase(relationShip.getName())).findAny()
+        .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
+            .orElseThrow(() -> new InconsistentTopologyException(
+                relationShip.getTargetId() + " does not exist", correlationId))
+            .getId());
   }
 
-  private static Optional<UUID> getGateway(final List<Relationship> relationShips) {
+  private void updateChildSpaces(final UUID parent, final List<Relationship> relationShips,
+      final UUID correlationId) {
+    if (CollectionUtils.isEmpty(relationShips)) {
+      return;
+    }
+
+    relationShips.stream()
+        .filter(relationShip -> "spaces".equalsIgnoreCase(relationShip.getEntityType()))
+        .filter(relationShip -> "child".equalsIgnoreCase(relationShip.getName()))
+        .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
+            .orElseThrow(() -> new InconsistentTopologyException(
+                relationShip.getTargetId() + " does not exist", correlationId)))
+        .forEach(
+            childSpace -> cachedDigitalTwinProxy.updateSpaceParent(childSpace.getId(), parent));
+  }
+
+  private void updateChildDevices(final UUID parent, final List<Relationship> relationShips,
+      final UUID correlationId) {
+    if (CollectionUtils.isEmpty(relationShips)) {
+      return;
+    }
+
+    relationShips.stream()
+        .filter(relationShip -> "devices".equalsIgnoreCase(relationShip.getEntityType()))
+        .filter(relationShip -> "child".equalsIgnoreCase(relationShip.getName()))
+        .map(relationShip -> cachedDigitalTwinProxy.getDeviceByName(relationShip.getTargetId())
+            .orElseThrow(() -> new InconsistentTopologyException(
+                relationShip.getTargetId() + " does not exist", correlationId)))
+        .forEach(
+            childSpace -> cachedDigitalTwinProxy.updateDeviceParent(childSpace.getId(), parent));
+  }
+
+  private Optional<UUID> getGateway(final List<Relationship> relationShips,
+      final UUID correlationId) {
     if (CollectionUtils.isEmpty(relationShips)) {
       return Optional.empty();
     }
 
     return relationShips.stream()
-        .filter(relationShip -> "devices".equalsIgnoreCase(relationShip.getEntityType())
-            && "gateway".equalsIgnoreCase(relationShip.getName()))
-        .findAny().map(Relationship::getTargetId);
+        .filter(relationShip -> "devices".equalsIgnoreCase(relationShip.getEntityType()))
+        .filter(relationShip -> "gateway".equalsIgnoreCase(relationShip.getName())).findAny()
+        .map(relationShip -> cachedDigitalTwinProxy
+            .getGatewayIdByHardwareId(relationShip.getTargetId())
+            .orElseThrow(() -> new InconsistentTopologyException(
+                relationShip.getTargetId() + " does not exist", correlationId)));
   }
 
 }

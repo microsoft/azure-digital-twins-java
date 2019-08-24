@@ -175,7 +175,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class MatchersRetrieveQueryParams extends HashMap<String, Object> {
-    public MatchersRetrieveQueryParams ids(final String value) {
+    public MatchersRetrieveQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }

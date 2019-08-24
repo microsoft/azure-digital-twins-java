@@ -91,12 +91,15 @@ public class CachedDigitalTwinTopologyProxy {
     return devicesApi.devicesCreate(device);
   }
 
-  public void updateDevice(@NotNull final UUID id, @NotNull final UUID parent,
-      @NotNull final UUID gateway, final List<Property> properties,
-      final Map<String, String> attributes) {
+  public void updateDevice(@NotNull final UUID id, @NotNull final UUID parent, final UUID gateway,
+      final List<Property> properties, final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
     device.setSpaceId(parent);
-    device.setGatewayId(gateway);
+
+
+    if (gateway != null) {
+      device.setGatewayId(gateway);
+    }
 
     if (!CollectionUtils.isEmpty(properties)) {
       devicesApi.devicesUpdateProperties(properties.stream()
@@ -112,7 +115,9 @@ public class CachedDigitalTwinTopologyProxy {
     devicesApi.devicesUpdate(device, id);
   }
 
-
+  public void updateDeviceParent(@NotNull final UUID id, @NotNull final UUID parent) {
+    updateDevice(id, parent, null, null, null);
+  }
 
   public UUID createSpace(@NotEmpty final String name, @NotNull final UUID parent,
       final List<Property> properties, final Map<String, String> attributes) {
@@ -154,6 +159,10 @@ public class CachedDigitalTwinTopologyProxy {
     }
 
     spacesApi.spacesUpdate(space, id);
+  }
+
+  public void updateSpaceParent(@NotNull final UUID id, @NotNull final UUID parent) {
+    updateSpace(id, parent, null, null);
   }
 
 
@@ -232,7 +241,7 @@ public class CachedDigitalTwinTopologyProxy {
   public Optional<DeviceRetrieve> getDeviceByDeviceId(@NotNull final UUID deviceId) {
     return devicesApi
         .devicesRetrieve(
-            new DevicesRetrieveQueryParams().ids(deviceId.toString()).includes("ConnectionString"))
+            new DevicesRetrieveQueryParams().ids(deviceId).includes("ConnectionString"))
         .stream().findAny();
   }
 
@@ -240,8 +249,8 @@ public class CachedDigitalTwinTopologyProxy {
       put = {@CachePut(cacheNames = CACHE_SPACE_BY_NAME, key = "#result.name",
           condition = "#result != null")})
   public Optional<SpaceRetrieve> getSpaceBySpaceId(@NotNull final UUID deviceId) {
-    return spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().ids(deviceId.toString()))
-        .stream().map(srwc -> (SpaceRetrieve) srwc).findAny();
+    return spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().ids(deviceId)).stream()
+        .map(srwc -> (SpaceRetrieve) srwc).findAny();
   }
 
   @CacheEvict(cacheNames = CACHE_DEVICE_BY_NAME)

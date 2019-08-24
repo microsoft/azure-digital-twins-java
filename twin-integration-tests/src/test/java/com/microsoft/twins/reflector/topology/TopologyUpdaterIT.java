@@ -40,9 +40,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     final UUID correlationId = UUID.randomUUID();
 
-    assertThat(spacesApi
-        .spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace.toString())))
-            .hasSize(1);
+    assertThat(spacesApi.spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace)))
+        .hasSize(1);
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(spaceName);
@@ -57,8 +56,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
-        .untilAsserted(() -> assertThat(spacesApi
-            .spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace.toString())))
+        .untilAsserted(() -> assertThat(
+            spacesApi.spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace)))
                 .isEmpty());
   }
 
@@ -71,9 +70,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId, testGateway, testSpace);
 
-    assertThat(devicesApi
-        .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString())))
-            .hasSize(1);
+    assertThat(devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device)))
+        .hasSize(1);
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
@@ -88,22 +86,23 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
-        .untilAsserted(() -> assertThat(devicesApi
-            .devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device.toString())))
+        .untilAsserted(() -> assertThat(
+            devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device)))
                 .isEmpty());
   }
 
   @Test
   public void createDeviceFull() {
-    createDeviceWithGivenParent(createSpace("My Reflector Proxy create test space"));
+    final String spaceName = UUID.randomUUID().toString();
+    createDeviceWithGivenParent(spaceName, createSpace(spaceName));
   }
 
   @Test
-  public void createDeviceNoParent() {
-    createDeviceWithGivenParent(null);
+  public void createDeviceFullNoParent() {
+    createDeviceWithGivenParent(null, null);
   }
 
-  private void createDeviceWithGivenParent(final UUID parent) {
+  private void createDeviceWithGivenParent(final String parentName, final UUID parent) {
     final UUID correlationId = UUID.randomUUID();
     final String deviceId = UUID.randomUUID().toString();
     final String friendlyName = "a test device";
@@ -113,13 +112,13 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
 
-    final List<Relationship> relationShips = new ArrayList();
-    relationShips.add(
-        Relationship.builder().entityType("devices").name("gateway").targetId(testGateway).build());
+    final List<Relationship> relationShips = new ArrayList<>();
+    relationShips.add(Relationship.builder().entityType("devices").name("gateway")
+        .targetId(testGatewayName).build());
 
-    if (parent != null) {
-      relationShips
-          .add(Relationship.builder().entityType("spaces").name("parent").targetId(parent).build());
+    if (parentName != null) {
+      relationShips.add(
+          Relationship.builder().entityType("spaces").name("parent").targetId(parentName).build());
     }
 
     testMessage.setRelationships(relationShips);
@@ -163,13 +162,14 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   @Test
   public void updateDeviceFull() {
-    final UUID updatedParent = createSpace("My Reflector Proxy updated parent space");
+    final String updatedParentName = UUID.randomUUID().toString();
+    final UUID updatedParent = createSpace(updatedParentName);
     final UUID correlationId = UUID.randomUUID();
+
+    final String updatedGatewayName = UUID.randomUUID().toString();
+    final UUID updatedGateway = createGateway(updatedGatewayName, tenant);
+
     final String deviceId = UUID.randomUUID().toString();
-
-    final String gatewayName = UUID.randomUUID().toString();
-    final UUID updatedGateway = createGateway(gatewayName, tenant);
-
     final UUID device =
         createDevice(deviceId, testGateway, createSpace("My Reflector Proxyoriginal space"));
 
@@ -180,8 +180,9 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
     testMessage.setRelationships(List.of(
-        Relationship.builder().entityType("spaces").name("parent").targetId(updatedParent).build(),
-        Relationship.builder().entityType("devices").name("gateway").targetId(updatedGateway)
+        Relationship.builder().entityType("spaces").name("parent").targetId(updatedParentName)
+            .build(),
+        Relationship.builder().entityType("devices").name("gateway").targetId(updatedGatewayName)
             .build()));
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value("updatedValue").build()));
@@ -223,15 +224,29 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
     final UUID correlationId = UUID.randomUUID();
-    final UUID updateParentSpace = createSpace("My Reflector Proxy update test parent space");
+    final String updateParentSpaceName = UUID.randomUUID().toString();
+    final UUID updateParentSpace = createSpace(updateParentSpaceName);
+
+    final String updateChildSpaceName = UUID.randomUUID().toString();
+    final UUID updateChildSpaceId = createSpace(updateChildSpaceName);
+
+    final String updateChildDeviceName = UUID.randomUUID().toString();
+    final UUID updateChildDeviceId = createDevice(updateChildDeviceName, testGateway,
+        createSpace("My Reflector Proxy original parent space"));
+
     final String friendlyName = "updated name";
     final String description = "updated description";
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(spaceId);
     testMessage.setEntityType("spaces");
-    testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("parent")
-        .targetId(updateParentSpace).build()));
+    testMessage.setRelationships(List.of(
+        Relationship.builder().entityType("spaces").name("parent").targetId(updateParentSpaceName)
+            .build(),
+        Relationship.builder().entityType("spaces").name("child").targetId(updateChildSpaceName)
+            .build(),
+        Relationship.builder().entityType("devices").name("child").targetId(updateChildDeviceName)
+            .build()));
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value("updatedValue").build()));
     testMessage.setAttributes(Map.of("friendlyName", friendlyName, "description", description));
@@ -258,19 +273,26 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(created.getProperties()).containsExactly(new ExtendedPropertyRetrieve()
         .name(TEST_PROP_KEY).value("updatedValue").dataType("string"));
 
+    assertThat(getDevice(updateChildDeviceId)).isNotEmpty()
+        .hasValueSatisfying(child -> child.getSpaceId().equals(space));
+
+    assertThat(getSpace(updateChildSpaceId)).isNotEmpty()
+        .hasValueSatisfying(child -> child.getParentSpaceId().equals(space));
   }
 
   @Test
   public void createSpaceFull() {
-    testSpaceCreationWithParent(createSpace("My Reflector Proxy create test parent space"));
+    final String spaceName = UUID.randomUUID().toString();
+
+    testSpaceCreationWithParent(spaceName, createSpace(spaceName));
   }
 
   @Test
   public void createSpaceFullNoParent() {
-    testSpaceCreationWithParent(null);
+    testSpaceCreationWithParent(null, null);
   }
 
-  private void testSpaceCreationWithParent(final UUID testParentSpace) {
+  private void testSpaceCreationWithParent(final String parentSpaceName, final UUID parentSpaceId) {
     final UUID correlationId = UUID.randomUUID();
     final String spaceId = UUID.randomUUID().toString();
     final String friendlyName = "a test device";
@@ -280,9 +302,9 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setId(spaceId);
     testMessage.setEntityType("spaces");
 
-    if (testParentSpace != null) {
+    if (parentSpaceName != null) {
       testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces")
-          .name("parent").targetId(testParentSpace).build()));
+          .name("parent").targetId(parentSpaceName).build()));
     }
 
     testMessage.setProperties(
@@ -305,8 +327,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     final SpaceRetrieve created = spacesApi.spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams()
         .name(spaceId.toString()).includes("properties,description")).get(0);
     assertThat(created.getName()).isEqualTo(spaceId);
-    if (testParentSpace != null) {
-      assertThat(created.getParentSpaceId()).isEqualTo(testParentSpace);
+    if (parentSpaceId != null) {
+      assertThat(created.getParentSpaceId()).isEqualTo(parentSpaceId);
     } else {
       assertThat(created.getParentSpaceId()).isEqualTo(tenant);
     }

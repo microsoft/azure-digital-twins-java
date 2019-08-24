@@ -204,12 +204,12 @@ public interface SensorsApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/sensors?ids={ids}&deviceIds={deviceIds}&types={types}&portTypes={portTypes}&dataTypes={dataTypes}&dataSubtypes={dataSubtypes}&dataUnitTypes={dataUnitTypes}&hardwareIds={hardwareIds}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<SensorRetrieve> sensorsRetrieve(@Param("ids") UUID ids,
-      @Param("deviceIds") String deviceIds, @Param("types") String types,
-      @Param("portTypes") String portTypes, @Param("dataTypes") String dataTypes,
-      @Param("dataSubtypes") String dataSubtypes, @Param("dataUnitTypes") String dataUnitTypes,
-      @Param("hardwareIds") String hardwareIds, @Param("includes") String includes,
-      @Param("propertyKey") String propertyKey, @Param("propertyValue") String propertyValue,
+  List<SensorRetrieve> sensorsRetrieve(@Param("ids") UUID ids, @Param("deviceIds") String deviceIds,
+      @Param("types") String types, @Param("portTypes") String portTypes,
+      @Param("dataTypes") String dataTypes, @Param("dataSubtypes") String dataSubtypes,
+      @Param("dataUnitTypes") String dataUnitTypes, @Param("hardwareIds") String hardwareIds,
+      @Param("includes") String includes, @Param("propertyKey") String propertyKey,
+      @Param("propertyValue") String propertyValue,
       @Param("propertyValueSearchType") String propertyValueSearchType,
       @Param("spaceId") String spaceId, @Param("traverse") String traverse,
       @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
@@ -266,12 +266,12 @@ public interface SensorsApi extends TwinsApiClient.Api {
    * in a fluent style.
    */
   public static class SensorsRetrieveQueryParams extends HashMap<String, Object> {
-    public SensorsRetrieveQueryParams ids(final String value) {
+    public SensorsRetrieveQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }
 
-    public SensorsRetrieveQueryParams deviceIds(final String value) {
+    public SensorsRetrieveQueryParams deviceIds(final UUID value) {
       put("deviceIds", EncodingUtils.encode(value));
       return this;
     }

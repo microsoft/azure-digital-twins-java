@@ -395,7 +395,7 @@ public interface UsersApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public UsersRetrieveBlobMetadataQueryParams ids(final String value) {
+    public UsersRetrieveBlobMetadataQueryParams ids(final UUID value) {
       put("ids", EncodingUtils.encode(value));
       return this;
     }
