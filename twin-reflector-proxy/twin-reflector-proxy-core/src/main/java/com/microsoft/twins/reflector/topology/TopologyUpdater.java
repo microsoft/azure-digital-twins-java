@@ -36,8 +36,11 @@ public class TopologyUpdater {
     log.trace("Got partial topology update: [{}] with correlation ID: [{}]", update, correlationId);
 
 
-
-    // TODO implement
+    if ("devices".equalsIgnoreCase(update.getEntityType())) {
+      updateDevicePartial(update, correlationId);
+    } else if ("spaces".equalsIgnoreCase(update.getEntityType())) {
+      updateSpacePartial(update, correlationId);
+    }
   }
 
 
@@ -59,7 +62,7 @@ public class TopologyUpdater {
 
     if (existing.isPresent()) {
       cachedDigitalTwinProxy
-          .updateSpace(existing.get().getId(),
+          .updateSpaceComplete(existing.get().getId(),
               getParent(update.getRelationships(), correlationId)
                   .orElseGet(() -> tenantResolver.getTenant()),
               update.getProperties(), update.getAttributes());
@@ -79,13 +82,56 @@ public class TopologyUpdater {
     }
   }
 
+  private void updateSpacePartial(final IngressMessage update, final UUID correlationId) {
+    final Optional<SpaceRetrieve> existing = cachedDigitalTwinProxy.getSpaceByName(update.getId());
+
+    if (existing.isPresent()) {
+      cachedDigitalTwinProxy.updateSpacePartial(existing.get().getId(),
+          getParent(update.getRelationships(), correlationId).orElse(null), update.getProperties(),
+          update.getAttributes());
+
+      // TODO support removing childs as well
+      updateChildSpaces(existing.get().getId(), update.getRelationships(), correlationId);
+      updateChildDevices(existing.get().getId(), update.getRelationships(), correlationId);
+    } else {
+      final UUID created =
+          cachedDigitalTwinProxy.createSpace(update.getId(),
+              getParent(update.getRelationships(), correlationId)
+                  .orElseGet(() -> tenantResolver.getTenant()),
+              update.getProperties(), update.getAttributes());
+
+      updateChildSpaces(created, update.getRelationships(), correlationId);
+      updateChildDevices(created, update.getRelationships(), correlationId);
+    }
+  }
+
+
+  private void updateDevicePartial(final IngressMessage update, final UUID correlationId) {
+    final Optional<DeviceRetrieve> existing =
+        cachedDigitalTwinProxy.getDeviceByName(update.getId());
+
+    if (existing.isPresent()) {
+      cachedDigitalTwinProxy.updateDevicePartial(existing.get().getId(),
+          getParent(update.getRelationships(), correlationId).orElse(null),
+          getGateway(update.getRelationships(), correlationId).orElse(null), update.getProperties(),
+          update.getAttributes());
+    } else {
+      cachedDigitalTwinProxy.createDevice(update.getId(),
+          getParent(update.getRelationships(), correlationId)
+              .orElseGet(() -> tenantResolver.getTenant()),
+          getGateway(update.getRelationships(), correlationId).orElseThrow(
+              () -> new InconsistentTopologyException(update.getId() + " lacks a gateway",
+                  correlationId)),
+          update.getProperties(), update.getAttributes());
+    }
+  }
 
   private void updateDeviceComplete(final IngressMessage update, final UUID correlationId) {
     final Optional<DeviceRetrieve> existing =
         cachedDigitalTwinProxy.getDeviceByName(update.getId());
 
     if (existing.isPresent()) {
-      cachedDigitalTwinProxy.updateDevice(existing.get().getId(),
+      cachedDigitalTwinProxy.updateDeviceComplete(existing.get().getId(),
           getParent(update.getRelationships(), correlationId)
               .orElseGet(() -> tenantResolver.getTenant()),
           getGateway(update.getRelationships(), correlationId).orElseThrow(

@@ -52,6 +52,11 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class CachedDigitalTwinTopologyProxy {
 
+  private static final String ENTITY_TYPE_SPACE = "spaces";
+  private static final String ENTITY_TYPE_DEVICE = "devices";
+  private static final String ATTRIBUTE_STATUS = "status";
+  private static final String ATTRIBUTE_FRIENDLY_NAME = "friendlyName";
+  private static final String ATTRIBUTE_DESCRIPTION = "description";
   private static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
   private static final String CACHE_DEVICE_BY_ID = "deviceById";
   private static final String CACHE_DEVICE_BY_NAME = "deviceByName";
@@ -80,7 +85,8 @@ public class CachedDigitalTwinTopologyProxy {
     if (!CollectionUtils.isEmpty(properties)) {
       properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), "devices")).value(p.getValue()))
+              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_DEVICE))
+              .value(p.getValue()))
           .forEach(device::addPropertiesItem);
     }
 
@@ -91,11 +97,64 @@ public class CachedDigitalTwinTopologyProxy {
     return devicesApi.devicesCreate(device);
   }
 
-  public void updateDevice(@NotNull final UUID id, @NotNull final UUID parent, final UUID gateway,
-      final List<Property> properties, final Map<String, String> attributes) {
+  public void updateDeviceComplete(@NotNull final UUID id, @NotNull final UUID parent,
+      final UUID gateway, final List<Property> properties, final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
     device.setSpaceId(parent);
+    device.setGatewayId(gateway);
 
+    if (!CollectionUtils.isEmpty(properties)) {
+      devicesApi.devicesUpdateProperties(properties.stream()
+          .map(p -> new ExtendedPropertyCreate()
+              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_DEVICE))
+              .value(p.getValue()))
+          .collect(Collectors.toList()), id);
+    }
+
+    setAllDeviceAttributes(device, attributes);
+
+
+    devicesApi.devicesUpdate(device, id);
+  }
+
+  private void setAllDeviceAttributes(final DeviceUpdate device,
+      final Map<String, String> attributes) {
+
+    if (CollectionUtils.isEmpty(attributes)) {
+      device.setDescription("");
+      device.setFriendlyName("");
+      device.setStatus(StatusEnum.PROVISIONED);
+      return;
+    }
+
+    device.setDescription(attributes.getOrDefault(ATTRIBUTE_DESCRIPTION, ""));
+    device.setFriendlyName(attributes.getOrDefault(ATTRIBUTE_FRIENDLY_NAME, ""));
+
+    // TODO define what empty status in update case means
+    final StatusEnum status = StatusEnum.fromValue(attributes.get(ATTRIBUTE_STATUS));
+    device.setStatus(status);
+  }
+
+  private void setAllSpaceAttributes(final SpaceUpdate space,
+      final Map<String, String> attributes) {
+
+    if (CollectionUtils.isEmpty(attributes)) {
+      space.setDescription("");
+      space.setFriendlyName("");
+      return;
+    }
+
+    space.setDescription(attributes.getOrDefault(ATTRIBUTE_DESCRIPTION, ""));
+    space.setFriendlyName(attributes.getOrDefault(ATTRIBUTE_FRIENDLY_NAME, ""));
+  }
+
+  public void updateDevicePartial(@NotNull final UUID id, final UUID parent, final UUID gateway,
+      final List<Property> properties, final Map<String, String> attributes) {
+    final DeviceUpdate device = new DeviceUpdate();
+
+    if (parent != null) {
+      device.setSpaceId(parent);
+    }
 
     if (gateway != null) {
       device.setGatewayId(gateway);
@@ -104,7 +163,8 @@ public class CachedDigitalTwinTopologyProxy {
     if (!CollectionUtils.isEmpty(properties)) {
       devicesApi.devicesUpdateProperties(properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), "devices")).value(p.getValue()))
+              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_DEVICE))
+              .value(p.getValue()))
           .collect(Collectors.toList()), id);
     }
 
@@ -116,7 +176,7 @@ public class CachedDigitalTwinTopologyProxy {
   }
 
   public void updateDeviceParent(@NotNull final UUID id, @NotNull final UUID parent) {
-    updateDevice(id, parent, null, null, null);
+    updateDevicePartial(id, parent, null, null, null);
   }
 
   public UUID createSpace(@NotEmpty final String name, @NotNull final UUID parent,
@@ -129,7 +189,8 @@ public class CachedDigitalTwinTopologyProxy {
     if (!CollectionUtils.isEmpty(properties)) {
       properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), "spaces")).value(p.getValue()))
+              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_SPACE))
+              .value(p.getValue()))
           .forEach(space::addPropertiesItem);
     }
 
@@ -141,7 +202,7 @@ public class CachedDigitalTwinTopologyProxy {
 
   }
 
-  public void updateSpace(@NotNull final UUID id, @NotNull final UUID parent,
+  public void updateSpaceComplete(@NotNull final UUID id, @NotNull final UUID parent,
       final List<Property> properties, final Map<String, String> attributes) {
 
     final SpaceUpdate space = new SpaceUpdate();
@@ -150,7 +211,32 @@ public class CachedDigitalTwinTopologyProxy {
     if (!CollectionUtils.isEmpty(properties)) {
       spacesApi.spacesUpdateProperties(properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), "spaces")).value(p.getValue()))
+              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_SPACE))
+              .value(p.getValue()))
+          .collect(Collectors.toList()), id);
+    }
+
+    if (!CollectionUtils.isEmpty(attributes)) {
+      setAllSpaceAttributes(space, attributes);
+    }
+
+    spacesApi.spacesUpdate(space, id);
+  }
+
+  public void updateSpacePartial(@NotNull final UUID id, final UUID parent,
+      final List<Property> properties, final Map<String, String> attributes) {
+
+    final SpaceUpdate space = new SpaceUpdate();
+
+    if (parent != null) {
+      space.setParentSpaceId(parent);
+    }
+
+    if (!CollectionUtils.isEmpty(properties)) {
+      spacesApi.spacesUpdateProperties(properties.stream()
+          .map(p -> new ExtendedPropertyCreate()
+              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_SPACE))
+              .value(p.getValue()))
           .collect(Collectors.toList()), id);
     }
 
@@ -162,7 +248,7 @@ public class CachedDigitalTwinTopologyProxy {
   }
 
   public void updateSpaceParent(@NotNull final UUID id, @NotNull final UUID parent) {
-    updateSpace(id, parent, null, null);
+    updateSpaceComplete(id, parent, null, null);
   }
 
 
@@ -171,13 +257,13 @@ public class CachedDigitalTwinTopologyProxy {
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
-      case "description":
+      case ATTRIBUTE_DESCRIPTION:
         device.setDescription(attribute.getValue());
         break;
-      case "friendlyName":
+      case ATTRIBUTE_FRIENDLY_NAME:
         device.setFriendlyName(attribute.getValue());
         break;
-      case "status":
+      case ATTRIBUTE_STATUS:
         device.setStatus(StatusEnum.fromValue(attribute.getValue()));
         break;
       default:
@@ -196,13 +282,13 @@ public class CachedDigitalTwinTopologyProxy {
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
-      case "description":
+      case ATTRIBUTE_DESCRIPTION:
         space.setDescription(attribute.getValue());
         break;
-      case "friendlyName":
+      case ATTRIBUTE_FRIENDLY_NAME:
         space.setFriendlyName(attribute.getValue());
         break;
-      case "status":
+      case ATTRIBUTE_STATUS:
         space.setStatus(attribute.getValue());
         break;
       default:
