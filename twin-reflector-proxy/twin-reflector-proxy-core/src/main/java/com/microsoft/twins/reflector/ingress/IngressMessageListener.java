@@ -28,6 +28,9 @@ public class IngressMessageListener {
       condition = "headers['TwinReflectorProxy-MessageType']=='partial'")
   void getPartialTopologyUpdate(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
+    log.trace("Got partial update ingress message {} with correlationId {}", message,
+        correlationId);
+
     topologyUpdater.updateTopologyElementPartial(message, correlationId);
 
     if (message.getTelemetry() != null) {
@@ -40,6 +43,9 @@ public class IngressMessageListener {
       condition = "headers['TwinReflectorProxy-MessageType']=='full'")
   void getCompleteTopologyUpdate(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
+    log.trace("Got complete update ingress message {} with correlationId {}", message,
+        correlationId);
+
     topologyUpdater.updateTopologyElementComplete(message, correlationId);
 
     if (message.getTelemetry() != null) {
@@ -52,6 +58,9 @@ public class IngressMessageListener {
       condition = "headers['TwinReflectorProxy-MessageType']=='delete'")
   void getDeleteTopologyElement(@NotNull @Valid @Payload final IngressMessage message,
       @Header(name = HEADER_CORRELATION_ID, required = false) final UUID correlationId) {
+    log.trace("Got delete element ingress message {} with correlationId {}", message,
+        correlationId);
+
     topologyUpdater.deleteTopologyElement(message.getId(), correlationId, message.getEntityType());
   }
 

@@ -242,8 +242,8 @@ public abstract class AbstractIntegrationTest {
   protected UUID createSpace(final String spaceName, final UUID parent) {
     final SpaceCreate deviceSpaceCreate = new SpaceCreate();
     deviceSpaceCreate.setName(spaceName);
-    deviceSpaceCreate.setFriendlyName("Space " + spaceName);
-    deviceSpaceCreate.setDescription("Space " + spaceName);
+    deviceSpaceCreate.setFriendlyName(spaceName);
+    deviceSpaceCreate.setDescription(spaceName);
     deviceSpaceCreate.setType(TEST_SPACE_TYPE);
     deviceSpaceCreate.setParentSpaceId(parent);
 
@@ -261,11 +261,17 @@ public abstract class AbstractIntegrationTest {
     device.setType(TEST_DEVICE_TYPE);
     device.setSpaceId(spaceId);
     device.setHardwareId(deviceName);
+    device.setDescription(deviceName);
+    device.setFriendlyName(deviceName);
 
     final UUID createdDevice = devicesApi.devicesCreate(device);
     assertThat(createdDevice).isNotNull();
 
     return createdDevice;
+  }
+
+  protected UUID createDevice(final String deviceName) {
+    return createDevice(deviceName, testGateway, tenant);
   }
 
   protected UUID createDevice(final String deviceName, final UUID gatewayId, final UUID spaceId) {
@@ -276,6 +282,8 @@ public abstract class AbstractIntegrationTest {
     device.setHardwareId(deviceName);
     device.setGatewayId(gatewayId);
     device.setCreateIoTHubDevice(false);
+    device.setFriendlyName(deviceName);
+    device.setDescription(deviceName);
 
     final UUID createdDevice = devicesApi.devicesCreate(device);
     assertThat(createdDevice).isNotNull();

@@ -13,7 +13,7 @@
     </encoder>
   </appender>
   
-  <logger name="feign" level="debug" />
+  <logger name="feign" level="info" />
 
   <root level="info">
     <appender-ref ref="STDOUT" />
