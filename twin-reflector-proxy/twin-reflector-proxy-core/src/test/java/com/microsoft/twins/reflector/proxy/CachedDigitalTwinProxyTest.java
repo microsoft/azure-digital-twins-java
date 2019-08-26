@@ -62,7 +62,10 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
   private EndpointsApi endpointsApi;
 
   @Autowired
-  private CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy;
+  private DigitalTwinTopologyProxy cachedDigitalTwinProxy;
+
+  @Autowired
+  private TopologyCacheManager topologyCacheManager;
 
   @Autowired
   private CachedDigitalTwinProxyTestConfiguration testConfiguration;
@@ -86,7 +89,7 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     private DevicesApi devicesApi;
 
     @MockBean
-    private CachedDigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy;
+    private DigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy;
 
     private final TwinReflectorProxyProperties properties = new TwinReflectorProxyProperties();
 
@@ -116,10 +119,15 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     }
 
     @Bean
-    CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy(final CacheManager cacheManager,
-        final EndpointsApi endpointsApi) {
-      return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, spacesApi,
-          sensorsApi, devicesApi, endpointsApi, properties, cacheManager);
+    DigitalTwinTopologyProxy cachedDigitalTwinProxy(final CacheManager cacheManager) {
+      return new Cachedv1DigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, spacesApi,
+          sensorsApi, devicesApi, cacheManager);
+    }
+
+    @Bean
+    TopologyCacheManager topologyCacheManager(final EndpointsApi endpointsApi,
+        final CacheManager cacheManager) {
+      return new TopologyCacheManager(endpointsApi, properties, cacheManager);
     }
 
   }
@@ -148,7 +156,7 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     testConfiguration.getProperties().getEventHubs()
         .setSecondaryConnectionString(testSecondaryConnectionString);
 
-    cachedDigitalTwinProxy.registerForTopologyChanges();
+    topologyCacheManager.registerForTopologyChanges();
     verify(endpointsApi, times(2))
         .endpointsRetrieve(any(EndpointsApi.EndpointsRetrieveQueryParams.class));
     final ArgumentCaptor<EndpointCreate> endpointCreateCaptor =

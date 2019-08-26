@@ -4,7 +4,6 @@
 package com.microsoft.twins.reflector.proxy;
 
 import java.util.Optional;
-import javax.validation.constraints.NotBlank;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.twins.api.PropertyKeysApi;
@@ -18,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class CachedDigitalTwinMetadataProxy {
+public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProxy {
   private static final String CACHE_PROPERTY_KEY_BY_NAME_AND_SCOPE =
       "cachePropertyKeyByNameAndScope";
 
@@ -26,8 +25,9 @@ public class CachedDigitalTwinMetadataProxy {
   private final TenantResolver tenantResolver;
   private final PropertyKeysApi propertyKeysApi;
 
+  @Override
   @Cacheable(CACHE_PROPERTY_KEY_BY_NAME_AND_SCOPE)
-  public String getPropertykey(@NotBlank final String name, @NotBlank final String scope) {
+  public String getPropertykey(final String name, final String scope) {
     final Optional<ExtendedPropertyKeyRetrieve> found = propertyKeysApi
         .propertyKeysRetrieve(new PropertyKeysApi.PropertyKeysRetrieveQueryParams()
             .spaceId(tenantResolver.getTenant().toString()).scope(scope))

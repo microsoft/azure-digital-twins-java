@@ -20,9 +20,12 @@ import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.reflector.ingress.IngressMessageListener;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
-import com.microsoft.twins.reflector.proxy.CachedDigitalTwinMetadataProxy;
-import com.microsoft.twins.reflector.proxy.CachedDigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.Cachedv1DigitalTwinMetadataProxy;
+import com.microsoft.twins.reflector.proxy.Cachedv1DigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
+import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import com.microsoft.twins.reflector.proxy.TenantResolver;
+import com.microsoft.twins.reflector.proxy.TopologyCacheManager;
 import com.microsoft.twins.reflector.proxy.TopologyOperationSink;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
 import com.microsoft.twins.reflector.topology.TopologyUpdater;
@@ -36,35 +39,39 @@ public class TwinReflectorProxyAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  TelemetryForwarder telemetryForwarder(
-      final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy) {
+  TelemetryForwarder telemetryForwarder(final DigitalTwinTopologyProxy cachedDigitalTwinProxy) {
     return new TelemetryForwarder(cachedDigitalTwinProxy);
   }
 
   @Bean
   @ConditionalOnMissingBean
   TopologyUpdater topologyUpdater(final TenantResolver tenantResolver,
-      final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy) {
+      final DigitalTwinTopologyProxy cachedDigitalTwinProxy) {
     return new TopologyUpdater(tenantResolver, cachedDigitalTwinProxy);
   }
 
   @Bean
   @ConditionalOnMissingBean
-  CachedDigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy(final TenantResolver tenantResolver,
+  DigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy(final TenantResolver tenantResolver,
       final PropertyKeysApi propertyKeysApi) {
 
-    return new CachedDigitalTwinMetadataProxy(tenantResolver, propertyKeysApi);
+    return new Cachedv1DigitalTwinMetadataProxy(tenantResolver, propertyKeysApi);
   }
 
   @Bean
   @ConditionalOnMissingBean
-  CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy(
-      final CachedDigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy,
-      final SpacesApi spacesApi, final SensorsApi sensorsApi, final DevicesApi devicesApi,
-      final EndpointsApi endpointsApi, final TwinReflectorProxyProperties properties,
-      final CacheManager cacheManager) {
-    return new CachedDigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, spacesApi, sensorsApi,
-        devicesApi, endpointsApi, properties, cacheManager);
+  DigitalTwinTopologyProxy cachedDigitalTwinProxy(
+      final DigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy, final SpacesApi spacesApi,
+      final SensorsApi sensorsApi, final DevicesApi devicesApi, final CacheManager cacheManager) {
+    return new Cachedv1DigitalTwinTopologyProxy(cachedDigitalTwinMetadataProxy, spacesApi,
+        sensorsApi, devicesApi, cacheManager);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  TopologyCacheManager topologyCacheManager(final EndpointsApi endpointsApi,
+      final TwinReflectorProxyProperties properties, final CacheManager cacheManager) {
+    return new TopologyCacheManager(endpointsApi, properties, cacheManager);
   }
 
   @Bean
