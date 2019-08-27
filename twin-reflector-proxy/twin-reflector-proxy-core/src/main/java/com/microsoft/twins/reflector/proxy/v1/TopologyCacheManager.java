@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.proxy;
+package com.microsoft.twins.reflector.proxy.v1;
 
 import java.util.List;
 import java.util.UUID;

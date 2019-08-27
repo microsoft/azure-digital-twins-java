@@ -60,6 +60,7 @@ import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfigurati
 @EnableBinding(Sink.class)
 public abstract class AbstractIntegrationTest {
   protected static final String TEST_DEVICE_SUBTYPE = "IntegrationTestDevice";
+  protected static final String TEST_SPACE_STATUS = "ReadyToTest";
   protected static final String TEST_SPACE_TYPE = "TestSpaces";
   protected static final String TEST_SPACE_SUBTYPE = "integrationTestSpaces";
   protected static final String TEST_DEVICE_TYPE = "TestDevices";
@@ -69,6 +70,7 @@ public abstract class AbstractIntegrationTest {
   protected int deviceSubTypeId;
   protected int spaceTypeId;
   protected int spaceSubTypeId;
+  protected int spaceStatusId;
 
   @Autowired
   private TenantResolver tenantResolver;
@@ -113,6 +115,7 @@ public abstract class AbstractIntegrationTest {
 
     createTypes();
     testGateway = createGateway(testGatewayName, tenant);
+    ((TestTenantResolver) tenantResolver).setGateway(testGateway);
   }
 
   @AfterEach
@@ -211,7 +214,7 @@ public abstract class AbstractIntegrationTest {
     deviceSubTypeId = getType(TEST_DEVICE_SUBTYPE, CategoryEnum.DEVICESUBTYPE);
     spaceTypeId = getType(TEST_SPACE_TYPE, CategoryEnum.SPACETYPE);
     spaceSubTypeId = getType(TEST_SPACE_SUBTYPE, CategoryEnum.SPACESUBTYPE);
-
+    spaceStatusId = getType(TEST_SPACE_STATUS, CategoryEnum.SPACESTATUS);
   }
 
   private void addDeviceEventEndPoint(final String connectionString,
@@ -249,6 +252,7 @@ public abstract class AbstractIntegrationTest {
     deviceSpaceCreate.setDescription(spaceName);
     deviceSpaceCreate.setTypeId(spaceTypeId);
     deviceSpaceCreate.setParentSpaceId(parent);
+    deviceSpaceCreate.setStatusId(spaceStatusId);
 
     return spacesApi.spacesCreate(deviceSpaceCreate);
   }

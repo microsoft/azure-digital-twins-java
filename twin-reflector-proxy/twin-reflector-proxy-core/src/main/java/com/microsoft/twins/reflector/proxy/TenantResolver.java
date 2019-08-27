@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface TenantResolver {
   UUID getTenant();
+
+  UUID getGateway();
 }

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.proxy;
+package com.microsoft.twins.reflector.proxy.v1;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +18,8 @@ import com.microsoft.twins.model.ExtendedTypeCreate;
 import com.microsoft.twins.model.ExtendedTypeRetrieve;
 import com.microsoft.twins.model.PrimitiveDataTypeEnum;
 import com.microsoft.twins.model.ScopeEnum;
+import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
+import com.microsoft.twins.reflector.proxy.TenantResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +46,7 @@ public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProx
         .stream().filter(p -> name.equalsIgnoreCase(p.getName())).findAny();
 
     if (!found.isPresent()) {
+      log.debug("PropertyKey [{}] in scope [{}] not found. I will create one", name, scope);
       propertyKeysApi.propertyKeysCreate(
           new ExtendedPropertyKeyCreate().name(name).spaceId(tenantResolver.getTenant())
               .scope(ScopeEnum.fromValue(scope)).primitiveDataType(PrimitiveDataTypeEnum.STRING));
@@ -60,13 +63,11 @@ public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProx
             .names(name.replaceAll("\\s+", "")).categories(category));
 
     if (CollectionUtils.isEmpty(found)) {
+      log.debug("Type [{}] in category [{}] not found. I will create one", name, category);
       return typesApi.typesCreate(new ExtendedTypeCreate().name(name.replaceAll("\\s+", ""))
           .friendlyName(name).category(category).spaceId(tenantResolver.getTenant()));
     }
 
     return found.get(0).getId();
   }
-
-
-
 }

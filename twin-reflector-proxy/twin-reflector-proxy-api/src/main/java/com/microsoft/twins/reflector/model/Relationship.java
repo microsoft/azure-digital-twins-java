@@ -20,8 +20,19 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Relationship {
+  /**
+   * Supported values are
+   *
+   * - {@link IngressMessage#ENTITY_V1_DEVICE}<br/>
+   * - {@link IngressMessage#ENTITY_V1_SPACE}.
+   */
   @JsonProperty("entity-type")
   private String entityType;
+
+  // Supported ADT V1 relationships
+  public static final String RELATIONSHIP_CHILD = "child";
+  public static final String RELATIONSHIP_PARENT = "parent";
+  public static final String RELATIONSHIP_GATEWAY = "gateway";
 
   @JsonProperty("name")
   private String name;

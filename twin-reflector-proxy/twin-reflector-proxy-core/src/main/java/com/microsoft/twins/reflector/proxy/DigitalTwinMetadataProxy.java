@@ -7,6 +7,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import com.microsoft.twins.model.CategoryEnum;
 
+/**
+ * Proxy service for twin metadata, e.g. types and property keys.
+ *
+ */
 public interface DigitalTwinMetadataProxy {
 
   String getPropertykey(@NotEmpty String name, @NotEmpty String scope);
@@ -25,6 +29,10 @@ public interface DigitalTwinMetadataProxy {
 
   default int getSpaceSubType(@NotEmpty final String name) {
     return getType(name, CategoryEnum.SPACESUBTYPE);
+  }
+
+  default int getSpaceStatus(@NotEmpty final String name) {
+    return getType(name, CategoryEnum.SPACESTATUS);
   }
 
   int getType(@NotEmpty String name, @NotNull CategoryEnum category);

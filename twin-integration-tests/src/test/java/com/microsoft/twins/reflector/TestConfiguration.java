@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.proxy.TenantResolver;
-import com.microsoft.twins.reflector.proxy.TopologyOperationSink;
+import com.microsoft.twins.reflector.proxy.v1.TopologyOperationSink;
 
 @Configuration
 @EnableAutoConfiguration
@@ -32,6 +32,7 @@ public class TestConfiguration {
 
   public class TestTenantResolver implements TenantResolver {
     private UUID tenant;
+    private UUID gateway;
 
     public void setTenant(final UUID tenant) {
       this.tenant = tenant;
@@ -42,6 +43,14 @@ public class TestConfiguration {
       return tenant;
     }
 
+    @Override
+    public UUID getGateway() {
+      return gateway;
+    }
+
+    public void setGateway(final UUID gateway) {
+      this.gateway = gateway;
+    }
 
   }
 
