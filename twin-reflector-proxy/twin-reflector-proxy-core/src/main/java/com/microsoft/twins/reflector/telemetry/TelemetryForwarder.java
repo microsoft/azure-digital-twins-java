@@ -21,7 +21,7 @@ import com.microsoft.azure.sdk.iot.device.IotHubEventCallback;
 import com.microsoft.azure.sdk.iot.device.IotHubStatusCode;
 import com.microsoft.azure.sdk.iot.device.Message;
 import com.microsoft.twins.reflector.error.TopologyElementDoesNotExistException;
-import com.microsoft.twins.reflector.proxy.CachedDigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class TelemetryForwarder implements Closeable {
 
   private final Map<UUID, DeviceClient> knownClients = new ConcurrentHashMap<>();
 
-  private final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy;
+  private final DigitalTwinTopologyProxy cachedDigitalTwinProxy;
 
 
   protected static class EventCallback implements IotHubEventCallback {

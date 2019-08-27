@@ -8,9 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -23,119 +21,11 @@ public class SpaceResourceCreate {
   @JsonProperty("spaceId")
   private UUID spaceId;
 
-  /**
-   * Resource type
-   */
-  public enum TypeEnum {
-    IOTHUB("IotHub");
-    private final String value;
-
-    TypeEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TypeEnum fromValue(final String text) {
-      for (final TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("type")
-  private TypeEnum type;
-
-  /**
-   * Resource size
-   */
-  public enum SizeEnum {
-    XS("XS"), S("S"), M("M"), L("L"), XL("XL"), XXL("XXL");
-    private final String value;
-
-    SizeEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static SizeEnum fromValue(final String text) {
-      for (final SizeEnum b : SizeEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
+  private SpaceTypeEnum type;
 
   @JsonProperty("size")
   private SizeEnum size;
-
-  /**
-   * Resource region
-   */
-  public enum RegionEnum {
-    WESTUS("WestUS"), WESTUS2("WestUS2"), CENTRALUSEUAP("CentralUSEUAP"), EASTUS("EastUS"), EASTUS2(
-        "EastUS2"), CENTRALUS("CentralUS"), SOUTHCENTRALUS("SouthCentralUS"), WESTCENTRALUS(
-            "WestCentralUS"), CANADAEAST("CanadaEast"), CANADACENTRAL("CanadaCentral"), BRAZILSOUTH(
-                "BrazilSouth"), AUSTRALIAEAST("AustraliaEast"), AUSTRALIASOUTHEAST(
-                    "AustraliaSoutheast"), SOUTHEASTASIA("SoutheastAsia"), EASTASIA(
-                        "EastAsia"), CENTRALINDIA(
-                            "CentralIndia"), SOUTHINDIA("SouthIndia"), JAPANEAST(
-                                "JapanEast"), JAPANWEST("JapanWest"), KOREACENTRAL(
-                                    "KoreaCentral"), KOREASOUTH("KoreaSouth"), NORTHEUROPE(
-                                        "NorthEurope"), WESTEUROPE("WestEurope"), UKWEST(
-                                            "UKWest"), UKSOUTH("UKSouth"), GERMANYCENTRAL(
-                                                "GermanyCentral"), GERMANYNORTHEAST(
-                                                    "GermanyNortheast");
-    private final String value;
-
-    RegionEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RegionEnum fromValue(final String text) {
-      for (final RegionEnum b : RegionEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("region")
   private RegionEnum region;
@@ -145,39 +35,6 @@ public class SpaceResourceCreate {
   private Map<String, String> parameters;
   @JsonProperty("resourceDependencies")
   private List<UUID> resourceDependencies;
-
-  /**
-   * Resource status
-   */
-  public enum StatusEnum {
-    NONE("None"), PROVISIONING("Provisioning"), RUNNING("Running"), STOPPED("Stopped"), FAILED(
-        "Failed"), DELETING("Deleting");
-    private final String value;
-
-    StatusEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(final String text) {
-      for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("status")
   private StatusEnum status;
@@ -202,7 +59,7 @@ public class SpaceResourceCreate {
     this.spaceId = spaceId;
   }
 
-  public SpaceResourceCreate type(final TypeEnum type) {
+  public SpaceResourceCreate type(final SpaceTypeEnum type) {
     this.type = type;
     return this;
   }
@@ -213,11 +70,11 @@ public class SpaceResourceCreate {
    * @return type
    **/
   @NotNull
-  public TypeEnum getType() {
+  public SpaceTypeEnum getType() {
     return type;
   }
 
-  public void setType(final TypeEnum type) {
+  public void setType(final SpaceTypeEnum type) {
     this.type = type;
   }
 

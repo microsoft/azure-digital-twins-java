@@ -15,7 +15,7 @@ import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.reflector.error.InconsistentTopologyException;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Relationship;
-import com.microsoft.twins.reflector.proxy.CachedDigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import com.microsoft.twins.reflector.proxy.TenantResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TopologyUpdater {
 
   private final TenantResolver tenantResolver;
-  private final CachedDigitalTwinTopologyProxy cachedDigitalTwinProxy;
+  private final DigitalTwinTopologyProxy cachedDigitalTwinProxy;
 
 
   // Note: for the time being we assume the ID is stored in the name fields and we only handle the

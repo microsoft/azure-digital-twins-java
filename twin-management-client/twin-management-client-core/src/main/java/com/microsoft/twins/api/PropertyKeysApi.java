@@ -133,7 +133,7 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    * <code>propertyKeysDeleteBySpace</code> method in a fluent style.
    */
   public static class PropertyKeysDeleteBySpaceQueryParams extends HashMap<String, Object> {
-    public PropertyKeysDeleteBySpaceQueryParams spaceId(final String value) {
+    public PropertyKeysDeleteBySpaceQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }
@@ -229,7 +229,7 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public PropertyKeysRetrieveQueryParams spaceId(final String value) {
+    public PropertyKeysRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

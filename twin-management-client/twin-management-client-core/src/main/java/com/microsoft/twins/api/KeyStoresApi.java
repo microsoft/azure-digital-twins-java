@@ -219,7 +219,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   public static class KeyStoresRetrieveQueryParams extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
-    public KeyStoresRetrieveQueryParams spaceId(final String value) {
+    public KeyStoresRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

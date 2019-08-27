@@ -319,7 +319,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class SpacesMoveUsersToSpaceQueryParams extends HashMap<String, Object> {
-    public SpacesMoveUsersToSpaceQueryParams toSpaceId(final String value) {
+    public SpacesMoveUsersToSpaceQueryParams tospaceId(final UUID value) {
       put("toSpaceId", EncodingUtils.encode(value));
       return this;
     }
@@ -496,7 +496,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public SpacesRetrieveQueryParams spaceId(final String value) {
+    public SpacesRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }
@@ -639,7 +639,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public SpacesRetrieveBlobMetadataQueryParams spaceId(final String value) {
+    public SpacesRetrieveBlobMetadataQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

@@ -31,20 +31,23 @@ import com.microsoft.twins.api.SensorsApi.SensorsRetrieveQueryParams;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.api.TypesApi;
+import com.microsoft.twins.api.TypesApi.TypesRetrieveQueryParams;
+import com.microsoft.twins.model.CategoryEnum;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.EndpointCreate;
-import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
-import com.microsoft.twins.model.EndpointCreate.TypeEnum;
-import com.microsoft.twins.model.EndpointRetrieve;
+import com.microsoft.twins.model.EventTypesEnum;
 import com.microsoft.twins.model.ExtendedTypeCreate;
-import com.microsoft.twins.model.ExtendedTypeCreate.CategoryEnum;
+import com.microsoft.twins.model.ExtendedTypeRetrieve;
 import com.microsoft.twins.model.SensorCreate;
 import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
+import com.microsoft.twins.model.SpaceTypeEnum;
+import com.microsoft.twins.model.StatusEnum;
+import com.microsoft.twins.model.TypeEnum;
 import com.microsoft.twins.reflector.TestConfiguration.TestTenantResolver;
 import com.microsoft.twins.reflector.proxy.TenantResolver;
 import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfiguration;
@@ -56,9 +59,16 @@ import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfigurati
     TwinReflectorProxyAutoConfiguration.class, TestConfiguration.class})
 @EnableBinding(Sink.class)
 public abstract class AbstractIntegrationTest {
-  private static final String TEST_SPACE_TYPE = "TestSpaces";
-  private static final String TEST_DEVICE_TYPE = "TestDevices";
-  private static final String TEST_SENSOR_TYPE = "TestSensors";
+  protected static final String TEST_DEVICE_SUBTYPE = "IntegrationTestDevice";
+  protected static final String TEST_SPACE_TYPE = "TestSpaces";
+  protected static final String TEST_SPACE_SUBTYPE = "integrationTestSpaces";
+  protected static final String TEST_DEVICE_TYPE = "TestDevices";
+  protected static final String TEST_SENSOR_TYPE = "TestSensors";
+  protected int sensorTypeId;
+  protected int deviceTypeId;
+  protected int deviceSubTypeId;
+  protected int spaceTypeId;
+  protected int spaceSubTypeId;
 
   @Autowired
   private TenantResolver tenantResolver;
@@ -101,6 +111,7 @@ public abstract class AbstractIntegrationTest {
     cleanTestSpaces();
 
 
+    createTypes();
     testGateway = createGateway(testGatewayName, tenant);
   }
 
@@ -136,7 +147,7 @@ public abstract class AbstractIntegrationTest {
   private void cleanTestSpaces() {
     final List<SpaceRetrieveWithChildren> existing =
         spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().types(TEST_SPACE_TYPE)
-            .useParentSpace(true).spaceId(tenant.toString()).traverse("Down").maxLevel(1));
+            .useParentSpace(true).spaceId(tenant).traverse("Down").maxLevel(1));
 
     existing.forEach(space -> spacesApi.spacesDelete(space.getId()));
   }
@@ -165,9 +176,8 @@ public abstract class AbstractIntegrationTest {
       tenant = found.get(0).getId();
       ((TestTenantResolver) tenantResolver).setTenant(tenant);
 
-      assertThat(resourcesApi
-          .resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant.toString())))
-              .hasSize(1);
+      assertThat(resourcesApi.resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant)))
+          .hasSize(1);
       assertThat(endpointsApi.endpointsRetrieve(new EndpointsRetrieveQueryParams()
           .eventTypes(EventTypesEnum.DEVICEMESSAGE.toString()).types(TypeEnum.EVENTHUB.toString())))
               .hasSize(1);
@@ -187,13 +197,22 @@ public abstract class AbstractIntegrationTest {
 
     ((TestTenantResolver) tenantResolver).setTenant(tenant);
 
-    createTypes();
+
     createResources();
     addDeviceEventEndPoint(twinReflectorProxyProperties.getEventHubs().getConnectionString(),
         twinReflectorProxyProperties.getEventHubs().getSecondaryConnectionString(),
         testConfigurationProperties.getDevicesHubname());
   }
 
+
+  private void createTypes() {
+    sensorTypeId = getType(TEST_SENSOR_TYPE, CategoryEnum.SENSORTYPE);
+    deviceTypeId = getType(TEST_DEVICE_TYPE, CategoryEnum.DEVICETYPE);
+    deviceSubTypeId = getType(TEST_DEVICE_SUBTYPE, CategoryEnum.DEVICESUBTYPE);
+    spaceTypeId = getType(TEST_SPACE_TYPE, CategoryEnum.SPACETYPE);
+    spaceSubTypeId = getType(TEST_SPACE_SUBTYPE, CategoryEnum.SPACESUBTYPE);
+
+  }
 
   private void addDeviceEventEndPoint(final String connectionString,
       final String secondaryConnectionString, final String hubName) {
@@ -208,30 +227,14 @@ public abstract class AbstractIntegrationTest {
     final UUID created = endpointsApi.endpointsCreate(eventHub);
 
     Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS)
-        .pollInterval(1, TimeUnit.SECONDS).until(() -> endpointsApi.endpointsRetrieveById(created)
-            .getStatus() == EndpointRetrieve.StatusEnum.READY);
-  }
-
-  private void createTypes() {
-    final ExtendedTypeCreate type = new ExtendedTypeCreate();
-    type.setCategory(CategoryEnum.SPACETYPE);
-    type.setSpaceId(tenant);
-    type.setName(TEST_SPACE_TYPE);
-    typesApi.typesCreate(type);
-
-    type.setCategory(CategoryEnum.DEVICETYPE);
-    type.setName(TEST_DEVICE_TYPE);
-    typesApi.typesCreate(type);
-
-    type.setCategory(CategoryEnum.SENSORTYPE);
-    type.setName(TEST_SENSOR_TYPE);
-    typesApi.typesCreate(type);
+        .pollInterval(1, TimeUnit.SECONDS)
+        .until(() -> endpointsApi.endpointsRetrieveById(created).getStatus() == StatusEnum.READY);
   }
 
   private void createResources() {
     final SpaceResourceCreate iotHub = new SpaceResourceCreate();
     iotHub.setSpaceId(tenant);
-    iotHub.setType(SpaceResourceCreate.TypeEnum.IOTHUB);
+    iotHub.setType(SpaceTypeEnum.IOTHUB);
     final UUID created = resourcesApi.resourcesCreate(iotHub);
 
     Awaitility.await().atMost(15, TimeUnit.MINUTES).pollDelay(10, TimeUnit.SECONDS)
@@ -244,7 +247,7 @@ public abstract class AbstractIntegrationTest {
     deviceSpaceCreate.setName(spaceName);
     deviceSpaceCreate.setFriendlyName(spaceName);
     deviceSpaceCreate.setDescription(spaceName);
-    deviceSpaceCreate.setType(TEST_SPACE_TYPE);
+    deviceSpaceCreate.setTypeId(spaceTypeId);
     deviceSpaceCreate.setParentSpaceId(parent);
 
     return spacesApi.spacesCreate(deviceSpaceCreate);
@@ -258,7 +261,7 @@ public abstract class AbstractIntegrationTest {
     // Add new vehicle to line
     final DeviceCreate device = new DeviceCreate();
     device.setName(deviceName);
-    device.setType(TEST_DEVICE_TYPE);
+    device.setTypeId(deviceTypeId);
     device.setSpaceId(spaceId);
     device.setHardwareId(deviceName);
     device.setDescription(deviceName);
@@ -277,7 +280,7 @@ public abstract class AbstractIntegrationTest {
   protected UUID createDevice(final String deviceName, final UUID gatewayId, final UUID spaceId) {
     final DeviceCreate device = new DeviceCreate();
     device.setName(deviceName);
-    device.setType(TEST_DEVICE_TYPE);
+    device.setTypeId(deviceTypeId);
     device.setSpaceId(spaceId);
     device.setHardwareId(deviceName);
     device.setGatewayId(gatewayId);
@@ -291,9 +294,25 @@ public abstract class AbstractIntegrationTest {
     return createdDevice;
   }
 
+
+
+  protected int getType(final String name, final CategoryEnum category) {
+    final List<ExtendedTypeRetrieve> found = typesApi.typesRetrieve(
+        new TypesRetrieveQueryParams().spaceId(tenant).names(name).categories(category));
+
+    if (CollectionUtils.isEmpty(found)) {
+      return typesApi
+          .typesCreate(new ExtendedTypeCreate().name(name).category(category).spaceId(tenant));
+    }
+
+    return found.get(0).getId();
+  }
+
+
+
   protected UUID createSensor(final String deviceName, final UUID deviceId, final UUID spaceId) {
     final SensorCreate device = new SensorCreate();
-    device.setType(TEST_SENSOR_TYPE);
+    device.setTypeId(sensorTypeId);
     device.setDeviceId(deviceId);
     device.setHardwareId(deviceName);
     device.setSpaceId(spaceId);

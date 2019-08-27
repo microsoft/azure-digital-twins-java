@@ -123,9 +123,7 @@
  */
 package com.microsoft.twins.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -135,37 +133,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class ConditionCreate {
-  /**
-   * What object the condition applies to: the sensor, its parent device or its parent space
-   */
-  public enum TargetEnum {
-    SENSOR("Sensor"), SENSORDEVICE("SensorDevice"), SENSORSPACE("SensorSpace");
-    private final String value;
-
-    TargetEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TargetEnum fromValue(final String text) {
-      for (final TargetEnum b : TargetEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("target")
   private TargetEnum target;
@@ -173,38 +140,6 @@ public class ConditionCreate {
   private String path;
   @JsonProperty("value")
   private String value;
-
-  /**
-   * Type of comparison to perform
-   */
-  public enum ComparisonEnum {
-    EQUALS("Equals"), NOTEQUALS("NotEquals"), CONTAINS("Contains");
-    private final String value;
-
-    ComparisonEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static ComparisonEnum fromValue(final String text) {
-      for (final ComparisonEnum b : ComparisonEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("comparison")
   private ComparisonEnum comparison;

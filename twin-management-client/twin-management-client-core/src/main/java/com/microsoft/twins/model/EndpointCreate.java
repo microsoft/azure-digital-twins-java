@@ -125,9 +125,7 @@ package com.microsoft.twins.model;
 
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -137,73 +135,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class EndpointCreate {
-  /**
-   * Endpoint type
-   */
-  public enum TypeEnum {
-    SERVICEBUS("ServiceBus"), EVENTGRID("EventGrid"), EVENTHUB("EventHub");
-    private final String value;
-
-    TypeEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TypeEnum fromValue(final String text) {
-      for (final TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("type")
   private TypeEnum type;
-
-  /**
-   * Gets or Sets eventTypes
-   */
-  public enum EventTypesEnum {
-    SENSORCHANGE("SensorChange"), SPACECHANGE("SpaceChange"), TOPOLOGYOPERATION(
-        "TopologyOperation"), DEVICEMESSAGE("DeviceMessage"), UDFCUSTOM("UdfCustom");
-    private final String value;
-
-    EventTypesEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static EventTypesEnum fromValue(final String text) {
-      for (final EventTypesEnum b : EventTypesEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("eventTypes")
   private List<EventTypesEnum> eventTypes = new java.util.ArrayList<>();

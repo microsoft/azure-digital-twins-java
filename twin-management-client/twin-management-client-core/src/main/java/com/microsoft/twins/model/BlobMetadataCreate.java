@@ -127,9 +127,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -151,38 +149,6 @@ public class BlobMetadataCreate {
   private Integer typeId;
   @JsonProperty("subtypeId")
   private Integer subtypeId;
-
-  /**
-   * Level of sharing
-   */
-  public enum SharingEnum {
-    NONE("None"), TREE("Tree"), GLOBAL("Global");
-    private final String value;
-
-    SharingEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static SharingEnum fromValue(final String text) {
-      for (final SharingEnum b : SharingEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("sharing")
   private SharingEnum sharing;

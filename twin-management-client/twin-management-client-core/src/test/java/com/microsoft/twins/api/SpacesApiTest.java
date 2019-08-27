@@ -240,7 +240,7 @@ public class SpacesApiTest extends AbstractApiTest {
     final List<UserCreate> body;
     final String id;
     final SpacesApi.SpacesMoveUsersToSpaceQueryParams queryParams =
-        new SpacesApi.SpacesMoveUsersToSpaceQueryParams().toSpaceId(null).resetLocation(null);
+        new SpacesApi.SpacesMoveUsersToSpaceQueryParams().tospaceId(null).resetLocation(null);
     // Object response = api.spacesMoveUsersToSpace(body, id, queryParams);
     // TODO: test validations
   }

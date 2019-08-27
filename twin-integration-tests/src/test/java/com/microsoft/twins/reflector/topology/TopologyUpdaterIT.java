@@ -16,6 +16,7 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.SpacesApi;
+import com.microsoft.twins.model.CategoryEnum;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.ExtendedPropertyRetrieve;
 import com.microsoft.twins.model.SpaceRetrieve;
@@ -125,8 +126,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value(TEST_PROP_VALUE).build()));
-    testMessage.setAttributes(
-        Map.of("status", "Provisioned", "friendlyName", friendlyName, "description", description));
+    testMessage.setAttributes(Map.of("status", "Provisioned", "friendlyName", friendlyName,
+        "description", description, "type", TEST_DEVICE_TYPE));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -151,6 +152,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     } else {
       assertThat(created.getSpaceId()).isEqualTo(tenant);
     }
+    assertThat(created.getTypeId()).isEqualTo(deviceTypeId);
     assertThat(created.getIoTHubUrl()).isNullOrEmpty();
     assertThat(created.getConnectionString()).isNullOrEmpty();
     assertThat(created.getProperties()).containsOnly(new ExtendedPropertyRetrieve()
@@ -169,6 +171,9 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     final String updatedGatewayName = UUID.randomUUID().toString();
     final UUID updatedGateway = createGateway(updatedGatewayName, tenant);
 
+    final String updatedType = "updatedTestType";
+    final int updatedTypeId = getType(updatedType, CategoryEnum.DEVICETYPE);
+
     final String deviceId = UUID.randomUUID().toString();
     final UUID device =
         createDevice(deviceId, testGateway, createSpace("My Reflector Proxyoriginal space"));
@@ -186,8 +191,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
             .build()));
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value("updatedValue").build()));
-    testMessage.setAttributes(
-        Map.of("status", "Active", "friendlyName", friendlyName, "description", description));
+    testMessage.setAttributes(Map.of("status", "Active", "friendlyName", friendlyName,
+        "description", description, "type", updatedType));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -202,6 +207,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getName()).isEqualTo(deviceId);
     assertThat(updated.getHardwareId()).isEqualTo(deviceId);
     assertThat(updated.getGatewayId()).isEqualTo(updatedGateway);
+    assertThat(updated.getTypeId()).isEqualTo(updatedTypeId);
     assertThat(updated.getSpaceId()).isEqualTo(updatedParent);
     assertThat(updated.getIoTHubUrl()).isNullOrEmpty();
     assertThat(updated.getConnectionString()).isNullOrEmpty();
@@ -393,6 +399,43 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getDescription()).isEqualTo(description);
   }
 
+  @Test
+  public void updateDeviceType() {
+    final UUID correlationId = UUID.randomUUID();
+    final String deviceId = UUID.randomUUID().toString();
+    final UUID device = createDevice(deviceId);
+
+    final String updatedType = "updatedTestType";
+    final int updatedTypeId = getType(updatedType, CategoryEnum.DEVICETYPE);
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(deviceId);
+    testMessage.setEntityType("devices");
+    testMessage.setAttributes(Map.of("type", updatedType));
+
+    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
+            MessageType.PARTIAL.toString().toLowerCase())
+        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
+
+    sink.inputChannel().send(hubMessage);
+
+
+    final DeviceRetrieve updated = devicesApi.devicesRetrieve(
+        new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
+        .get(0);
+    assertThat(updated.getName()).isEqualTo(deviceId);
+    assertThat(updated.getHardwareId()).isEqualTo(deviceId);
+    assertThat(updated.getGatewayId()).isEqualTo(testGateway);
+    assertThat(updated.getSpaceId()).isEqualTo(tenant);
+    assertThat(updated.getTypeId()).isEqualTo(updatedTypeId);
+    assertThat(updated.getIoTHubUrl()).isNullOrEmpty();
+    assertThat(updated.getConnectionString()).isNullOrEmpty();
+    assertThat(updated.getProperties()).isEmpty();
+    assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
+    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+  }
+
 
 
   @Test
@@ -410,6 +453,9 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     final UUID updateChildDeviceId = createDevice(updateChildDeviceName, testGateway,
         createSpace("My Reflector Proxy original parent space"));
 
+    final String updatedType = "updatedTestSpaceType";
+    final int updatedTypeId = getType(updatedType, CategoryEnum.SPACETYPE);
+
     final String friendlyName = "updated name";
     final String description = "updated description";
 
@@ -425,7 +471,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
             .build()));
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value("updatedValue").build()));
-    testMessage.setAttributes(Map.of("friendlyName", friendlyName, "description", description));
+    testMessage.setAttributes(
+        Map.of("friendlyName", friendlyName, "description", description, "type", updatedType));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -442,6 +489,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getParentSpaceId()).isEqualTo(updateParentSpace);
     assertThat(updated.getFriendlyName()).isEqualTo(friendlyName);
     assertThat(updated.getDescription()).isEqualTo(description);
+    assertThat(updated.getTypeId()).isEqualTo(updatedTypeId);
     assertThat(updated.getProperties()).containsOnly(new ExtendedPropertyRetrieve()
         .name(TEST_PROP_KEY).value("updatedValue").dataType("string"));
 
@@ -481,7 +529,38 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getFriendlyName()).isEqualTo(friendlyName);
     assertThat(updated.getDescription()).isEqualTo(spaceId);
     assertThat(updated.getProperties()).isEmpty();
+  }
 
+  @Test
+  public void updateSpaceType() {
+    final String spaceId = UUID.randomUUID().toString();
+    final UUID space = createSpace(spaceId);
+    final UUID correlationId = UUID.randomUUID();
+
+    final String updatedType = "updatedTestSpaceType";
+    final int updatedTypeId = getType(updatedType, CategoryEnum.SPACETYPE);
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(spaceId);
+    testMessage.setEntityType("spaces");
+    testMessage.setAttributes(Map.of("type", updatedType));
+
+    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
+        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
+            MessageType.PARTIAL.toString().toLowerCase())
+        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
+
+    sink.inputChannel().send(hubMessage);
+
+    final SpaceRetrieve updated = spacesApi
+        .spacesRetrieve(
+            new SpacesApi.SpacesRetrieveQueryParams().ids(space).includes("properties,description"))
+        .get(0);
+    assertThat(updated.getName()).isEqualTo(spaceId);
+    assertThat(updated.getParentSpaceId()).isEqualTo(tenant);
+    assertThat(updated.getDescription()).isEqualTo(spaceId);
+    assertThat(updated.getProperties()).isEmpty();
+    assertThat(updated.getTypeId()).isEqualTo(updatedTypeId);
   }
 
   @Test
@@ -690,7 +769,8 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value(TEST_PROP_VALUE).build()));
-    testMessage.setAttributes(Map.of("friendlyName", friendlyName, "description", description));
+    testMessage.setAttributes(
+        Map.of("friendlyName", friendlyName, "description", description, "type", TEST_SPACE_TYPE));
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
@@ -713,6 +793,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     } else {
       assertThat(created.getParentSpaceId()).isEqualTo(tenant);
     }
+    assertThat(created.getTypeId()).isEqualTo(spaceTypeId);
     assertThat(created.getFriendlyName()).isEqualTo(friendlyName);
     assertThat(created.getDescription()).isEqualTo(description);
     assertThat(created.getProperties()).containsOnly(new ExtendedPropertyRetrieve()

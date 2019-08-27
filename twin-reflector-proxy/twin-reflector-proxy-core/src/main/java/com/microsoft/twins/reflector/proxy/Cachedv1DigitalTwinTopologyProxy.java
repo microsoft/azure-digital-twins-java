@@ -8,41 +8,29 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
-import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
-import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.DeviceUpdate;
 import com.microsoft.twins.model.DeviceUpdate.StatusEnum;
-import com.microsoft.twins.model.EndpointCreate;
-import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
-import com.microsoft.twins.model.EndpointCreate.TypeEnum;
-import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.model.SpaceUpdate;
-import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
+import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Property;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,31 +38,28 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class CachedDigitalTwinTopologyProxy {
+public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProxy {
 
+  private static final String UNKOWN_TYPE = "None";
   private static final String ENTITY_TYPE_SPACE = "spaces";
   private static final String ENTITY_TYPE_DEVICE = "devices";
-  private static final String ATTRIBUTE_STATUS = "status";
-  private static final String ATTRIBUTE_FRIENDLY_NAME = "friendlyName";
-  private static final String ATTRIBUTE_DESCRIPTION = "description";
-  private static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
-  private static final String CACHE_DEVICE_BY_ID = "deviceById";
-  private static final String CACHE_DEVICE_BY_NAME = "deviceByName";
-  private static final String CACHE_SPACE_BY_NAME = "spaceByName";
-  private static final String CACHE_SPACE_BY_ID = "spaceById";
+
+  static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
+  static final String CACHE_DEVICE_BY_ID = "deviceById";
+  static final String CACHE_DEVICE_BY_NAME = "deviceByName";
+  static final String CACHE_SPACE_BY_NAME = "spaceByName";
+  static final String CACHE_SPACE_BY_ID = "spaceById";
 
 
-  private final CachedDigitalTwinMetadataProxy metadataProxy;
+  private final DigitalTwinMetadataProxy metadataProxy;
   private final SpacesApi spacesApi;
   private final SensorsApi sensorsApi;
   private final DevicesApi devicesApi;
-  private final EndpointsApi endpointsApi;
-  private final TwinReflectorProxyProperties properties;
   private final CacheManager cacheManager;
 
-  public UUID createDevice(@NotEmpty final String name, @NotNull final UUID parent,
-      @NotNull final UUID gateway, final List<Property> properties,
-      final Map<String, String> attributes) {
+  @Override
+  public UUID createDevice(final String name, final UUID parent, final UUID gateway,
+      final List<Property> properties, final Map<String, String> attributes) {
     final DeviceCreate device = new DeviceCreate();
     device.setName(name);
     device.setSpaceId(parent);
@@ -97,8 +82,9 @@ public class CachedDigitalTwinTopologyProxy {
     return devicesApi.devicesCreate(device);
   }
 
-  public void updateDeviceComplete(@NotNull final UUID id, @NotNull final UUID parent,
-      final UUID gateway, final List<Property> properties, final Map<String, String> attributes) {
+  @Override
+  public void updateDeviceComplete(final UUID id, final UUID parent, final UUID gateway,
+      final List<Property> properties, final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
     device.setSpaceId(parent);
     device.setGatewayId(gateway);
@@ -124,14 +110,21 @@ public class CachedDigitalTwinTopologyProxy {
       device.setDescription("");
       device.setFriendlyName("");
       device.setStatus(StatusEnum.PROVISIONED);
+      device.setTypeId(metadataProxy.getDeviceType(UNKOWN_TYPE));
+      device.setSubtypeId(metadataProxy.getDeviceSubType(UNKOWN_TYPE));
       return;
     }
 
-    device.setDescription(attributes.getOrDefault(ATTRIBUTE_DESCRIPTION, ""));
-    device.setFriendlyName(attributes.getOrDefault(ATTRIBUTE_FRIENDLY_NAME, ""));
+    device.setDescription(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_DESCRIPTION, ""));
+    device.setFriendlyName(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME, ""));
 
-    // TODO define what empty status in update case means
-    final StatusEnum status = StatusEnum.fromValue(attributes.get(ATTRIBUTE_STATUS));
+    device.setTypeId(metadataProxy
+        .getDeviceType(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_TYPE, UNKOWN_TYPE)));
+    device.setSubtypeId(metadataProxy.getDeviceSubType(
+        attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_SUB_TYPE, UNKOWN_TYPE)));
+
+    final StatusEnum status =
+        StatusEnum.fromValue(attributes.get(IngressMessage.ATTRIBUTE_V1_STATUS));
     device.setStatus(status);
   }
 
@@ -141,14 +134,21 @@ public class CachedDigitalTwinTopologyProxy {
     if (CollectionUtils.isEmpty(attributes)) {
       space.setDescription("");
       space.setFriendlyName("");
+      space.setTypeId(metadataProxy.getSpaceType(UNKOWN_TYPE));
+      space.setSubtypeId(metadataProxy.getSpaceSubType(UNKOWN_TYPE));
       return;
     }
 
-    space.setDescription(attributes.getOrDefault(ATTRIBUTE_DESCRIPTION, ""));
-    space.setFriendlyName(attributes.getOrDefault(ATTRIBUTE_FRIENDLY_NAME, ""));
+    space.setDescription(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_DESCRIPTION, ""));
+    space.setFriendlyName(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME, ""));
+    space.setTypeId(metadataProxy
+        .getSpaceType(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_TYPE, UNKOWN_TYPE)));
+    space.setSubtypeId(metadataProxy.getSpaceSubType(
+        attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_SUB_TYPE, UNKOWN_TYPE)));
   }
 
-  public void updateDevicePartial(@NotNull final UUID id, final UUID parent, final UUID gateway,
+  @Override
+  public void updateDevicePartial(final UUID id, final UUID parent, final UUID gateway,
       final List<Property> properties, final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
 
@@ -175,12 +175,10 @@ public class CachedDigitalTwinTopologyProxy {
     devicesApi.devicesUpdate(device, id);
   }
 
-  public void updateDeviceParent(@NotNull final UUID id, @NotNull final UUID parent) {
-    updateDevicePartial(id, parent, null, null, null);
-  }
 
-  public UUID createSpace(@NotEmpty final String name, @NotNull final UUID parent,
-      final List<Property> properties, final Map<String, String> attributes) {
+  @Override
+  public UUID createSpace(final String name, final UUID parent, final List<Property> properties,
+      final Map<String, String> attributes) {
 
     final SpaceCreate space = new SpaceCreate();
     space.setName(name);
@@ -202,8 +200,9 @@ public class CachedDigitalTwinTopologyProxy {
 
   }
 
-  public void updateSpaceComplete(@NotNull final UUID id, @NotNull final UUID parent,
-      final List<Property> properties, final Map<String, String> attributes) {
+  @Override
+  public void updateSpaceComplete(final UUID id, final UUID parent, final List<Property> properties,
+      final Map<String, String> attributes) {
 
     final SpaceUpdate space = new SpaceUpdate();
     space.setParentSpaceId(parent);
@@ -223,8 +222,9 @@ public class CachedDigitalTwinTopologyProxy {
     spacesApi.spacesUpdate(space, id);
   }
 
-  public void updateSpacePartial(@NotNull final UUID id, final UUID parent,
-      final List<Property> properties, final Map<String, String> attributes) {
+  @Override
+  public void updateSpacePartial(final UUID id, final UUID parent, final List<Property> properties,
+      final Map<String, String> attributes) {
 
     final SpaceUpdate space = new SpaceUpdate();
 
@@ -247,24 +247,25 @@ public class CachedDigitalTwinTopologyProxy {
     spacesApi.spacesUpdate(space, id);
   }
 
-  public void updateSpaceParent(@NotNull final UUID id, @NotNull final UUID parent) {
-    updateSpaceComplete(id, parent, null, null);
-  }
-
-
 
   private void setDeviceAttribute(final DeviceUpdate device,
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
-      case ATTRIBUTE_DESCRIPTION:
+      case IngressMessage.ATTRIBUTE_V1_DESCRIPTION:
         device.setDescription(attribute.getValue());
         break;
-      case ATTRIBUTE_FRIENDLY_NAME:
+      case IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME:
         device.setFriendlyName(attribute.getValue());
         break;
-      case ATTRIBUTE_STATUS:
+      case IngressMessage.ATTRIBUTE_V1_STATUS:
         device.setStatus(StatusEnum.fromValue(attribute.getValue()));
+        break;
+      case IngressMessage.ATTRIBUTE_V1_TYPE:
+        device.setTypeId(metadataProxy.getDeviceType(attribute.getValue()));
+        break;
+      case IngressMessage.ATTRIBUTE_V1_SUB_TYPE:
+        device.setSubtypeId(metadataProxy.getDeviceSubType(attribute.getValue()));
         break;
       default:
         log.error("Attribute [{}] not supported", attribute.getKey());
@@ -273,74 +274,79 @@ public class CachedDigitalTwinTopologyProxy {
     // TODO support device location
     // device.setLocation(location);
 
-    // TODO support device types
-    // device.setType(type);
-    // device.setSubtype(subtype);
   }
 
   private void setSpaceAttribute(final SpaceUpdate space,
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
-      case ATTRIBUTE_DESCRIPTION:
+      case IngressMessage.ATTRIBUTE_V1_DESCRIPTION:
         space.setDescription(attribute.getValue());
         break;
-      case ATTRIBUTE_FRIENDLY_NAME:
+      case IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME:
         space.setFriendlyName(attribute.getValue());
         break;
-      case ATTRIBUTE_STATUS:
+      case IngressMessage.ATTRIBUTE_V1_STATUS:
         space.setStatus(attribute.getValue());
+        break;
+      case IngressMessage.ATTRIBUTE_V1_TYPE:
+        space.setTypeId(metadataProxy.getSpaceType(attribute.getValue()));
+        break;
+      case IngressMessage.ATTRIBUTE_V1_SUB_TYPE:
+        space.setSubtypeId(metadataProxy.getSpaceSubType(attribute.getValue()));
         break;
       default:
         log.error("Attribute [{}] not supported", attribute.getKey());
         break;
     }
-    // TODO support device location
-    // device.setLocation(location);
 
-    // TODO support device types
-    // device.setType(type);
-    // device.setSubtype(subtype);
+    // TODO support space location
+    // device.setLocation(location);
   }
 
 
 
+  @Override
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_NAME)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id",
           condition = "#result != null")})
-  public Optional<DeviceRetrieve> getDeviceByName(@NotEmpty final String name) {
+  public Optional<DeviceRetrieve> getDeviceByName(final String name) {
     return devicesApi
         .devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"))
         .stream().findAny();
   }
 
+  @Override
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_SPACE_BY_NAME)}, put = {
       @CachePut(cacheNames = CACHE_SPACE_BY_ID, key = "#result.id", condition = "#result != null")})
-  public Optional<SpaceRetrieve> getSpaceByName(@NotEmpty final String name) {
+  public Optional<SpaceRetrieve> getSpaceByName(final String name) {
     return spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name(name)).stream()
         .map(srwc -> (SpaceRetrieve) srwc).findAny();
   }
 
+  @Override
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_DEVICE_BY_ID)},
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name",
           condition = "#result != null")})
-  public Optional<DeviceRetrieve> getDeviceByDeviceId(@NotNull final UUID deviceId) {
+  public Optional<DeviceRetrieve> getDeviceByDeviceId(final UUID deviceId) {
     return devicesApi
         .devicesRetrieve(
             new DevicesRetrieveQueryParams().ids(deviceId).includes("ConnectionString"))
         .stream().findAny();
   }
 
+  @Override
   @Caching(cacheable = {@Cacheable(cacheNames = CACHE_SPACE_BY_ID)},
       put = {@CachePut(cacheNames = CACHE_SPACE_BY_NAME, key = "#result.name",
           condition = "#result != null")})
-  public Optional<SpaceRetrieve> getSpaceBySpaceId(@NotNull final UUID deviceId) {
+  public Optional<SpaceRetrieve> getSpaceBySpaceId(final UUID deviceId) {
     return spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().ids(deviceId)).stream()
         .map(srwc -> (SpaceRetrieve) srwc).findAny();
   }
 
+  @Override
   @CacheEvict(cacheNames = CACHE_DEVICE_BY_NAME)
-  public void deleteDeviceByName(@NotEmpty final String name) {
+  public void deleteDeviceByName(final String name) {
     final Optional<DeviceRetrieve> device = getDeviceByName(name);
 
     if (device.isEmpty()) {
@@ -352,8 +358,9 @@ public class CachedDigitalTwinTopologyProxy {
     cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(device.get().getId());
   }
 
+  @Override
   @CacheEvict(cacheNames = CACHE_SPACE_BY_NAME)
-  public void deleteSpaceByName(@NotBlank final String name) {
+  public void deleteSpaceByName(final String name) {
     final Optional<SpaceRetrieve> space = getSpaceByName(name);
 
     if (space.isEmpty()) {
@@ -366,8 +373,9 @@ public class CachedDigitalTwinTopologyProxy {
   }
 
 
+  @Override
   @Cacheable(cacheNames = CACHE_GATEWAY_ID_BY_HARDWARE_ID)
-  public Optional<UUID> getGatewayIdByHardwareId(@NotEmpty final String hardwareId) {
+  public Optional<UUID> getGatewayIdByHardwareId(final String hardwareId) {
     // Check first if hardware ID belongs to sensor
     final List<SensorRetrieve> sensors = sensorsApi.sensorsRetrieve(
         new SensorsApi.SensorsRetrieveQueryParams().hardwareIds(hardwareId).includes("device"));
@@ -392,70 +400,6 @@ public class CachedDigitalTwinTopologyProxy {
     }
 
     return Optional.of(devices.get(0).getGatewayId());
-  }
-
-  @PostConstruct
-  void registerForTopologyChanges() {
-    final List<EndpointRetrieve> existing = endpointsApi.endpointsRetrieve(
-        new EndpointsApi.EndpointsRetrieveQueryParams().types(TypeEnum.EVENTHUB.toString())
-            .eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
-
-    if (!CollectionUtils.isEmpty(existing)
-        && existing.stream().anyMatch(endpoint -> endpoint.getPath()
-            .equalsIgnoreCase(properties.getEventHubs().getTopologyOperations().getHubname()))) {
-      return;
-    }
-
-
-    final EndpointCreate eventHub = new EndpointCreate();
-    eventHub.addEventTypesItem(EventTypesEnum.TOPOLOGYOPERATION);
-    eventHub.setType(TypeEnum.EVENTHUB);
-    eventHub.setConnectionString(properties.getEventHubs().getConnectionString() + ";EntityPath="
-        + properties.getEventHubs().getTopologyOperations().getHubname());
-    eventHub.setSecondaryConnectionString(properties.getEventHubs().getSecondaryConnectionString()
-        + ";EntityPath=" + properties.getEventHubs().getTopologyOperations().getHubname());
-    eventHub.setPath(properties.getEventHubs().getTopologyOperations().getHubname());
-
-    endpointsApi.endpointsCreate(eventHub);
-  }
-
-
-  @StreamListener(target = TopologyOperationSink.INPUT)
-  void getTopologyUpdate(final TopologyOperationEvent topologyOperationEvent) {
-    if (TopologyOperationEvent.AccessType.UPDATE == topologyOperationEvent.getAccessType()
-        || TopologyOperationEvent.AccessType.DELETE == topologyOperationEvent.getAccessType()) {
-
-      switch (topologyOperationEvent.getType()) {
-        case DEVICE:
-          evictDeviceCache(topologyOperationEvent.getId());
-          break;
-        case SPACE:
-          evictSpaceCache(topologyOperationEvent.getId());
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private void evictDeviceCache(final UUID deviceId) {
-    final ValueWrapper inCache = cacheManager.getCache(CACHE_DEVICE_BY_ID).get(deviceId);
-
-    if (inCache != null) {
-      cacheManager.getCache(CACHE_DEVICE_BY_NAME).evict(((DeviceRetrieve) inCache.get()).getName());
-      cacheManager.getCache(CACHE_GATEWAY_ID_BY_HARDWARE_ID)
-          .evict(((DeviceRetrieve) inCache.get()).getHardwareId());
-      cacheManager.getCache(CACHE_DEVICE_BY_ID).evict(deviceId);
-    }
-  }
-
-  private void evictSpaceCache(final UUID spaceId) {
-    final ValueWrapper inCache = cacheManager.getCache(CACHE_SPACE_BY_ID).get(spaceId);
-
-    if (inCache != null) {
-      cacheManager.getCache(CACHE_SPACE_BY_NAME).evict(((SpaceRetrieve) inCache.get()).getName());
-      cacheManager.getCache(CACHE_SPACE_BY_ID).evict(spaceId);
-    }
   }
 
 

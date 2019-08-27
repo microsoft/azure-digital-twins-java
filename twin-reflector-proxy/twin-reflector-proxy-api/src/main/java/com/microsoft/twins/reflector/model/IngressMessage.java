@@ -32,6 +32,13 @@ public class IngressMessage {
   @JsonProperty("entity-type")
   private String entityType;
 
+  // Supported ADT V1 attributes
+  public static final String ATTRIBUTE_V1_STATUS = "status";
+  public static final String ATTRIBUTE_V1_TYPE = "type";
+  public static final String ATTRIBUTE_V1_SUB_TYPE = "subType";
+  public static final String ATTRIBUTE_V1_FRIENDLY_NAME = "friendlyName";
+  public static final String ATTRIBUTE_V1_DESCRIPTION = "description";
+
   @JsonProperty("attributes")
   private Map<String, String> attributes;
 
