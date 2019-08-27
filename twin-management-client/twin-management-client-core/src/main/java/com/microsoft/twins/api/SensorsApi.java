@@ -326,7 +326,7 @@ public interface SensorsApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public SensorsRetrieveQueryParams spaceId(final String value) {
+    public SensorsRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

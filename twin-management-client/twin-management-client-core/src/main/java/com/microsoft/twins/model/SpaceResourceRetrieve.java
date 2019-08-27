@@ -145,119 +145,11 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
   @JsonProperty("spaceId")
   private UUID spaceId;
 
-  /**
-   * Resource type
-   */
-  public enum TypeEnum {
-    IOTHUB("IotHub");
-    private final String value;
-
-    TypeEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TypeEnum fromValue(final String text) {
-      for (final TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("type")
-  private TypeEnum type;
-
-  /**
-   * Resource size
-   */
-  public enum SizeEnum {
-    XS("XS"), S("S"), M("M"), L("L"), XL("XL"), XXL("XXL");
-    private final String value;
-
-    SizeEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static SizeEnum fromValue(final String text) {
-      for (final SizeEnum b : SizeEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
+  private SpaceTypeEnum type;
 
   @JsonProperty("size")
   private SizeEnum size;
-
-  /**
-   * Resource region
-   */
-  public enum RegionEnum {
-    WESTUS("WestUS"), WESTUS2("WestUS2"), CENTRALUSEUAP("CentralUSEUAP"), EASTUS("EastUS"), EASTUS2(
-        "EastUS2"), CENTRALUS("CentralUS"), SOUTHCENTRALUS("SouthCentralUS"), WESTCENTRALUS(
-            "WestCentralUS"), CANADAEAST("CanadaEast"), CANADACENTRAL("CanadaCentral"), BRAZILSOUTH(
-                "BrazilSouth"), AUSTRALIAEAST("AustraliaEast"), AUSTRALIASOUTHEAST(
-                    "AustraliaSoutheast"), SOUTHEASTASIA("SoutheastAsia"), EASTASIA(
-                        "EastAsia"), CENTRALINDIA(
-                            "CentralIndia"), SOUTHINDIA("SouthIndia"), JAPANEAST(
-                                "JapanEast"), JAPANWEST("JapanWest"), KOREACENTRAL(
-                                    "KoreaCentral"), KOREASOUTH("KoreaSouth"), NORTHEUROPE(
-                                        "NorthEurope"), WESTEUROPE("WestEurope"), UKWEST(
-                                            "UKWest"), UKSOUTH("UKSouth"), GERMANYCENTRAL(
-                                                "GermanyCentral"), GERMANYNORTHEAST(
-                                                    "GermanyNortheast");
-    private final String value;
-
-    RegionEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RegionEnum fromValue(final String text) {
-      for (final RegionEnum b : RegionEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
 
   @JsonProperty("region")
   private RegionEnum region;
@@ -340,7 +232,7 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
     this.spaceId = spaceId;
   }
 
-  public SpaceResourceRetrieve type(final TypeEnum type) {
+  public SpaceResourceRetrieve type(final SpaceTypeEnum type) {
     this.type = type;
     return this;
   }
@@ -351,11 +243,11 @@ public class SpaceResourceRetrieve extends AbstractRetrieve<SpaceResourceRetriev
    * @return type
    **/
   @NotNull
-  public TypeEnum getType() {
+  public SpaceTypeEnum getType() {
     return type;
   }
 
-  public void setType(final TypeEnum type) {
+  public void setType(final SpaceTypeEnum type) {
     this.type = type;
   }
 

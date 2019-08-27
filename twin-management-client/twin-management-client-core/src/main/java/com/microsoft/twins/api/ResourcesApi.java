@@ -138,7 +138,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public ResourcesRetrieveQueryParams spaceId(final String value) {
+    public ResourcesRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

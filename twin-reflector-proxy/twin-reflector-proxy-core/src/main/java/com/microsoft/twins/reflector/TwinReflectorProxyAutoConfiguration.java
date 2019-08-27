@@ -18,6 +18,7 @@ import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.PropertyKeysApi;
 import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.api.SpacesApi;
+import com.microsoft.twins.api.TypesApi;
 import com.microsoft.twins.reflector.ingress.IngressMessageListener;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.proxy.Cachedv1DigitalTwinMetadataProxy;
@@ -53,9 +54,9 @@ public class TwinReflectorProxyAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   DigitalTwinMetadataProxy cachedDigitalTwinMetadataProxy(final TenantResolver tenantResolver,
-      final PropertyKeysApi propertyKeysApi) {
+      final PropertyKeysApi propertyKeysApi, final TypesApi typesApi) {
 
-    return new Cachedv1DigitalTwinMetadataProxy(tenantResolver, propertyKeysApi);
+    return new Cachedv1DigitalTwinMetadataProxy(tenantResolver, propertyKeysApi, typesApi);
   }
 
   @Bean

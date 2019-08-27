@@ -19,14 +19,15 @@ import com.microsoft.twins.api.ResourcesApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.api.TypesApi;
+import com.microsoft.twins.model.CategoryEnum;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.DeviceUpdate;
 import com.microsoft.twins.model.ExtendedTypeCreate;
-import com.microsoft.twins.model.ExtendedTypeCreate.CategoryEnum;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
+import com.microsoft.twins.model.SpaceTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -103,7 +104,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
 
     final List<SpaceRetrieveWithChildren> parkingSpaces =
         spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().types(PARKING_TYPE)
-            .useParentSpace(true).spaceId(tenant.toString()).traverse("Down"));
+            .useParentSpace(true).spaceId(tenant).traverse("Down"));
 
     final UUID lineId =
         spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name(line)).get(0).getId();
@@ -111,14 +112,13 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
     final NavigableSet<SpaceRetrieveWithChildren> stations =
         new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
     stations.addAll(spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams()
-        .types(WORK_STATION_TYPE).useParentSpace(true).spaceId(lineId.toString())));
+        .types(WORK_STATION_TYPE).useParentSpace(true).spaceId(lineId)));
 
     for (int i = 0; i < vehiclesToAssemble; i++) {
 
       final DevicesApi devicesApi = client.getDevicesApi();
-      final List<DeviceRetrieve> vehicles =
-          devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().types(VEHICLE_TYPE)
-              .spaceId(lineId.toString()).traverse("Down"));
+      final List<DeviceRetrieve> vehicles = devicesApi.devicesRetrieve(
+          new DevicesRetrieveQueryParams().types(VEHICLE_TYPE).spaceId(lineId).traverse("Down"));
 
       vehicles.forEach(
           vehicle -> stations.stream().filter(space -> space.getId().equals(vehicle.getSpaceId()))
@@ -194,7 +194,7 @@ public class SimulateFactoryCommandLineRunner implements CommandLineRunner {
     final ResourcesApi resourcesApi = client.getResourcesApi();
     final SpaceResourceCreate iotHub = new SpaceResourceCreate();
     iotHub.setSpaceId(tenant);
-    iotHub.setType(SpaceResourceCreate.TypeEnum.IOTHUB);
+    iotHub.setType(SpaceTypeEnum.IOTHUB);
     resourcesApi.resourcesCreate(iotHub);
   }
 

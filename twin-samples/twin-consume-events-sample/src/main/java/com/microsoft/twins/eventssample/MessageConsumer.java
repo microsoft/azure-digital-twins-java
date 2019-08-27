@@ -62,7 +62,7 @@ public class MessageConsumer {
 
     return spacesApi
         .spacesRetrieve(new SpacesRetrieveQueryParams().types(PARKING_TYPE).useParentSpace(true)
-            .spaceId(tenant.get(0).getId().toString()).traverse("Down"))
+            .spaceId(tenant.get(0).getId()).traverse("Down"))
         .stream().map(space -> space.getId().toString()).collect(Collectors.toList());
   }
 }

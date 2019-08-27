@@ -277,7 +277,7 @@ public interface UsersApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public UsersRetrieveQueryParams spaceId(final String value) {
+    public UsersRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }
@@ -420,7 +420,7 @@ public interface UsersApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public UsersRetrieveBlobMetadataQueryParams spaceId(final String value) {
+    public UsersRetrieveBlobMetadataQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

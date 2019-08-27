@@ -30,6 +30,7 @@ import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.model.SpaceUpdate;
+import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Property;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProxy {
 
+  private static final String UNKOWN_TYPE = "None";
   private static final String ENTITY_TYPE_SPACE = "spaces";
   private static final String ENTITY_TYPE_DEVICE = "devices";
-  private static final String ATTRIBUTE_STATUS = "status";
-  private static final String ATTRIBUTE_FRIENDLY_NAME = "friendlyName";
-  private static final String ATTRIBUTE_DESCRIPTION = "description";
 
   static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
   static final String CACHE_DEVICE_BY_ID = "deviceById";
@@ -111,14 +110,21 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       device.setDescription("");
       device.setFriendlyName("");
       device.setStatus(StatusEnum.PROVISIONED);
+      device.setTypeId(metadataProxy.getDeviceType(UNKOWN_TYPE));
+      device.setSubtypeId(metadataProxy.getDeviceSubType(UNKOWN_TYPE));
       return;
     }
 
-    device.setDescription(attributes.getOrDefault(ATTRIBUTE_DESCRIPTION, ""));
-    device.setFriendlyName(attributes.getOrDefault(ATTRIBUTE_FRIENDLY_NAME, ""));
+    device.setDescription(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_DESCRIPTION, ""));
+    device.setFriendlyName(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME, ""));
 
-    // TODO define what empty status in update case means
-    final StatusEnum status = StatusEnum.fromValue(attributes.get(ATTRIBUTE_STATUS));
+    device.setTypeId(metadataProxy
+        .getDeviceType(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_TYPE, UNKOWN_TYPE)));
+    device.setSubtypeId(metadataProxy.getDeviceSubType(
+        attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_SUB_TYPE, UNKOWN_TYPE)));
+
+    final StatusEnum status =
+        StatusEnum.fromValue(attributes.get(IngressMessage.ATTRIBUTE_V1_STATUS));
     device.setStatus(status);
   }
 
@@ -128,11 +134,17 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (CollectionUtils.isEmpty(attributes)) {
       space.setDescription("");
       space.setFriendlyName("");
+      space.setTypeId(metadataProxy.getSpaceType(UNKOWN_TYPE));
+      space.setSubtypeId(metadataProxy.getSpaceSubType(UNKOWN_TYPE));
       return;
     }
 
-    space.setDescription(attributes.getOrDefault(ATTRIBUTE_DESCRIPTION, ""));
-    space.setFriendlyName(attributes.getOrDefault(ATTRIBUTE_FRIENDLY_NAME, ""));
+    space.setDescription(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_DESCRIPTION, ""));
+    space.setFriendlyName(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME, ""));
+    space.setTypeId(metadataProxy
+        .getSpaceType(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_TYPE, UNKOWN_TYPE)));
+    space.setSubtypeId(metadataProxy.getSpaceSubType(
+        attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_SUB_TYPE, UNKOWN_TYPE)));
   }
 
   @Override
@@ -240,14 +252,20 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
-      case ATTRIBUTE_DESCRIPTION:
+      case IngressMessage.ATTRIBUTE_V1_DESCRIPTION:
         device.setDescription(attribute.getValue());
         break;
-      case ATTRIBUTE_FRIENDLY_NAME:
+      case IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME:
         device.setFriendlyName(attribute.getValue());
         break;
-      case ATTRIBUTE_STATUS:
+      case IngressMessage.ATTRIBUTE_V1_STATUS:
         device.setStatus(StatusEnum.fromValue(attribute.getValue()));
+        break;
+      case IngressMessage.ATTRIBUTE_V1_TYPE:
+        device.setTypeId(metadataProxy.getDeviceType(attribute.getValue()));
+        break;
+      case IngressMessage.ATTRIBUTE_V1_SUB_TYPE:
+        device.setSubtypeId(metadataProxy.getDeviceSubType(attribute.getValue()));
         break;
       default:
         log.error("Attribute [{}] not supported", attribute.getKey());
@@ -256,34 +274,34 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     // TODO support device location
     // device.setLocation(location);
 
-    // TODO support device types
-    // device.setType(type);
-    // device.setSubtype(subtype);
   }
 
   private void setSpaceAttribute(final SpaceUpdate space,
       final Map.Entry<String, String> attribute) {
 
     switch (attribute.getKey()) {
-      case ATTRIBUTE_DESCRIPTION:
+      case IngressMessage.ATTRIBUTE_V1_DESCRIPTION:
         space.setDescription(attribute.getValue());
         break;
-      case ATTRIBUTE_FRIENDLY_NAME:
+      case IngressMessage.ATTRIBUTE_V1_FRIENDLY_NAME:
         space.setFriendlyName(attribute.getValue());
         break;
-      case ATTRIBUTE_STATUS:
+      case IngressMessage.ATTRIBUTE_V1_STATUS:
         space.setStatus(attribute.getValue());
+        break;
+      case IngressMessage.ATTRIBUTE_V1_TYPE:
+        space.setTypeId(metadataProxy.getSpaceType(attribute.getValue()));
+        break;
+      case IngressMessage.ATTRIBUTE_V1_SUB_TYPE:
+        space.setSubtypeId(metadataProxy.getSpaceSubType(attribute.getValue()));
         break;
       default:
         log.error("Attribute [{}] not supported", attribute.getKey());
         break;
     }
-    // TODO support device location
-    // device.setLocation(location);
 
-    // TODO support device types
-    // device.setType(type);
-    // device.setSubtype(subtype);
+    // TODO support space location
+    // device.setLocation(location);
   }
 
 

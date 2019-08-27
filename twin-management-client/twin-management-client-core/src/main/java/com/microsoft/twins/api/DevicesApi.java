@@ -446,7 +446,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public DevicesRetrieveQueryParams spaceId(final String value) {
+    public DevicesRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }
@@ -591,7 +591,7 @@ public interface DevicesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public DevicesRetrieveBlobMetadataQueryParams spaceId(final String value) {
+    public DevicesRetrieveBlobMetadataQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

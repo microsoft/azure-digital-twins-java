@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import com.microsoft.twins.EncodingUtils;
 import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.CategoryEnum;
 import com.microsoft.twins.model.ExtendedTypeCreate;
 import com.microsoft.twins.model.ExtendedTypeRetrieve;
 import com.microsoft.twins.model.ExtendedTypeUpdate;
@@ -142,7 +143,7 @@ public interface TypesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public TypesRetrieveQueryParams categories(final String value) {
+    public TypesRetrieveQueryParams categories(final CategoryEnum value) {
       put("categories", EncodingUtils.encode(value));
       return this;
     }
@@ -167,7 +168,7 @@ public interface TypesApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public TypesRetrieveQueryParams spaceId(final String value) {
+    public TypesRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

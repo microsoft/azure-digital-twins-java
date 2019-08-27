@@ -190,7 +190,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public MatchersRetrieveQueryParams spaceId(final String value) {
+    public MatchersRetrieveQueryParams spaceId(final UUID value) {
       put("spaceId", EncodingUtils.encode(value));
       return this;
     }

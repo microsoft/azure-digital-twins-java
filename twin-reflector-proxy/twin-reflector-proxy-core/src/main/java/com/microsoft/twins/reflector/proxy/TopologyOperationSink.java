@@ -5,7 +5,7 @@ package com.microsoft.twins.reflector.proxy;
 
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.messaging.SubscribableChannel;
-import com.microsoft.twins.model.EndpointCreate.EventTypesEnum;
+import com.microsoft.twins.model.EventTypesEnum;
 
 /**
  * Spring cloud stream {@link Input} for {@link EventTypesEnum#TOPOLOGYOPERATION}s.
