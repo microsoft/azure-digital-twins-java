@@ -1,13 +1,15 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.proxy;
+package com.microsoft.twins.reflector.proxy.v1;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -32,6 +34,8 @@ import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.model.SpaceUpdate;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Property;
+import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
+import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProxy {
 
   private static final String UNKOWN_TYPE = "None";
+  private static final String UNKOWN_SPACE_STATUS = "None";
   private static final String ENTITY_TYPE_SPACE = "spaces";
   private static final String ENTITY_TYPE_DEVICE = "devices";
 
@@ -59,7 +64,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
 
   @Override
   public UUID createDevice(final String name, final UUID parent, final UUID gateway,
-      final List<Property> properties, final Map<String, String> attributes) {
+      final Collection<Property> properties, final Map<String, String> attributes) {
     final DeviceCreate device = new DeviceCreate();
     device.setName(name);
     device.setSpaceId(parent);
@@ -84,7 +89,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
 
   @Override
   public void updateDeviceComplete(final UUID id, final UUID parent, final UUID gateway,
-      final List<Property> properties, final Map<String, String> attributes) {
+      final Collection<Property> properties, final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
     device.setSpaceId(parent);
     device.setGatewayId(gateway);
@@ -136,6 +141,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       space.setFriendlyName("");
       space.setTypeId(metadataProxy.getSpaceType(UNKOWN_TYPE));
       space.setSubtypeId(metadataProxy.getSpaceSubType(UNKOWN_TYPE));
+      space.setStatusId(metadataProxy.getSpaceStatus(UNKOWN_SPACE_STATUS));
       return;
     }
 
@@ -145,11 +151,13 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         .getSpaceType(attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_TYPE, UNKOWN_TYPE)));
     space.setSubtypeId(metadataProxy.getSpaceSubType(
         attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_SUB_TYPE, UNKOWN_TYPE)));
+    space.setStatusId(metadataProxy.getSpaceStatus(
+        attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_STATUS, UNKOWN_SPACE_STATUS)));
   }
 
   @Override
   public void updateDevicePartial(final UUID id, final UUID parent, final UUID gateway,
-      final List<Property> properties, final Map<String, String> attributes) {
+      final Collection<Property> properties, final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
 
     if (parent != null) {
@@ -176,9 +184,10 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
   }
 
 
+
   @Override
-  public UUID createSpace(final String name, final UUID parent, final List<Property> properties,
-      final Map<String, String> attributes) {
+  public UUID createSpace(final String name, final UUID parent,
+      final Collection<Property> properties, final Map<String, String> attributes) {
 
     final SpaceCreate space = new SpaceCreate();
     space.setName(name);
@@ -201,8 +210,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
   }
 
   @Override
-  public void updateSpaceComplete(final UUID id, final UUID parent, final List<Property> properties,
-      final Map<String, String> attributes) {
+  public void updateSpaceComplete(final UUID id, final UUID parent,
+      final Collection<Property> properties, final Map<String, String> attributes) {
 
     final SpaceUpdate space = new SpaceUpdate();
     space.setParentSpaceId(parent);
@@ -215,16 +224,14 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
           .collect(Collectors.toList()), id);
     }
 
-    if (!CollectionUtils.isEmpty(attributes)) {
-      setAllSpaceAttributes(space, attributes);
-    }
+    setAllSpaceAttributes(space, attributes);
 
     spacesApi.spacesUpdate(space, id);
   }
 
   @Override
-  public void updateSpacePartial(final UUID id, final UUID parent, final List<Property> properties,
-      final Map<String, String> attributes) {
+  public void updateSpacePartial(final UUID id, final UUID parent,
+      final Collection<Property> properties, final Map<String, String> attributes) {
 
     final SpaceUpdate space = new SpaceUpdate();
 
@@ -287,7 +294,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         space.setFriendlyName(attribute.getValue());
         break;
       case IngressMessage.ATTRIBUTE_V1_STATUS:
-        space.setStatus(attribute.getValue());
+        space.setStatusId(metadataProxy.getSpaceStatus(attribute.getValue()));
         break;
       case IngressMessage.ATTRIBUTE_V1_TYPE:
         space.setTypeId(metadataProxy.getSpaceType(attribute.getValue()));
@@ -400,6 +407,18 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     }
 
     return Optional.of(devices.get(0).getGatewayId());
+  }
+
+  @Override
+  public List<DeviceRetrieve> getDeviceChildrenOf(@NotNull final UUID space) {
+    return devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().spaceId(space));
+  }
+
+  @Override
+  public List<SpaceRetrieve> getSpaceChildrenOf(@NotNull final UUID space) {
+    return spacesApi
+        .spacesRetrieve(new SpacesRetrieveQueryParams().spaceId(space).useParentSpace(true))
+        .stream().map(s -> (SpaceRetrieve) s).collect(Collectors.toList());
   }
 
 

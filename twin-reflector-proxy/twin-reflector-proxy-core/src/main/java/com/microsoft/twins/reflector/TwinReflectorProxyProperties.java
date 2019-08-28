@@ -19,6 +19,8 @@ public class TwinReflectorProxyProperties {
 
   private UUID tenant;
 
+  private UUID defaultGateway;
+
   private final EventHubs eventHubs = new EventHubs();
 
 

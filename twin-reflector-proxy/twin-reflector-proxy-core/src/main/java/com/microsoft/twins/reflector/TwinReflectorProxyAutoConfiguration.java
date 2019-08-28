@@ -3,6 +3,7 @@
  */
 package com.microsoft.twins.reflector;
 
+import java.util.UUID;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,13 +22,13 @@ import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.TypesApi;
 import com.microsoft.twins.reflector.ingress.IngressMessageListener;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
-import com.microsoft.twins.reflector.proxy.Cachedv1DigitalTwinMetadataProxy;
-import com.microsoft.twins.reflector.proxy.Cachedv1DigitalTwinTopologyProxy;
 import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
 import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import com.microsoft.twins.reflector.proxy.TenantResolver;
-import com.microsoft.twins.reflector.proxy.TopologyCacheManager;
-import com.microsoft.twins.reflector.proxy.TopologyOperationSink;
+import com.microsoft.twins.reflector.proxy.v1.Cachedv1DigitalTwinMetadataProxy;
+import com.microsoft.twins.reflector.proxy.v1.Cachedv1DigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.v1.TopologyCacheManager;
+import com.microsoft.twins.reflector.proxy.v1.TopologyOperationSink;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
 import com.microsoft.twins.reflector.topology.TopologyUpdater;
 
@@ -98,7 +99,18 @@ public class TwinReflectorProxyAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   TenantResolver tenantResolver(final TwinReflectorProxyProperties properties) {
-    return properties::getTenant;
+    return new TenantResolver() {
+
+      @Override
+      public UUID getTenant() {
+        return properties.getTenant();
+      }
+
+      @Override
+      public UUID getGateway() {
+        return properties.getDefaultGateway();
+      }
+    };
   }
 
 }

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins.reflector.proxy;
+package com.microsoft.twins.reflector.proxy.v1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +44,9 @@ import com.microsoft.twins.model.EventTypesEnum;
 import com.microsoft.twins.model.SpaceRetrieveWithChildren;
 import com.microsoft.twins.reflector.AbstractTest;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
-import com.microsoft.twins.reflector.proxy.CachedDigitalTwinProxyTest.CachedDigitalTwinProxyTestConfiguration;
+import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
+import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.v1.CachedDigitalTwinProxyTest.CachedDigitalTwinProxyTestConfiguration;
 import lombok.Getter;
 
 @ContextConfiguration(classes = {CachedDigitalTwinProxyTestConfiguration.class})

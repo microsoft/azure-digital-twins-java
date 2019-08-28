@@ -5,7 +5,7 @@ package com.microsoft.twins.reflector.model;
 
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -25,11 +25,15 @@ import lombok.ToString;
 @AllArgsConstructor
 public class IngressMessage {
   @JsonProperty(value = "id", required = true)
-  @NotBlank
+  @NotNull
   @Size(min = 3, max = 64)
   private String id;
 
-  @JsonProperty("entity-type")
+  // Supported ADT V1 entity types
+  public static final String ENTITY_V1_SPACE = "spaces";
+  public static final String ENTITY_V1_DEVICE = "devices";
+
+  @JsonProperty(value = "entity-type", required = true)
   private String entityType;
 
   // Supported ADT V1 attributes
