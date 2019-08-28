@@ -15,7 +15,7 @@
   
   <logger name="feign" level="info" />
   
-  <logger name="com.microsoft.twins.reflector" level="debug" />
+  <logger name="com.microsoft.twins.reflector" level="info" />
   
   <root level="info">
     <appender-ref ref="STDOUT" />

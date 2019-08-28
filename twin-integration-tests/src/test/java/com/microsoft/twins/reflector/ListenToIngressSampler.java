@@ -9,11 +9,15 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
+import com.microsoft.twins.reflector.model.FeedbackMessage;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ListenToIngressSampler {
   private final Set<TestMessage> receivedDeviceMessages =
+      Collections.synchronizedSet(new HashSet<>());
+
+  private final Set<FeedbackMessage> receivedFeedbackMessages =
       Collections.synchronizedSet(new HashSet<>());
 
   private final AmqpDeserializer amqpDeserializer = new AmqpDeserializer();
@@ -38,8 +42,20 @@ public class ListenToIngressSampler {
         .add(new TestMessage(hardwareId, event.getPayload(), UUID.fromString(deviceId)));
   }
 
+  @StreamListener(TestFeedbackSink.FEEDBACK)
+  void getIngressFeedback(final FeedbackMessage feedback) {
+    log.info("Got ingress feedback [{}]", feedback);
+    receivedFeedbackMessages.add(feedback);
+  }
+
   public Set<TestMessage> getReceivedDeviceMessages() {
     return receivedDeviceMessages;
   }
+
+  public Set<FeedbackMessage> getReceivedFeedbackMessages() {
+    return receivedFeedbackMessages;
+  }
+
+
 
 }

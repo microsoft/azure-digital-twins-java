@@ -84,6 +84,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       attributes.entrySet().forEach(e -> setDeviceAttribute(device, e));
     }
 
+    log.debug("I will create device [{}]", device);
     return devicesApi.devicesCreate(device);
   }
 
@@ -105,6 +106,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     setAllDeviceAttributes(device, attributes);
 
 
+    log.debug("I will update device with [{}]", device);
     devicesApi.devicesUpdate(device, id);
   }
 
@@ -180,6 +182,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       attributes.entrySet().forEach(e -> setDeviceAttribute(device, e));
     }
 
+    log.debug("I will update device with [{}]", device);
     devicesApi.devicesUpdate(device, id);
   }
 
@@ -205,6 +208,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       attributes.entrySet().forEach(e -> setSpaceAttribute(space, e));
     }
 
+    log.debug("I will create space [{}]", space);
     return spacesApi.spacesCreate(space);
 
   }
@@ -226,6 +230,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
 
     setAllSpaceAttributes(space, attributes);
 
+    log.debug("I will update space with [{}]", space);
     spacesApi.spacesUpdate(space, id);
   }
 
@@ -251,6 +256,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       attributes.entrySet().forEach(e -> setSpaceAttribute(space, e));
     }
 
+    log.debug("I will update space with [{}]", space);
     spacesApi.spacesUpdate(space, id);
   }
 
