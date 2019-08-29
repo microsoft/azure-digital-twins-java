@@ -16,8 +16,8 @@ import com.microsoft.twins.reflector.proxy.v1.TopologyOperationSink;
 
 @Configuration
 @EnableAutoConfiguration
-@EnableBinding({DeviceMessageSink.class, ReflectorIngressSink.class, TopologyOperationSink.class,
-    FeedbackSource.class, TestFeedbackSink.class})
+@EnableBinding({ReflectorIngressSink.class, TopologyOperationSink.class, FeedbackSource.class,
+    TestFeedbackSink.class, TestIngressSource.class, TestDeviceMessageSink.class})
 @EnableConfigurationProperties(TestConfigurationProperties.class)
 public class TestConfiguration {
 

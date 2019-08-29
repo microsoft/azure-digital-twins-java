@@ -15,7 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieve;
-import com.microsoft.twins.reflector.error.InconsistentTopologyException;
+import com.microsoft.twins.reflector.error.TopologyElementDoesNotExistException;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Relationship;
 import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
@@ -161,13 +161,12 @@ public class TopologyUpdater {
     return relationShips.stream()
         .filter(relationShip -> IngressMessage.ENTITY_V1_SPACE
             .equalsIgnoreCase(relationShip.getEntityType()))
-        .filter(
-            relationShip -> Relationship.RELATIONSHIP_PARENT
-                .equalsIgnoreCase(relationShip.getName()))
+        .filter(relationShip -> Relationship.RELATIONSHIP_PARENT
+            .equalsIgnoreCase(relationShip.getName()))
         .findAny()
         .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
-            .orElseThrow(() -> new InconsistentTopologyException(
-                relationShip.getTargetId() + " does not exist", correlationId))
+            .orElseThrow(() -> new TopologyElementDoesNotExistException(relationShip.getTargetId(),
+                correlationId))
             .getId());
   }
 
@@ -182,15 +181,16 @@ public class TopologyUpdater {
       return;
     }
 
-    final List<SpaceRetrieve> children = relationShips.stream()
-        .filter(relationShip -> IngressMessage.ENTITY_V1_SPACE
-            .equalsIgnoreCase(relationShip.getEntityType()))
-        .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
-            .equalsIgnoreCase(relationShip.getName()))
-        .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
-            .orElseThrow(() -> new InconsistentTopologyException(
-                relationShip.getTargetId() + " does not exist", correlationId)))
-        .collect(Collectors.toList());
+    final List<SpaceRetrieve> children =
+        relationShips.stream()
+            .filter(relationShip -> IngressMessage.ENTITY_V1_SPACE
+                .equalsIgnoreCase(relationShip.getEntityType()))
+            .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
+                .equalsIgnoreCase(relationShip.getName()))
+            .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
+                .orElseThrow(() -> new TopologyElementDoesNotExistException(
+                    relationShip.getTargetId(), correlationId)))
+            .collect(Collectors.toList());
 
     if (removeOrphans) {
       final List<SpaceRetrieve> existing = cachedDigitalTwinProxy.getSpaceChildrenOf(parent);
@@ -218,15 +218,16 @@ public class TopologyUpdater {
       return;
     }
 
-    final List<DeviceRetrieve> children = relationShips.stream()
-        .filter(relationShip -> IngressMessage.ENTITY_V1_DEVICE
-            .equalsIgnoreCase(relationShip.getEntityType()))
-        .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
-            .equalsIgnoreCase(relationShip.getName()))
-        .map(relationShip -> cachedDigitalTwinProxy.getDeviceByName(relationShip.getTargetId())
-            .orElseThrow(() -> new InconsistentTopologyException(
-                relationShip.getTargetId() + " does not exist", correlationId)))
-        .collect(Collectors.toList());
+    final List<DeviceRetrieve> children =
+        relationShips.stream()
+            .filter(relationShip -> IngressMessage.ENTITY_V1_DEVICE
+                .equalsIgnoreCase(relationShip.getEntityType()))
+            .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
+                .equalsIgnoreCase(relationShip.getName()))
+            .map(relationShip -> cachedDigitalTwinProxy.getDeviceByName(relationShip.getTargetId())
+                .orElseThrow(() -> new TopologyElementDoesNotExistException(
+                    relationShip.getTargetId(), correlationId)))
+            .collect(Collectors.toList());
 
     if (removeOrphans) {
       final List<DeviceRetrieve> existing = cachedDigitalTwinProxy.getDeviceChildrenOf(parent);
@@ -260,8 +261,8 @@ public class TopologyUpdater {
         .findAny()
         .map(relationShip -> cachedDigitalTwinProxy
             .getGatewayIdByHardwareId(relationShip.getTargetId())
-            .orElseThrow(() -> new InconsistentTopologyException(
-                relationShip.getTargetId() + " does not exist", correlationId)));
+            .orElseThrow(() -> new TopologyElementDoesNotExistException(relationShip.getTargetId(),
+                correlationId)));
   }
 
 }

@@ -14,8 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.test.context.ActiveProfiles;
@@ -52,6 +50,7 @@ import com.microsoft.twins.model.StatusEnum;
 import com.microsoft.twins.model.TypeEnum;
 import com.microsoft.twins.reflector.TestConfiguration.TestTenantResolver;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
+import com.microsoft.twins.reflector.model.ErrorCode;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
 import com.microsoft.twins.reflector.model.Status;
@@ -63,7 +62,6 @@ import com.microsoft.twins.spring.configuration.DigitalTwinClientAutoConfigurati
 @ActiveProfiles({"test"})
 @ContextConfiguration(classes = {DigitalTwinClientAutoConfiguration.class,
     TwinReflectorProxyAutoConfiguration.class, TestConfiguration.class})
-@EnableBinding(Sink.class)
 public abstract class AbstractIntegrationTest {
   protected static final String TEST_DEVICE_SUBTYPE = "IntegrationTestDevice";
   protected static final String TEST_SPACE_STATUS = "ReadyToTest";
@@ -80,7 +78,7 @@ public abstract class AbstractIntegrationTest {
 
 
   @Autowired
-  protected ReflectorIngressSink sink;
+  protected TestIngressSource source;
 
   @Autowired
   protected ListenToIngressSampler listToIngress;
@@ -145,27 +143,28 @@ public abstract class AbstractIntegrationTest {
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, type.toString())
         .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId.toString()).build();
 
-    sink.inputChannel().send(hubMessage);
-    awaitFeedback(correlationId, Status.PROCESSED);
+    source.ingress().send(hubMessage);
+    Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(100, TimeUnit.MILLISECONDS)
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .until(() -> listToIngress.getReceivedFeedbackMessages().stream()
+            .anyMatch(feedback -> feedback.getCorrelationId().equals(correlationId)
+                && Status.PROCESSED == feedback.getStatus()));
   }
 
-  protected void sendAndAwaitErrorFeedback(final IngressMessage payload, final MessageType type) {
+  protected void sendAndAwaitErrorFeedback(final IngressMessage payload, final MessageType type,
+      final ErrorCode errorCode) {
     final UUID correlationId = UUID.randomUUID();
 
     final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(payload)
         .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE, type.toString())
         .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId.toString()).build();
 
-    sink.inputChannel().send(hubMessage);
-    awaitFeedback(correlationId, Status.ERROR);
-  }
-
-  private void awaitFeedback(final UUID correlationId, final Status status) {
+    source.ingress().send(hubMessage);
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(100, TimeUnit.MILLISECONDS)
         .pollInterval(10, TimeUnit.MILLISECONDS)
         .until(() -> listToIngress.getReceivedFeedbackMessages().stream()
             .anyMatch(feedback -> feedback.getCorrelationId().equals(correlationId)
-                && status.equals(feedback.getStatus())));
+                && Status.ERROR == feedback.getStatus() && errorCode == feedback.getErrorCode()));
   }
 
   protected Optional<SpaceRetrieveWithChildren> getSpace(final UUID id) {

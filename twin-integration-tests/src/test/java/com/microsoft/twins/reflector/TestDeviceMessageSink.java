@@ -6,7 +6,7 @@ package com.microsoft.twins.reflector;
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.messaging.SubscribableChannel;
 
-public interface DeviceMessageSink {
+public interface TestDeviceMessageSink {
   /**
    * Input channel name.
    */
@@ -15,7 +15,7 @@ public interface DeviceMessageSink {
   /**
    * @return input channel.
    */
-  @Input(DeviceMessageSink.INPUT)
+  @Input(TestDeviceMessageSink.INPUT)
   SubscribableChannel inputChannel();
 
 }

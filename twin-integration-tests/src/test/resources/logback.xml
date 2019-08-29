@@ -17,6 +17,9 @@
   
   <logger name="com.microsoft.twins.reflector" level="debug" />
   
+  <logger name="org.springframework.cloud" level="info" />
+  <logger name="org.springframework.integration" level="info" />
+  
   <root level="info">
     <appender-ref ref="STDOUT" />
   </root>
