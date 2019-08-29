@@ -20,6 +20,7 @@ import com.microsoft.twins.api.PropertyKeysApi;
 import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.TypesApi;
+import com.microsoft.twins.reflector.ingress.FeedbackSource;
 import com.microsoft.twins.reflector.ingress.IngressMessageListener;
 import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
@@ -33,7 +34,7 @@ import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
 import com.microsoft.twins.reflector.topology.TopologyUpdater;
 
 @Configuration
-@EnableBinding({ReflectorIngressSink.class, TopologyOperationSink.class})
+@EnableBinding({ReflectorIngressSink.class, TopologyOperationSink.class, FeedbackSource.class})
 @EnableCaching
 @EnableConfigurationProperties(TwinReflectorProxyProperties.class)
 @PropertySource("classpath:/twins-reflector-proxy-defaults.properties")

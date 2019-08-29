@@ -10,10 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.messaging.Message;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.model.CategoryEnum;
@@ -21,7 +19,6 @@ import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.ExtendedPropertyRetrieve;
 import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.reflector.AbstractIntegrationTest;
-import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
 import com.microsoft.twins.reflector.model.Property;
@@ -31,15 +28,17 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   private static final String TEST_PROP_VALUE = "testValue1";
   private static final String TEST_PROP_KEY = "testName1";
-  @Autowired
-  private ReflectorIngressSink sink;
+
+
+  @BeforeEach
+  public void clear() {
+    listToIngress.getReceivedFeedbackMessages().clear();
+  }
 
   @Test
   public void deleteSpace() {
     final String spaceName = UUID.randomUUID().toString();
     final UUID testSpace = createSpace(spaceName);
-
-    final UUID correlationId = UUID.randomUUID();
 
     assertThat(spacesApi.spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().ids(testSpace)))
         .hasSize(1);
@@ -48,12 +47,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setId(spaceName);
     testMessage.setEntityType("spaces");
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.DELETE.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.DELETE);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
@@ -62,11 +56,11 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
                 .isEmpty());
   }
 
+
+
   @Test
   public void deleteDevice() {
     final UUID testSpace = createSpace("My Reflector Proxy delete test space");
-
-    final UUID correlationId = UUID.randomUUID();
 
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId, testGateway, testSpace);
@@ -78,18 +72,48 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.DELETE.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.DELETE);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
         .untilAsserted(() -> assertThat(
             devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams().ids(device)))
                 .isEmpty());
+  }
+
+  @Test
+  public void createDeviceMinimal() {
+    final String deviceId = UUID.randomUUID().toString();
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(deviceId);
+    testMessage.setEntityType("devices");
+
+    final List<Relationship> relationShips = new ArrayList<>();
+    relationShips.add(Relationship.builder().entityType("devices").name("gateway")
+        .targetId(testGatewayName).build());
+
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
+
+    Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
+        .untilAsserted(() -> assertThat(devicesApi.devicesRetrieve(
+            new DevicesApi.DevicesRetrieveQueryParams().names(deviceId.toString()))).hasSize(1));
+
+    final DeviceRetrieve created =
+        devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams()
+            .names(deviceId.toString()).includes("properties,description")).get(0);
+    assertThat(created.getName()).isEqualTo(deviceId);
+    assertThat(created.getHardwareId()).isEqualTo(deviceId);
+    assertThat(created.getGatewayId()).isEqualTo(testGateway);
+    assertThat(created.getSpaceId()).isEqualTo(tenant);
+    assertThat(created.getTypeId()).isEqualTo(getType("None", CategoryEnum.DEVICETYPE));
+    assertThat(created.getIoTHubUrl()).isNullOrEmpty();
+    assertThat(created.getConnectionString()).isNullOrEmpty();
+    assertThat(created.getProperties()).isEmpty();
+    assertThat(created.getFriendlyName()).isNullOrEmpty();
+    assertThat(created.getDescription()).isNullOrEmpty();
+    assertThat(created.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
   }
 
   @Test
@@ -104,7 +128,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   }
 
   private void createDeviceWithGivenParent(final String parentName, final UUID parent) {
-    final UUID correlationId = UUID.randomUUID();
     final String deviceId = UUID.randomUUID().toString();
     final String friendlyName = "a test device";
     final String description = "a test descrption";
@@ -123,18 +146,12 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     }
 
     testMessage.setRelationships(relationShips);
-
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value(TEST_PROP_VALUE).build()));
     testMessage.setAttributes(Map.of("status", "Provisioned", "friendlyName", friendlyName,
         "description", description, "type", TEST_DEVICE_TYPE));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
@@ -166,7 +183,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateDeviceFull() {
     final String updatedParentName = UUID.randomUUID().toString();
     final UUID updatedParent = createSpace(updatedParentName);
-    final UUID correlationId = UUID.randomUUID();
 
     final String updatedGatewayName = UUID.randomUUID().toString();
     final UUID updatedGateway = createGateway(updatedGatewayName, tenant);
@@ -194,12 +210,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setAttributes(Map.of("status", "Active", "friendlyName", friendlyName,
         "description", description, "type", updatedType));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     final DeviceRetrieve updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -220,23 +231,15 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   @Test
   public void updateDeviceFullResetValues() {
-    final UUID correlationId = UUID.randomUUID();
-
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId, createGateway("AnotherGateway", tenant),
         createSpace("AnotherSpace"));
-
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     final DeviceRetrieve updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -257,7 +260,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   @Test
   public void updateDeviceGateway() {
-    final UUID correlationId = UUID.randomUUID();
     final String deviceId = UUID.randomUUID().toString();
 
     final String updatedGatewayName = UUID.randomUUID().toString();
@@ -272,12 +274,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setRelationships(List.of(Relationship.builder().entityType("devices")
         .name("gateway").targetId(updatedGatewayName).build()));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final DeviceRetrieve updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -296,7 +293,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   @Test
   public void updateDeviceUpdateProperty() {
-    final UUID correlationId = UUID.randomUUID();
+
     final String deviceId = UUID.randomUUID().toString();
 
 
@@ -305,15 +302,10 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
-
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
     testMessage
         .setProperties(List.of(Property.builder().name(TEST_PROP_KEY).value("newValue").build()));
 
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     // Create property
     DeviceRetrieve updated = devicesApi.devicesRetrieve(
@@ -335,7 +327,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value("updatedValue").build()));
 
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -348,7 +340,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY + "_2").value("newValue").build()));
 
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -361,7 +353,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   @Test
   public void updateDeviceParent() {
-    final UUID correlationId = UUID.randomUUID();
+
     final String deviceId = UUID.randomUUID().toString();
 
     final String updatedParentName = UUID.randomUUID().toString();
@@ -376,13 +368,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("parent")
         .targetId(updatedParentName).build()));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
-
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final DeviceRetrieve updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -399,9 +385,11 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getDescription()).isEqualTo(deviceId);
   }
 
+
+
   @Test
   public void updateDeviceDescription() {
-    final UUID correlationId = UUID.randomUUID();
+
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId);
 
@@ -412,13 +400,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setEntityType("devices");
     testMessage.setAttributes(Map.of("description", description));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
-
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final DeviceRetrieve updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -437,7 +419,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
   @Test
   public void updateDeviceType() {
-    final UUID correlationId = UUID.randomUUID();
+
     final String deviceId = UUID.randomUUID().toString();
     final UUID device = createDevice(deviceId);
 
@@ -449,13 +431,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setEntityType("devices");
     testMessage.setAttributes(Map.of("type", updatedType));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
-
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final DeviceRetrieve updated = devicesApi.devicesRetrieve(
         new DevicesApi.DevicesRetrieveQueryParams().ids(device).includes("properties,description"))
@@ -478,7 +454,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceFull() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
+
     final String updateParentSpaceName = UUID.randomUUID().toString();
     final UUID updateParentSpace = createSpace(updateParentSpaceName);
 
@@ -513,12 +489,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setAttributes(Map.of("friendlyName", friendlyName, "description", description,
         "type", updatedType, "status", updatedStatus));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(
@@ -544,18 +515,12 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceFullResetValue() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(spaceId);
     testMessage.setEntityType("spaces");
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(
@@ -574,7 +539,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceFriendlyName() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
+
 
     final String friendlyName = "updated name";
 
@@ -583,12 +548,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setEntityType("spaces");
     testMessage.setAttributes(Map.of("friendlyName", friendlyName));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(
@@ -605,7 +565,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceType() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
+
 
     final String updatedType = "updatedTestSpaceType";
     final int updatedTypeId = getType(updatedType, CategoryEnum.SPACETYPE);
@@ -615,12 +575,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setEntityType("spaces");
     testMessage.setAttributes(Map.of("type", updatedType));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(
@@ -637,7 +592,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceStatus() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
 
     final String updatedStatus = "updatedTestSpaceStatus";
     final int updatedStatusId = getType(updatedStatus, CategoryEnum.SPACESTATUS);
@@ -647,12 +601,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setEntityType("spaces");
     testMessage.setAttributes(Map.of("status", updatedStatus));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(
@@ -669,7 +618,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceProperty() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(spaceId);
@@ -678,12 +626,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage
         .setProperties(List.of(Property.builder().name(TEST_PROP_KEY).value("newValue").build()));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     // Add property
     SpaceRetrieve updated = spacesApi
@@ -700,7 +643,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     // Update property
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY).value("updatedValue").build()));
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     updated = spacesApi
         .spacesRetrieve(
@@ -716,7 +659,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     // Add another property
     testMessage.setProperties(
         List.of(Property.builder().name(TEST_PROP_KEY + "_2").value("newValue").build()));
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     updated = spacesApi
         .spacesRetrieve(
@@ -736,11 +679,9 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceChildSpace() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
 
     final String updateChildSpaceName = UUID.randomUUID().toString();
     final UUID updateChildSpaceId = createSpace(updateChildSpaceName);
-
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(spaceId);
@@ -748,12 +689,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("child")
         .targetId(updateChildSpaceName).build()));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     // Add child
     SpaceRetrieve updated = spacesApi
@@ -771,11 +707,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     // Remove child
     testMessage.setRelationships(null);
-    final Message<IngressMessage> hubMessageFull = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-    sink.inputChannel().send(hubMessageFull);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     updated = spacesApi
         .spacesRetrieve(
@@ -793,12 +725,10 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceChildDevice() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
 
     final String updateChildDeviceName = UUID.randomUUID().toString();
     final UUID updateChildDeviceId = createDevice(updateChildDeviceName, testGateway,
         createSpace("My Reflector Proxy original parent space"));
-
 
     final IngressMessage testMessage = new IngressMessage();
     testMessage.setId(spaceId);
@@ -806,12 +736,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setRelationships(List.of(Relationship.builder().entityType("devices").name("child")
         .targetId(updateChildDeviceName).build()));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     // Add child
     SpaceRetrieve updated = spacesApi
@@ -830,11 +755,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
 
     // Remove child
     testMessage.setRelationships(null);
-    final Message<IngressMessage> hubMessageFull = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-    sink.inputChannel().send(hubMessageFull);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     updated = spacesApi
         .spacesRetrieve(
@@ -851,7 +772,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   public void updateSpaceParent() {
     final String spaceId = UUID.randomUUID().toString();
     final UUID space = createSpace(spaceId);
-    final UUID correlationId = UUID.randomUUID();
+
 
     final String updateParentSpaceName = UUID.randomUUID().toString();
     final UUID updateParentSpace = createSpace(updateParentSpaceName);
@@ -863,12 +784,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("parent")
         .targetId(updateParentSpaceName).build()));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.PARTIAL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(
@@ -880,6 +796,30 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getDescription()).isEqualTo(spaceId);
     assertThat(updated.getProperties()).isEmpty();
   }
+
+
+  // public void updateSpaceParentFailsIfParentIdDoesNotExist() {
+  // final String spaceId = UUID.randomUUID().toString();
+  // final UUID space = createSpace(spaceId);
+  //
+  // final IngressMessage testMessage = new IngressMessage();
+  // testMessage.setId(spaceId);
+  // testMessage.setEntityType("spaces");
+  // testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("parent")
+  // .targetId("DoesNotExist").build()));
+  //
+  // sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
+  //
+  // final SpaceRetrieve updated = spacesApi
+  // .spacesRetrieve(
+  // new SpacesApi.SpacesRetrieveQueryParams().ids(space).includes("properties,description"))
+  // .get(0);
+  // assertThat(updated.getName()).isEqualTo(spaceId);
+  // assertThat(updated.getParentSpaceId()).isEqualTo(tenant);
+  // assertThat(updated.getFriendlyName()).isEqualTo(spaceId);
+  // assertThat(updated.getDescription()).isEqualTo(spaceId);
+  // assertThat(updated.getProperties()).isEmpty();
+  // }
 
   @Test
   public void createSpaceFull() {
@@ -894,7 +834,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   }
 
   private void testSpaceCreationWithParent(final String parentSpaceName, final UUID parentSpaceId) {
-    final UUID correlationId = UUID.randomUUID();
+
     final String spaceId = UUID.randomUUID().toString();
     final String friendlyName = "a test device";
     final String description = "a test descrption";
@@ -913,12 +853,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setAttributes(Map.of("friendlyName", friendlyName, "description", description,
         "type", TEST_SPACE_TYPE, "status", TEST_SPACE_STATUS));
 
-    final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-        .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-            MessageType.FULL.toString().toLowerCase())
-        .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-    sink.inputChannel().send(hubMessage);
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
@@ -940,6 +875,33 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(created.getStatusId()).isEqualTo(spaceStatusId);
     assertThat(created.getProperties()).containsOnly(new ExtendedPropertyRetrieve()
         .name(TEST_PROP_KEY).value(TEST_PROP_VALUE).dataType("string"));
+  }
+
+  @Test
+  public void creationSpaceMinimal() {
+    final String spaceId = UUID.randomUUID().toString();
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(spaceId);
+    testMessage.setEntityType("spaces");
+
+    sendAndAwaitFeedback(testMessage, MessageType.FULL);
+
+    Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
+        .untilAsserted(() -> assertThat(spacesApi
+            .spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams().name(spaceId.toString())))
+                .hasSize(1));
+
+    final SpaceRetrieve created = spacesApi.spacesRetrieve(new SpacesApi.SpacesRetrieveQueryParams()
+        .name(spaceId.toString()).includes("properties,description")).get(0);
+    assertThat(created.getName()).isEqualTo(spaceId);
+    assertThat(created.getParentSpaceId()).isEqualTo(tenant);
+    assertThat(created.getTypeId()).isEqualTo(getType("None", CategoryEnum.SPACETYPE));
+    assertThat(created.getStatusId()).isEqualTo(getType("None", CategoryEnum.SPACESTATUS));
+    assertThat(created.getFriendlyName()).isNullOrEmpty();
+    assertThat(created.getDescription()).isNullOrEmpty();
+    assertThat(created.getProperties()).isEmpty();
   }
 
 

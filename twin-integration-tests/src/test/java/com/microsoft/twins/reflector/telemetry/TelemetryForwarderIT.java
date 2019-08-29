@@ -11,14 +11,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.messaging.Message;
 import com.microsoft.twins.reflector.AbstractIntegrationTest;
-import com.microsoft.twins.reflector.ListenToIngressSampler;
 import com.microsoft.twins.reflector.TestMessage;
-import com.microsoft.twins.reflector.ingress.ReflectorIngressSink;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
 
@@ -27,11 +24,11 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
   @Autowired
   private TelemetryForwarder telemetryForwarderUnderTest;
 
-  @Autowired
-  private ListenToIngressSampler listToIngress;
-
-  @Autowired
-  private ReflectorIngressSink sink;
+  @BeforeEach
+  public void clear() {
+    listToIngress.getReceivedDeviceMessages().clear();
+    listToIngress.getReceivedFeedbackMessages().clear();
+  }
 
   @Test
   public void sendTelemetryMessagesThroughIoTHub()
@@ -70,7 +67,6 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
 
     for (int i = 0; i < 10; i++) {
       final String payload = RandomStringUtils.randomAlphanumeric(20);
-      final UUID correlationId = UUID.randomUUID();
 
       final String deviceId = UUID.randomUUID().toString();
       final UUID device = createDevice(deviceId, testGateway, testSpace);
@@ -82,12 +78,7 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
       testMessage.setId(hardwareId);
       testMessage.setTelemetry(payload);
 
-      final Message<IngressMessage> hubMessage = MessageBuilder.withPayload(testMessage)
-          .setHeader(ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-              MessageType.FULL.toString().toLowerCase())
-          .setHeader(ReflectorIngressSink.HEADER_CORRELATION_ID, correlationId).build();
-
-      sink.inputChannel().send(hubMessage);
+      sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
       sendMessages.add(new TestMessage(hardwareId, payload, testGateway));
     }
