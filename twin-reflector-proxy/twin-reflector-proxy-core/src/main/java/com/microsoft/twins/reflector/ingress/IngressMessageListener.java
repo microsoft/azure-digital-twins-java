@@ -8,17 +8,18 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.MDC;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.validation.annotation.Validated;
-import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.reflector.error.AbstractIngressFailedException;
 import com.microsoft.twins.reflector.model.FeedbackMessage;
 import com.microsoft.twins.reflector.model.FeedbackMessage.FeedbackMessageBuilder;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Status;
+import com.microsoft.twins.reflector.proxy.ProxyContext;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
 import com.microsoft.twins.reflector.topology.TopologyUpdater;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class IngressMessageListener {
 
     if (correlationId != null) {
       MDC.put(LOG_CORRELATION_ID, correlationId.toString());
+      ProxyContext.setCorrelationId(correlationId);
     }
 
     log.trace("Got ingress message {}", message);
@@ -59,12 +61,12 @@ public class IngressMessageListener {
       }
     } finally {
       MDC.clear();
+      ProxyContext.clear();
     }
   }
 
   private FeedbackMessage getPartialTopologyUpdate(final IngressMessage message,
       final UUID correlationId) {
-
     topologyUpdater.updateTopologyElementPartial(message, correlationId);
 
     if (message.getTelemetry() != null) {
@@ -77,7 +79,6 @@ public class IngressMessageListener {
 
   private FeedbackMessage getCompleteTopologyUpdate(final IngressMessage message,
       final UUID correlationId) {
-
     if (correlationId != null) {
       MDC.put(LOG_CORRELATION_ID, correlationId.toString());
     }
@@ -105,30 +106,31 @@ public class IngressMessageListener {
     return FeedbackMessage.builder().correlationId(correlationId).status(Status.PROCESSED).build();
   }
 
-
   @StreamListener("errorChannel")
   @SendTo(FeedbackSource.FEEDBACK)
   FeedbackMessage error(final ErrorMessage message) {
-    if (message.getOriginalMessage().getPayload().getClass() == IngressMessage.class) {
-      final FeedbackMessageBuilder response = FeedbackMessage.builder()
-          .correlationId(UUID.fromString(
-              (String) message.getHeaders().get(ReflectorIngressSink.HEADER_CORRELATION_ID)))
-          .status(Status.ERROR);
+    if (message.getOriginalMessage().getHeaders()
+        .containsKey(ReflectorIngressSink.HEADER_CORRELATION_ID)) {
+      final FeedbackMessageBuilder response =
+          FeedbackMessage
+              .builder().correlationId(UUID.fromString((String) message.getOriginalMessage()
+                  .getHeaders().get(ReflectorIngressSink.HEADER_CORRELATION_ID)))
+              .status(Status.ERROR);
 
-      if (message.getPayload() instanceof AbstractIngressFailedException) {
-        response.errorCode(((AbstractIngressFailedException) message.getPayload()).getErrorCode());
+      if (message.getPayload() instanceof MessagingException
+          && ((MessagingException) message.getPayload())
+              .getCause() instanceof AbstractIngressFailedException) {
+
+        final AbstractIngressFailedException exception =
+            (AbstractIngressFailedException) ((MessagingException) message.getPayload()).getCause();
+
+        response.errorCode(exception.getErrorCode());
+        response.errorMessage(exception.getMessage());
       }
 
-      response.errorMessage(message.getPayload().getMessage());
-
       return response.build();
-    } else if (message.getOriginalMessage().getPayload()
-        .getClass() == TopologyOperationEvent.class) {
-      log.error("Failed to invalidate cache for topology item [{}]",
-          ((TopologyOperationEvent) message.getOriginalMessage().getPayload()).getId());
     }
 
     return null;
-
   }
 }

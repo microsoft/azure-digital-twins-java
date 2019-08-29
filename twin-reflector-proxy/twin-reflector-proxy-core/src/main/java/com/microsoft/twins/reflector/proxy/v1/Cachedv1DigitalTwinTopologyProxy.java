@@ -32,10 +32,12 @@ import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.model.SpaceUpdate;
+import com.microsoft.twins.reflector.error.AttributeNotSupportedException;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Property;
 import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
 import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.ProxyContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -281,8 +283,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         device.setSubtypeId(metadataProxy.getDeviceSubType(attribute.getValue()));
         break;
       default:
-        log.error("Attribute [{}] not supported", attribute.getKey());
-        break;
+        throw new AttributeNotSupportedException(attribute.getKey(),
+            ProxyContext.getCorrelationId());
     }
     // TODO support device location
     // device.setLocation(location);
@@ -309,8 +311,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         space.setSubtypeId(metadataProxy.getSpaceSubType(attribute.getValue()));
         break;
       default:
-        log.error("Attribute [{}] not supported", attribute.getKey());
-        break;
+        throw new AttributeNotSupportedException(attribute.getKey(),
+            ProxyContext.getCorrelationId());
     }
 
     // TODO support space location

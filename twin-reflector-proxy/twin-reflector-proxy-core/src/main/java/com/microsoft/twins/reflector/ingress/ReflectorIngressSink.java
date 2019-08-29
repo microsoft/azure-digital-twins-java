@@ -27,7 +27,7 @@ public interface ReflectorIngressSink {
   /**
    * Input channel name.
    */
-  String INPUT = "reflectoringress";
+  String INPUT = "ingress";
 
   /**
    * @return input channel.

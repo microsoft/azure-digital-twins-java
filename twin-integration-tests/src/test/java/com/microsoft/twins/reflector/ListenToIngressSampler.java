@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.slf4j.MDC;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
 import com.microsoft.twins.reflector.model.FeedbackMessage;
@@ -22,7 +23,7 @@ public class ListenToIngressSampler {
 
   private final AmqpDeserializer amqpDeserializer = new AmqpDeserializer();
 
-  @StreamListener(DeviceMessageSink.INPUT)
+  @StreamListener(TestDeviceMessageSink.INPUT)
   void getEvent(final Message<String> event) {
     final String hardwareId = amqpDeserializer
         .deserializeString((byte[]) event.getHeaders().get("DigitalTwins-SensorHardwareId"));
@@ -44,8 +45,13 @@ public class ListenToIngressSampler {
 
   @StreamListener(TestFeedbackSink.FEEDBACK)
   void getIngressFeedback(final FeedbackMessage feedback) {
-    log.info("Got ingress feedback [{}]", feedback);
-    receivedFeedbackMessages.add(feedback);
+    MDC.put("correlationId", feedback.getCorrelationId().toString());
+    try {
+      log.info("Got ingress feedback [{}]", feedback);
+      receivedFeedbackMessages.add(feedback);
+    } finally {
+      MDC.clear();
+    }
   }
 
   public Set<TestMessage> getReceivedDeviceMessages() {
