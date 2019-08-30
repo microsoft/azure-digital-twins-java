@@ -3,10 +3,13 @@
  */
 package com.microsoft.twins.reflector.ingress;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
@@ -14,6 +17,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.validation.annotation.Validated;
+import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.twins.reflector.error.AbstractIngressFailedException;
 import com.microsoft.twins.reflector.model.FeedbackMessage;
 import com.microsoft.twins.reflector.model.FeedbackMessage.FeedbackMessageBuilder;
@@ -30,8 +34,12 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class IngressMessageListener {
   private static final String LOG_CORRELATION_ID = "correlationId";
+  private static final String LOG_TYPE = "type";
   private final TopologyUpdater topologyUpdater;
   private final TelemetryForwarder telemetryForwarder;
+
+  @Autowired(required = false)
+  private TelemetryClient telemetryClient;
 
   @StreamListener(ReflectorIngressSink.INPUT)
   @SendTo(FeedbackSource.FEEDBACK)
@@ -41,12 +49,16 @@ public class IngressMessageListener {
       @Header(name = ReflectorIngressSink.HEADER_CORRELATION_ID,
           required = false) final UUID correlationId) {
 
+    trackIngress(messageType, correlationId);
+
     if (correlationId != null) {
       MDC.put(LOG_CORRELATION_ID, correlationId.toString());
       ProxyContext.setCorrelationId(correlationId);
+
     }
 
     log.trace("Got ingress message {}", message);
+
 
     try {
       if (messageType.equalsIgnoreCase("full")) {
@@ -63,6 +75,20 @@ public class IngressMessageListener {
       MDC.clear();
       ProxyContext.clear();
     }
+  }
+
+  private void trackIngress(final String messageType, final UUID correlationId) {
+    if (telemetryClient == null) {
+      return;
+    }
+
+    final Map<String, String> properties = new HashMap<>();
+    properties.put(LOG_TYPE, messageType);
+    if (correlationId != null) {
+      properties.put(LOG_CORRELATION_ID, correlationId.toString());
+    }
+
+    telemetryClient.trackEvent("ingress", properties, null);
   }
 
   private FeedbackMessage getPartialTopologyUpdate(final IngressMessage message,
@@ -111,11 +137,12 @@ public class IngressMessageListener {
   FeedbackMessage error(final ErrorMessage message) {
     if (message.getOriginalMessage().getHeaders()
         .containsKey(ReflectorIngressSink.HEADER_CORRELATION_ID)) {
+
+      final UUID correlationId = UUID.fromString((String) message.getOriginalMessage().getHeaders()
+          .get(ReflectorIngressSink.HEADER_CORRELATION_ID));
+
       final FeedbackMessageBuilder response =
-          FeedbackMessage
-              .builder().correlationId(UUID.fromString((String) message.getOriginalMessage()
-                  .getHeaders().get(ReflectorIngressSink.HEADER_CORRELATION_ID)))
-              .status(Status.ERROR);
+          FeedbackMessage.builder().correlationId(correlationId).status(Status.ERROR);
 
       if (message.getPayload() instanceof MessagingException
           && ((MessagingException) message.getPayload())
@@ -123,6 +150,8 @@ public class IngressMessageListener {
 
         final AbstractIngressFailedException exception =
             (AbstractIngressFailedException) ((MessagingException) message.getPayload()).getCause();
+
+        trackException(exception, correlationId);
 
         response.errorCode(exception.getErrorCode());
         response.errorMessage(exception.getMessage());
@@ -132,5 +161,20 @@ public class IngressMessageListener {
     }
 
     return null;
+  }
+
+  private void trackException(final AbstractIngressFailedException exception,
+      final UUID correlationId) {
+    if (telemetryClient == null) {
+      return;
+    }
+
+    final Map<String, String> properties = new HashMap<>();
+    if (correlationId != null) {
+      properties.put(LOG_CORRELATION_ID, correlationId.toString());
+    }
+
+    telemetryClient.trackException(exception, properties, null);
+
   }
 }

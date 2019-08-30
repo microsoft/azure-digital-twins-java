@@ -4,12 +4,15 @@
 package com.microsoft.twins.reflector.proxy.v1;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.util.CollectionUtils;
+import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.event.model.TopologyOperationEvent;
 import com.microsoft.twins.model.DeviceRetrieve;
@@ -25,14 +28,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class TopologyCacheManager {
+  private static final String LOG_TOPO_TYPE = "type";
+  private static final String LOG_TOPO_ACCESS = "access";
+  private static final String LOG_TOPO_ID = "id";
+
   private final EndpointsApi endpointsApi;
   private final TwinReflectorProxyProperties properties;
   private final CacheManager cacheManager;
+
+  @Autowired(required = false)
+  private TelemetryClient telemetryClient;
 
   @StreamListener(target = TopologyOperationSink.INPUT)
   void getTopologyUpdate(final TopologyOperationEvent topologyOperationEvent) {
     log.trace("Got TopologyOperationEvent [{}] ", topologyOperationEvent);
 
+    trackTelemetry(topologyOperationEvent);
 
     if (TopologyOperationEvent.AccessType.UPDATE == topologyOperationEvent.getAccessType()
         || TopologyOperationEvent.AccessType.DELETE == topologyOperationEvent.getAccessType()) {
@@ -48,6 +59,18 @@ public class TopologyCacheManager {
           break;
       }
     }
+  }
+
+  private void trackTelemetry(final TopologyOperationEvent topologyOperationEvent) {
+    if (telemetryClient == null) {
+      return;
+    }
+    telemetryClient.trackEvent("topologyChange",
+        Map.of(LOG_TOPO_TYPE, topologyOperationEvent.getType().toString(), LOG_TOPO_ACCESS,
+            topologyOperationEvent.getAccessType().toString(), LOG_TOPO_ID,
+            topologyOperationEvent.getId().toString()),
+        null);
+
   }
 
   @PostConstruct
