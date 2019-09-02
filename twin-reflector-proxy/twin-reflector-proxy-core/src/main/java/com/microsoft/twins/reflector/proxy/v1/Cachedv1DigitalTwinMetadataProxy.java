@@ -5,6 +5,7 @@ package com.microsoft.twins.reflector.proxy.v1;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -29,8 +30,9 @@ import lombok.extern.slf4j.Slf4j;
 public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProxy {
   private static final String CACHE_PROPERTY_KEY_BY_NAME_AND_SCOPE =
       "cachePropertyKeyByNameAndScope";
-
   private static final String CACHE_TYPE_BY_NAME_AND_CATEGORY = "cacheTypeByNameAndcategory";
+
+  private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
 
 
   private final TenantResolver tenantResolver;
@@ -55,17 +57,19 @@ public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProx
     return name;
   }
 
+
   @Override
   @Cacheable(CACHE_TYPE_BY_NAME_AND_CATEGORY)
   public int getType(final String name, final CategoryEnum category) {
     final List<ExtendedTypeRetrieve> found =
         typesApi.typesRetrieve(new TypesRetrieveQueryParams().spaceId(tenantResolver.getTenant())
-            .names(name.replaceAll("\\s+", "")).categories(category));
+            .names(WHITE_SPACE.matcher(name).replaceAll("")).categories(category));
 
     if (CollectionUtils.isEmpty(found)) {
       log.debug("Type [{}] in category [{}] not found. I will create one", name, category);
-      return typesApi.typesCreate(new ExtendedTypeCreate().name(name.replaceAll("\\s+", ""))
-          .friendlyName(name).category(category).spaceId(tenantResolver.getTenant()));
+      return typesApi
+          .typesCreate(new ExtendedTypeCreate().name(WHITE_SPACE.matcher(name).replaceAll(""))
+              .friendlyName(name).category(category).spaceId(tenantResolver.getTenant()));
     }
 
     return found.get(0).getId();

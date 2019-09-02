@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-// FIXME other events
 @JsonInclude(Include.NON_NULL)
 @AllArgsConstructor
 @NoArgsConstructor

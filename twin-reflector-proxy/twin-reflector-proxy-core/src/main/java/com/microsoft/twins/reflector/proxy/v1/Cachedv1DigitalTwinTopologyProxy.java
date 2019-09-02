@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
+import com.microsoft.twins.CorrelationIdContext;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.SensorsApi;
@@ -37,7 +38,6 @@ import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Property;
 import com.microsoft.twins.reflector.proxy.DigitalTwinMetadataProxy;
 import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
-import com.microsoft.twins.reflector.proxy.ProxyContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,17 +45,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Validated
 public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProxy {
-
-  private static final String UNKOWN_TYPE = "None";
-  private static final String UNKOWN_SPACE_STATUS = "None";
-  private static final String ENTITY_TYPE_SPACE = "spaces";
-  private static final String ENTITY_TYPE_DEVICE = "devices";
-
   static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
   static final String CACHE_DEVICE_BY_ID = "deviceById";
   static final String CACHE_DEVICE_BY_NAME = "deviceByName";
   static final String CACHE_SPACE_BY_NAME = "spaceByName";
   static final String CACHE_SPACE_BY_ID = "spaceById";
+
+  private static final String UNKOWN_TYPE = "None";
+  private static final String UNKOWN_SPACE_STATUS = "None";
+  private static final String ENTITY_TYPE_SPACE = "spaces";
+  private static final String ENTITY_TYPE_DEVICE = "devices";
 
 
   private final DigitalTwinMetadataProxy metadataProxy;
@@ -284,10 +283,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         break;
       default:
         throw new AttributeNotSupportedException(attribute.getKey(),
-            ProxyContext.getCorrelationId());
+            CorrelationIdContext.getCorrelationId());
     }
-    // TODO support device location
-    // device.setLocation(location);
 
   }
 
@@ -312,11 +309,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         break;
       default:
         throw new AttributeNotSupportedException(attribute.getKey(),
-            ProxyContext.getCorrelationId());
+            CorrelationIdContext.getCorrelationId());
     }
-
-    // TODO support space location
-    // device.setLocation(location);
   }
 
 

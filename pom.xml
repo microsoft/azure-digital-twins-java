@@ -54,7 +54,7 @@
       <!-- ************************ -->
       <!-- Dependencies -->
       <!-- ************************ -->
-      <spring-cloud-release.version>Greenwich.SR2</spring-cloud-release.version>
+      <spring-cloud-stream.version>Germantown.SR1</spring-cloud-stream.version>
       <feign.version>10.2.3</feign.version>
       <lombok.version>1.18.8</lombok.version>
       <adal4j.version>1.6.4</adal4j.version>
@@ -123,8 +123,8 @@
       <dependencies>
          <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-release.version}</version>
+            <artifactId>spring-cloud-stream-dependencies</artifactId>
+            <version>${spring-cloud-stream.version}</version>
             <type>pom</type>
             <scope>import</scope>
          </dependency>
@@ -135,8 +135,8 @@
             <type>pom</type>
             <scope>import</scope>
          </dependency>
-         
-         
+
+
 
          <!-- HTTP client: Netflix Feign -->
          <dependency>
@@ -175,7 +175,7 @@
             <groupId>com.microsoft.azure</groupId>
             <artifactId>applicationinsights-spring-boot-starter</artifactId>
             <version>${spring-applicationinsights.version}</version>
-         </dependency>         
+         </dependency>
          <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>applicationinsights-core</artifactId>
@@ -186,7 +186,7 @@
             <artifactId>applicationinsights-web</artifactId>
             <version>${spring-applicationinsights.version}</version>
          </dependency>
-         
+
          <!-- test dependencies -->
          <dependency>
             <groupId>org.awaitility</groupId>

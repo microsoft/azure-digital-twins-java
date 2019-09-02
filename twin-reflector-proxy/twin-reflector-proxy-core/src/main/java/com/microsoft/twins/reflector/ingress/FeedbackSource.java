@@ -7,8 +7,8 @@ import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
 public interface FeedbackSource {
-  String FEEDBACK = "feedback";
+  String OUTPUT = "feedback";
 
-  @Output(FeedbackSource.FEEDBACK)
+  @Output(FeedbackSource.OUTPUT)
   MessageChannel feedback();
 }

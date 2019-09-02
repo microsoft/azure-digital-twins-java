@@ -10,6 +10,14 @@ Twin instances (Create or update) are provided as event including properties, at
 
 ![twin-reflector_building-block-view](overview.png)
 
+## Modules
+
+TODO
+
+app (admin guide, properties)
+api (messages, error code)
+core implementation (event hubs)
+
 ## Ingress specification
 
 ### Event Hub Headers

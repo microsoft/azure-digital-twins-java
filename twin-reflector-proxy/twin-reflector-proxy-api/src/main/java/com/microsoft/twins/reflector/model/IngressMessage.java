@@ -5,6 +5,7 @@ package com.microsoft.twins.reflector.model;
 
 import java.util.List;
 import java.util.Map;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +35,7 @@ public class IngressMessage {
   public static final String ENTITY_V1_DEVICE = "devices";
 
   @JsonProperty(value = "entity-type", required = true)
+  @NotEmpty
   private String entityType;
 
   // Supported ADT V1 attributes

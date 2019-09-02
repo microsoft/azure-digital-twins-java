@@ -54,6 +54,7 @@ public class TwinsApiClient {
         "0b07f429-9f4b-4714-9392-cc5e8e80c8b0", clientId, clientSecret, timeout);
 
     feignBuilder.requestInterceptor(aadRequestInterceptor);
+    feignBuilder.requestInterceptor(new CorrelationIdRequestInterceptor());
   }
 
   public TwinsApiClient(final String twinsUrl, final Client client, final Retryer retryer) {

@@ -304,7 +304,6 @@ public abstract class AbstractIntegrationTest {
   }
 
   protected UUID createGateway(final String deviceName, final UUID spaceId) {
-    // Add new vehicle to line
     final DeviceCreate device = new DeviceCreate();
     device.setName(deviceName);
     device.setTypeId(deviceTypeId);
