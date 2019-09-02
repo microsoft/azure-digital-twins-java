@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.SpaceRetrieve;
+import com.microsoft.twins.reflector.error.EntityTypeNotSupportedException;
 import com.microsoft.twins.reflector.error.TopologyElementDoesNotExistException;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.Relationship;
@@ -43,6 +44,8 @@ public class TopologyUpdater {
       updateDevicePartial(update, correlationId);
     } else if (IngressMessage.ENTITY_V1_SPACE.equalsIgnoreCase(update.getEntityType())) {
       updateSpacePartial(update, correlationId);
+    } else {
+      throw new EntityTypeNotSupportedException(update.getEntityType(), correlationId);
     }
   }
 
@@ -56,6 +59,8 @@ public class TopologyUpdater {
       updateDeviceComplete(update, correlationId);
     } else if (IngressMessage.ENTITY_V1_SPACE.equalsIgnoreCase(update.getEntityType())) {
       updateSpaceComplete(update, correlationId);
+    } else {
+      throw new EntityTypeNotSupportedException(update.getEntityType(), correlationId);
     }
   }
 
@@ -148,6 +153,8 @@ public class TopologyUpdater {
       cachedDigitalTwinProxy.deleteDeviceByName(id);
     } else if (IngressMessage.ENTITY_V1_SPACE.equalsIgnoreCase(entityType)) {
       cachedDigitalTwinProxy.deleteSpaceByName(id);
+    } else {
+      throw new EntityTypeNotSupportedException(entityType, correlationId);
     }
   }
 

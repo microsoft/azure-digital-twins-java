@@ -91,10 +91,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setId(deviceId);
     testMessage.setEntityType("devices");
 
-    final List<Relationship> relationShips = new ArrayList<>();
-    relationShips.add(Relationship.builder().entityType("devices").name("gateway")
-        .targetId(testGatewayName).build());
-
     sendAndAwaitFeedback(testMessage, MessageType.FULL);
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
@@ -444,6 +440,22 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
     assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
     assertThat(updated.getDescription()).isEqualTo(description);
+  }
+
+  @Test
+  public void ingressFailsIfEntityTypeNotSupported() {
+
+    final String deviceId = RandomStringUtils.randomAlphanumeric(20);
+
+    final IngressMessage testMessage = new IngressMessage();
+    testMessage.setId(deviceId);
+    testMessage.setEntityType("not supported");
+
+    sendAndAwaitErrorFeedback(testMessage, MessageType.PARTIAL, ErrorCode.ENTITY_NOT_SUPPORTED);
+
+    assertThat(devicesApi.devicesRetrieve(new DevicesApi.DevicesRetrieveQueryParams()
+        .names(deviceId).includes("properties,description"))).isEmpty();
+
   }
 
   @Test

@@ -76,6 +76,7 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
 
       final IngressMessage testMessage = new IngressMessage();
       testMessage.setId(hardwareId);
+      testMessage.setEntityType("devices");
       testMessage.setTelemetry(payload);
 
       sendAndAwaitFeedback(testMessage, MessageType.FULL);

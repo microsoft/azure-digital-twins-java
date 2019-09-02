@@ -48,6 +48,10 @@ public class TopologyCacheManager {
     if (TopologyOperationEvent.AccessType.UPDATE == topologyOperationEvent.getAccessType()
         || TopologyOperationEvent.AccessType.DELETE == topologyOperationEvent.getAccessType()) {
 
+      log.debug("Got TopologyOperationEvent [{}] [{}] with correlation ID: [{}] ",
+          topologyOperationEvent.getType(), topologyOperationEvent.getAccessType(),
+          topologyOperationEvent.getCorrelationId());
+
       switch (topologyOperationEvent.getType()) {
         case DEVICE:
           evictDeviceCache(topologyOperationEvent.getId());

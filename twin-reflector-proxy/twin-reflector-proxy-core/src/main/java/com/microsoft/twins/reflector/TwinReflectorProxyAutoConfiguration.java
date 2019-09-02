@@ -3,7 +3,6 @@
  */
 package com.microsoft.twins.reflector;
 
-import java.util.UUID;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,6 +27,7 @@ import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import com.microsoft.twins.reflector.proxy.TenantResolver;
 import com.microsoft.twins.reflector.proxy.v1.Cachedv1DigitalTwinMetadataProxy;
 import com.microsoft.twins.reflector.proxy.v1.Cachedv1DigitalTwinTopologyProxy;
+import com.microsoft.twins.reflector.proxy.v1.PropertBackedV1TenantResolver;
 import com.microsoft.twins.reflector.proxy.v1.TopologyCacheManager;
 import com.microsoft.twins.reflector.proxy.v1.TopologyOperationSink;
 import com.microsoft.twins.reflector.telemetry.TelemetryForwarder;
@@ -96,22 +96,11 @@ public class TwinReflectorProxyAutoConfiguration {
     return new TwinsHealthIndicator(twinsApiClient);
   }
 
-  // TODO verify tenant exists?
   @Bean
   @ConditionalOnMissingBean
-  TenantResolver tenantResolver(final TwinReflectorProxyProperties properties) {
-    return new TenantResolver() {
-
-      @Override
-      public UUID getTenant() {
-        return properties.getTenant();
-      }
-
-      @Override
-      public UUID getGateway() {
-        return properties.getDefaultGateway();
-      }
-    };
+  TenantResolver tenantResolver(final TwinReflectorProxyProperties properties,
+      final DevicesApi devicesApi) {
+    return new PropertBackedV1TenantResolver(properties, devicesApi);
   }
 
 }
