@@ -7,16 +7,17 @@ replicaCount: 2
 image:
   repository: twin-reflector-proxy
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 adt:
   url:
+  tenant:
   aad:
     tenant:
     clientId:
     clientSecret:
 eventHubs:
-  connectionString:
+  primaryConnectionString:
   secondaryConnectionString:
   namespace:
 
@@ -26,6 +27,10 @@ fullnameOverride: ""
 service:
   type: ClusterIP
   port: 8080
+
+insights:
+  enabled: false
+  key: ""
 
 ingress:
   enabled: true

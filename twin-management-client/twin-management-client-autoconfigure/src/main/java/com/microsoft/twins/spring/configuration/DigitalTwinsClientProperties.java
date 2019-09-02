@@ -19,6 +19,10 @@ import lombok.Setter;
 @Validated
 public class DigitalTwinsClientProperties {
 
+  /**
+   * Azure Digital Twins management API base URL, e.g.
+   * https://YOU_INSTANCE.westeurope.azuresmartspaces.net/management.
+   */
   @NotNull
   @Valid
   private URL twinsUrl;

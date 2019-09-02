@@ -41,36 +41,48 @@ spec:
                 secretKeyRef:
                   name: twins
                   key: twins-url
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_TENANT
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: twins-tenant
             - name: COM_MICROSOFT_TWINS_AAD_TENANT
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: aad-tenant
-            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-ID
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENTID
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: aad-client-id
-            - name: COM_MICROSOFT_TWINS_AAD_CLIENT-SECRET
+            - name: COM_MICROSOFT_TWINS_AAD_CLIENTSECRET
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: aad-client-secret
-            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_CONNECTION-STRING
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENTHUBS_PRIMARYCONNECTIONSTRING
               valueFrom:
                 secretKeyRef:
                   name: twins
-                  key: event-hubs-connection-string
-            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_SECONDARY-CONNECTION-STRING
+                  key: event-hubs-primary-connection-string
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENTHUBS_SECONDARYCONNECTION-STRING
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: event-hubs-secondary-connection-string
-            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENT-HUBS_NAMESPACE
+            - name: COM_MICROSOFT_TWINS_REFLECTOR_EVENTHUBS_NAMESPACE
               valueFrom:
                 secretKeyRef:
                   name: twins
                   key: event-hubs-namespace
+            - name: AZURE_APPLICATION-INSIGHTS_INSTRUMENTATION-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: twins
+                  key: insights-key
+            - name: AZURE_APPLICATION-INSIGHTS_ENABLED
+              value: "{{ .Values.insights.enabled }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

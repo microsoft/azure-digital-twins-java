@@ -111,8 +111,20 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
       final EndpointRetrieve existing = new EndpointRetrieve();
       properties.getEventHubs().getTopologyOperations()
           .setHubname(RandomStringUtils.randomAscii(10));
+      properties.getEventHubs().setPrimaryConnectionString(RandomStringUtils.randomAscii(10));
+      properties.getEventHubs().setSecondaryConnectionString(RandomStringUtils.randomAscii(10));
+
       existing.setPath(properties.getEventHubs().getTopologyOperations().getHubname());
 
+      final String connectionString = properties.getEventHubs().getPrimaryConnectionString()
+          + ";EntityPath=" + properties.getEventHubs().getTopologyOperations().getHubname();
+      final String secondaryConnectionString =
+          properties.getEventHubs().getSecondaryConnectionString() + ";EntityPath="
+              + properties.getEventHubs().getTopologyOperations().getHubname();
+
+
+      existing.setConnectionString(connectionString);
+      existing.setSecondaryConnectionString(secondaryConnectionString);
 
       when(endpointsApi.endpointsRetrieve(any(EndpointsApi.EndpointsRetrieveQueryParams.class)))
           .thenReturn(List.of(existing));
@@ -152,7 +164,8 @@ public class CachedDigitalTwinProxyTest extends AbstractTest {
     final String testSecondaryConnectionString =
         "Endpoint=sb://testHub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=foobar2";
 
-    testConfiguration.getProperties().getEventHubs().setConnectionString(testConnectionString);
+    testConfiguration.getProperties().getEventHubs()
+        .setPrimaryConnectionString(testConnectionString);
     testConfiguration.getProperties().getEventHubs().getTopologyOperations()
         .setHubname(testHubname);
     testConfiguration.getProperties().getEventHubs()

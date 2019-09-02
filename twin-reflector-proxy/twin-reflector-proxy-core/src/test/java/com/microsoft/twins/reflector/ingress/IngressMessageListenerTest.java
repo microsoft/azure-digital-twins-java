@@ -23,6 +23,7 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.test.context.ContextConfiguration;
 import com.microsoft.twins.reflector.AbstractTest;
+import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import com.microsoft.twins.reflector.ingress.IngressMessageListenerTest.IngressMessageListenerTestConfiguration;
 import com.microsoft.twins.reflector.model.IngressMessage;
 import com.microsoft.twins.reflector.model.MessageType;
@@ -51,7 +52,8 @@ public class IngressMessageListenerTest extends AbstractTest {
 
     @Bean
     IngressMessageListener ingressMessageListener() {
-      return new IngressMessageListener(topologyUpdater, telemetryForwarder);
+      return new IngressMessageListener(topologyUpdater, telemetryForwarder,
+          new TwinReflectorProxyProperties());
     }
 
   }

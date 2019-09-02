@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/java/jre-headless:11u3-zulu-alpine
+FROM mcr.microsoft.com/java/jre-headless:11u4-zulu-alpine
 
 ARG JAR_FILE=twin-reflector-proxy-app-0.1.0-SNAPSHOT.jar
 

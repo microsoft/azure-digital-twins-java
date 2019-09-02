@@ -1,6 +1,6 @@
-# DRAFT - Twin Reflector Proxy
+# Twin Reflector Proxy
 
-This module aims to provide a dispatcher application that consumes Azure Event Hub event streams which contain topology changes and/or as telemetry ingress. The goal is to provide cloud ingress point that serves as a bride between arbitrary IoT protocol gateways and Azure Digital Twins.
+This module aims to provide a dispatcher application that consumes Azure Event Hub event streams which contain topology changes and/or telemetry ingress. The goal is to provide cloud ingress point that serves as a bride between arbitrary IoT protocol gateways and Azure Digital Twins.
 
 Disclaimer: the module is still work in progress and implementation pieces at this point have a PoC character at best.
 
@@ -10,15 +10,17 @@ Twin instances (Create or update) are provided as event including properties, at
 
 ![twin-reflector_building-block-view](overview.png)
 
+## Deployment
+
+see [deployment](deployment/azure) folder for further guidance on how to install the Twin Reflector Proxy on Microsoft Azure.
+
 ## Modules
 
-TODO
+- [twin-reflector-proxy-app](twin-reflector-proxy-app) - a Spring Boot App that packages the Twin Reflector Proxy in a cloud ready runtime (see [README.md](twin-reflector-proxy-app) for administration and configuration details).
+- [twin-reflector-proxy-api](twin-reflector-proxy-api) - API definition for the [ingress](twin-reflector-proxy-api/src/main/java/com/microsoft/twins/reflector/model/IngressMessage.java) as well as [feedback](twin-reflector-proxy-api/src/main/java/com/microsoft/twins/reflector/model/FeedbackMessage.java) event streams including [error codes](twin-reflector-proxy-api/src/main/java/com/microsoft/twins/reflector/model/ErrorCode.java).
+- [twin-reflector-proxy-core](twin-reflector-proxy-core) - Core implementation handling ingress message streams and applying to Azure Digital Twins as well as Azure IoT Hub.
 
-app (admin guide, properties)
-api (messages, error code)
-core implementation (event hubs)
-
-## Ingress specification
+## Ingress API specification
 
 ### Event Hub Headers
 
