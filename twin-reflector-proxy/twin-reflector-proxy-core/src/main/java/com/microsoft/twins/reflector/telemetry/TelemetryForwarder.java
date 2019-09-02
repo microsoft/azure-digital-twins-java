@@ -105,7 +105,9 @@ public class TelemetryForwarder implements Closeable {
     msg.setProperty("DigitalTwins-Telemetry", "yes");
 
     final EventCallback callback = new EventCallback();
-    client.sendEventAsync(msg, callback, msg);
+    if (client != null) {
+      client.sendEventAsync(msg, callback, msg);
+    }
   }
 
   @Override
