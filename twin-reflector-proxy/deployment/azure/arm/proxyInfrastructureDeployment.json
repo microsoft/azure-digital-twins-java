@@ -16,6 +16,13 @@
                 "description": "Optional AKS cluster name. Otherwise calculated from uniqueSolutionPrefix."
             }
         },
+        "insightsName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional Application Insights name. Otherwise calculated from uniqueSolutionPrefix."
+            }
+        },
         "vnetName": {
             "type": "string",
             "defaultValue": "",
@@ -23,6 +30,7 @@
                 "description": "Optional virtual network name. Otherwise calculated from uniqueSolutionPrefix."
             }
         },
+
         "aksSubnetName": {
             "type": "string",
             "defaultValue": "",
@@ -74,6 +82,13 @@
                 "description": "The Service Principal Client Secret."
             },
             "type": "securestring"
+        },
+        "namespaceName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional EventHub namespace name. Otherwise calculated from uniqueSolutionPrefix."
+            }
         }
 
     },
@@ -81,10 +96,43 @@
         "dnsLabelPrefix": "[if(empty(parameters('dnsLabelPrefix')),concat(parameters('uniqueSolutionPrefix'),'proxy'),parameters('dnsLabelPrefix'))]",
         "publicIPAddressName": "[if(empty(parameters('publicIPAddressName')),concat(parameters('uniqueSolutionPrefix'),'proxypip'),parameters('publicIPAddressName'))]",
         "aksClusterName": "[if(empty(parameters('aksClusterName')),concat(parameters('uniqueSolutionPrefix'), 'proxyaks'),parameters('aksClusterName'))]",
+        "namespaceName": "[if(empty(parameters('namespaceName')),concat(parameters('uniqueSolutionPrefix'),'proxyns'),parameters('namespaceName'))]",
         "vnetName": "[if(empty(parameters('vnetName')),concat(parameters('uniqueSolutionPrefix'), 'proxyvnet'),parameters('vnetName'))]",
-        "aksSubnetName": "[if(empty(parameters('aksSubnetName')),concat(parameters('uniqueSolutionPrefix'), 'proxyakssubnet'),parameters('aksSubnetName'))]"
+        "aksSubnetName": "[if(empty(parameters('aksSubnetName')),concat(parameters('uniqueSolutionPrefix'), 'proxyakssubnet'),parameters('aksSubnetName'))]",
+        "insightsName": "[if(empty(parameters('insightsName')),concat(parameters('uniqueSolutionPrefix'), 'proxyinsights'),parameters('insightsName'))]"
+
     },
     "resources": [{
+            "name": "proxyEventHubsDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'proxyVnetDeployment')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/azure-digital-twins-java/master/twin-reflector-proxy/deployment/azure/arm/templates/ehNamespaceDeploy.json"
+                },
+                "parameters": {
+                    "namespaceName": {
+                        "value": "[variables('namespaceName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('aksSubnetName')]"
+                    },
+                    "virtualNetworkResourceGroup": {
+                        "value": "[resourceGroup().name]"
+                    }
+                }
+            }
+        }, {
             "condition": "[parameters('aks')]",
             "name": "proxyKubernetesDeployment",
             "type": "Microsoft.Resources/deployments",
@@ -155,6 +203,25 @@
                     }
                 }
             }
+        },
+        {
+            "name": "proxyInsightsDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/azure-digital-twins-java/master/twin-reflector-proxy/deployment/azure/arm/templates/appInsights.json"
+                },
+                "parameters": {
+                    "appInsName": {
+                        "value": "[variables('insightsName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {
@@ -169,6 +236,30 @@
         "publicIPAddressName": {
             "type": "string",
             "value": "[variables('publicIPAddressName')]"
+        },
+        "publicIPAddress": {
+            "type": "string",
+            "value": "[reference('proxyKubernetesDeployment').outputs.ipAddress.value]"
+        },
+        "publicIPFQDN": {
+            "type": "string",
+            "value": "[reference('proxyKubernetesDeployment').outputs.ipFQDN.value]"
+        },
+        "namespacePrimaryConnectionString": {
+            "type": "string",
+            "value": "[reference('proxyEventHubsDeployment').outputs.namespacePrimaryConnectionString.value]"
+        },
+        "namespaceSecondaryConnectionString": {
+            "type": "string",
+            "value": "[reference('proxyEventHubsDeployment').outputs.namespaceSecondaryConnectionString.value]"
+        },
+        "instrumentationKey": {
+            "type": "string",
+            "value": "[reference('proxyInsightsDeployment').outputs.instrumentationKey.value]"
+        },
+        "ehNamespaceName": {
+            "type": "string",
+            "value": "[variables('namespaceName')]"
         }
     }
 }

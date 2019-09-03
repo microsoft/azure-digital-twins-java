@@ -32,7 +32,7 @@ public class TwinReflectorProxyProperties {
   public static class EventHubs {
 
     @NotEmpty
-    private String connectionString;
+    private String primaryConnectionString;
 
     @NotEmpty
     private String secondaryConnectionString;
@@ -40,8 +40,11 @@ public class TwinReflectorProxyProperties {
     @NotEmpty
     private String namespace;
 
+    /**
+     * Azure EventHub name used for ingress of ADT TopologyOperation events. Anonymous access.
+     */
     @Valid
-    private final Hub topologyOperations = new HubWithConsumer();
+    private final Hub topologyOperations = new Hub();
 
     @Valid
     private final Hub ingress = new HubWithConsumer();
@@ -59,6 +62,8 @@ public class TwinReflectorProxyProperties {
     @Getter
     @Setter
     public static class Hub {
+      private boolean enabled;
+
       @NotEmpty
       private String hubname;
     }

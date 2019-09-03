@@ -83,9 +83,19 @@ public class TopologyCacheManager {
         new EndpointsApi.EndpointsRetrieveQueryParams().types(TypeEnum.EVENTHUB.toString())
             .eventTypes(EventTypesEnum.TOPOLOGYOPERATION.toString()));
 
-    if (!CollectionUtils.isEmpty(existing)
-        && existing.stream().anyMatch(endpoint -> endpoint.getPath()
-            .equalsIgnoreCase(properties.getEventHubs().getTopologyOperations().getHubname()))) {
+    final String connectionString = properties.getEventHubs().getPrimaryConnectionString()
+        + ";EntityPath=" + properties.getEventHubs().getTopologyOperations().getHubname();
+    final String secondaryConnectionString =
+        properties.getEventHubs().getSecondaryConnectionString() + ";EntityPath="
+            + properties.getEventHubs().getTopologyOperations().getHubname();
+
+    if (!CollectionUtils.isEmpty(existing) && existing.stream()
+        .anyMatch(endpoint -> endpoint.getPath()
+            .equalsIgnoreCase(properties.getEventHubs().getTopologyOperations().getHubname())
+            && endpoint.getConnectionString().equalsIgnoreCase(connectionString) && endpoint
+                .getSecondaryConnectionString().equalsIgnoreCase(secondaryConnectionString))) {
+      log.debug("Endpoint for topology operations [{}] already exists.",
+          properties.getEventHubs().getTopologyOperations().getHubname());
       return;
     }
 
@@ -93,13 +103,13 @@ public class TopologyCacheManager {
     final EndpointCreate eventHub = new EndpointCreate();
     eventHub.addEventTypesItem(EventTypesEnum.TOPOLOGYOPERATION);
     eventHub.setType(TypeEnum.EVENTHUB);
-    eventHub.setConnectionString(properties.getEventHubs().getConnectionString() + ";EntityPath="
-        + properties.getEventHubs().getTopologyOperations().getHubname());
-    eventHub.setSecondaryConnectionString(properties.getEventHubs().getSecondaryConnectionString()
-        + ";EntityPath=" + properties.getEventHubs().getTopologyOperations().getHubname());
+    eventHub.setConnectionString(connectionString);
+    eventHub.setSecondaryConnectionString(secondaryConnectionString);
     eventHub.setPath(properties.getEventHubs().getTopologyOperations().getHubname());
 
     endpointsApi.endpointsCreate(eventHub);
+    log.debug("Created endpoint for topology operations [{}].",
+        properties.getEventHubs().getTopologyOperations().getHubname());
   }
 
 

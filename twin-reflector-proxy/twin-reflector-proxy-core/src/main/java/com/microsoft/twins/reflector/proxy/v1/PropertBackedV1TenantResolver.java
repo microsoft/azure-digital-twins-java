@@ -40,7 +40,7 @@ public class PropertBackedV1TenantResolver implements TenantResolver {
         return gateway;
       }
 
-      setGateway(createGateway("AutoCreated default gateway", devicesApi, properties));
+      setGateway(createGateway(devicesApi, properties));
 
       log.debug("Created default gateway [{}] as none was provided", gateway);
       return gateway;
@@ -62,7 +62,7 @@ public class PropertBackedV1TenantResolver implements TenantResolver {
     }
   }
 
-  private static UUID createGateway(final String deviceName, final DevicesApi devicesApi,
+  private static UUID createGateway(final DevicesApi devicesApi,
       final TwinReflectorProxyProperties properties) {
     final DeviceCreate device = new DeviceCreate();
     device.setName("DefaultGateway");

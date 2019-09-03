@@ -244,7 +244,7 @@ public abstract class AbstractIntegrationTest {
 
 
     createResources();
-    addDeviceEventEndPoint(twinReflectorProxyProperties.getEventHubs().getConnectionString(),
+    addDeviceEventEndPoint(twinReflectorProxyProperties.getEventHubs().getPrimaryConnectionString(),
         twinReflectorProxyProperties.getEventHubs().getSecondaryConnectionString(),
         testConfigurationProperties.getDevicesHubname());
   }

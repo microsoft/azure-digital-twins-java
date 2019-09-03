@@ -18,7 +18,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.applicationinsights.TelemetryClient;
+import com.microsoft.applicationinsights.core.dependencies.google.common.collect.Maps;
 import com.microsoft.twins.CorrelationIdContext;
+import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import com.microsoft.twins.reflector.error.AbstractIngressFailedException;
 import com.microsoft.twins.reflector.model.FeedbackMessage;
 import com.microsoft.twins.reflector.model.FeedbackMessage.FeedbackMessageBuilder;
@@ -39,6 +41,7 @@ public class IngressMessageListener {
 
   private final TopologyUpdater topologyUpdater;
   private final TelemetryForwarder telemetryForwarder;
+  private final TwinReflectorProxyProperties properties;
 
   @Autowired(required = false)
   private TelemetryClient telemetryClient;
@@ -60,22 +63,29 @@ public class IngressMessageListener {
 
     log.trace("Got ingress message {}", message);
 
-
     try {
+
+      FeedbackMessage response = null;
       if ("full".equalsIgnoreCase(messageType)) {
-        return getCompleteTopologyUpdate(message, correlationId);
+        response = getCompleteTopologyUpdate(message, correlationId);
       } else if ("partial".equalsIgnoreCase(messageType)) {
-        return getPartialTopologyUpdate(message, correlationId);
+        response = getPartialTopologyUpdate(message, correlationId);
       } else if ("delete".equalsIgnoreCase(messageType)) {
-        return getDeleteTopologyElement(message, correlationId);
+        response = getDeleteTopologyElement(message, correlationId);
       } else {
         log.error("Got message with unknown messageType [{}]", messageType);
-        return null;
       }
+
+      if (properties.getEventHubs().getFeedback().isEnabled()) {
+        return response;
+      }
+
     } finally {
       MDC.clear();
       CorrelationIdContext.clear();
     }
+
+    return null;
   }
 
   private void trackIngress(final String messageType, final UUID correlationId,
@@ -84,14 +94,14 @@ public class IngressMessageListener {
       return;
     }
 
-    final Map<String, String> properties = new HashMap<>();
-    properties.put(LOG_TYPE, messageType);
-    properties.put(DEVICE_ID, deviceID);
+    final Map<String, String> eventProperties = Maps.newHashMapWithExpectedSize(3);
+    eventProperties.put(LOG_TYPE, messageType);
+    eventProperties.put(DEVICE_ID, deviceID);
     if (correlationId != null) {
-      properties.put(LOG_CORRELATION_ID, correlationId.toString());
+      eventProperties.put(LOG_CORRELATION_ID, correlationId.toString());
     }
 
-    telemetryClient.trackEvent("ingress", properties, null);
+    telemetryClient.trackEvent("ingress", eventProperties, null);
   }
 
   private FeedbackMessage getPartialTopologyUpdate(final IngressMessage message,
@@ -138,8 +148,8 @@ public class IngressMessageListener {
   @StreamListener("errorChannel")
   @SendTo(FeedbackSource.OUTPUT)
   FeedbackMessage error(final ErrorMessage message) {
-    if (message.getOriginalMessage().getHeaders()
-        .containsKey(ReflectorIngressSink.HEADER_CORRELATION_ID)) {
+    if (properties.getEventHubs().getFeedback().isEnabled() && message.getOriginalMessage()
+        .getHeaders().containsKey(ReflectorIngressSink.HEADER_CORRELATION_ID)) {
 
       final UUID correlationId = UUID.fromString((String) message.getOriginalMessage().getHeaders()
           .get(ReflectorIngressSink.HEADER_CORRELATION_ID));
