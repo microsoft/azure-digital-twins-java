@@ -185,12 +185,12 @@ public class IngressMessageListener {
       return;
     }
 
-    final Map<String, String> properties = new HashMap<>();
+    final Map<String, String> eventProperties = new HashMap<>();
     if (correlationId != null) {
-      properties.put(LOG_CORRELATION_ID, correlationId.toString());
+      eventProperties.put(LOG_CORRELATION_ID, correlationId.toString());
     }
 
-    telemetryClient.trackException(exception, properties, null);
+    telemetryClient.trackException(exception, eventProperties, null);
 
   }
 }
