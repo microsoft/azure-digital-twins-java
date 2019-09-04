@@ -65,14 +65,16 @@ namespace=adttest
 
 az eventhubs namespace create --name $namespace --resource-group $resourceGroupName --enable-kafka
 
-az eventhubs eventhub create --name twinstestevents --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 3
-az eventhubs eventhub consumer-group create --eventhub-name twinstestevents --resource-group $resourceGroupName --namespace-name $namespace --name twinscg
+az eventhubs eventhub create --name twinstestevents --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
+az eventhubs eventhub consumer-group create --eventhub-name twinstestevents --resource-group $resourceGroupName --namespace-name $namespace --name twinstesteventscg
 
-az eventhubs eventhub create --name proxyingress --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 3
+az eventhubs eventhub create --name proxyingress --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
 az eventhubs eventhub consumer-group create --eventhub-name proxyingress --resource-group $resourceGroupName --namespace-name $namespace --name proxyingresscg
 
-az eventhubs eventhub create --name topologyoperations --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 3
-az eventhubs eventhub consumer-group create --eventhub-name topologyoperations --resource-group $resourceGroupName --namespace-name $namespace --name topologyoperationscg
+az eventhubs eventhub create --name proxyfeedback --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
+az eventhubs eventhub consumer-group create --eventhub-name proxyfeedback --resource-group $resourceGroupName --namespace-name $namespace --name proxyfeedbackcg
+
+az eventhubs eventhub create --name topologyoperations --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
 ```
 
 Next the connection strings for the tests:
@@ -92,4 +94,11 @@ mvn test  -Dcom.microsoft.twins.aad.clientSecret=AAD_PRINCIPAL_SECRET \
  -Dazure.event-hubs.test.connection-string=$primary_connection_string \
  -Dazure.event-hubs.test.secondary-connection-string=$secondary_connection_string \
  -Dazure.event-hubs.test.namespace=$namespace
+```
+
+Optionally you can add:
+
+```bash
+-Dazure.application-insights.instrumentation-key=YOUR_INSIGHTS_KEY \
+-Dazure.application-insights.enabled=true
 ```

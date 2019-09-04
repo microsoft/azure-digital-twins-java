@@ -16,9 +16,11 @@ see [deployment](deployment/azure) folder for further guidance on how to install
 
 ## Modules
 
-- [twin-reflector-proxy-app](twin-reflector-proxy-app) - a Spring Boot App that packages the Twin Reflector Proxy in a cloud ready runtime (see [README.md](twin-reflector-proxy-app) for administration and configuration details).
+- [twin-reflector-proxy-app](twin-reflector-proxy-app) - a Spring Boot App that packages the Twin Reflector Proxy in a cloud ready runtime
+  - see [README.md](twin-reflector-proxy-app) for administration and configuration details.
 - [twin-reflector-proxy-api](twin-reflector-proxy-api) - API definition for the [ingress](twin-reflector-proxy-api/src/main/java/com/microsoft/twins/reflector/model/IngressMessage.java) as well as [feedback](twin-reflector-proxy-api/src/main/java/com/microsoft/twins/reflector/model/FeedbackMessage.java) event streams including [error codes](twin-reflector-proxy-api/src/main/java/com/microsoft/twins/reflector/model/ErrorCode.java).
 - [twin-reflector-proxy-core](twin-reflector-proxy-core) - Core implementation handling ingress message streams and applying to Azure Digital Twins as well as Azure IoT Hub.
+  - see [README.md](twin-reflector-proxy-core) for functional details.
 
 ## Ingress API specification
 

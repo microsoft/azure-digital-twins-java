@@ -23,6 +23,7 @@ import com.microsoft.azure.sdk.iot.device.Message;
 import com.microsoft.twins.reflector.error.TopologyElementDoesNotExistException;
 import com.microsoft.twins.reflector.proxy.DigitalTwinTopologyProxy;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 public class TelemetryForwarder implements Closeable {
@@ -34,9 +35,8 @@ public class TelemetryForwarder implements Closeable {
 
   private final DigitalTwinTopologyProxy cachedDigitalTwinProxy;
 
-
+  @Slf4j
   protected static class EventCallback implements IotHubEventCallback {
-    private static final Logger LOG = LoggerFactory.getLogger(EventCallback.class);
 
     @Override
     public void execute(final IotHubStatusCode status, final Object context) {
@@ -45,24 +45,11 @@ public class TelemetryForwarder implements Closeable {
       switch (status) {
         case OK:
         case OK_EMPTY:
-          LOG.debug("IoT Hub responded to message {} with status {}", msg.getMessageId(), status);
-          break;
-        case BAD_FORMAT:
-        case ERROR:
-        case HUB_OR_DEVICE_ID_NOT_FOUND:
-        case INTERNAL_SERVER_ERROR:
-        case MESSAGE_CANCELLED_ONCLOSE:
-        case MESSAGE_EXPIRED:
-        case PRECONDITION_FAILED:
-        case REQUEST_ENTITY_TOO_LARGE:
-        case SERVER_BUSY:
-        case THROTTLED:
-        case TOO_MANY_DEVICES:
-        case UNAUTHORIZED:
-          LOG.debug("IoT Hub responded with an error to message {} with status {}",
-              msg.getMessageId(), status);
+          log.trace("IoT Hub responded to message {} with status {}", msg.getMessageId(), status);
           break;
         default:
+          log.error("IoT Hub responded with an error to message {} with status {}",
+              msg.getMessageId(), status);
           break;
 
       }

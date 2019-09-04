@@ -25,6 +25,12 @@ public class TwinReflectorProxyProperties {
 
   private final EventHubs eventHubs = new EventHubs();
 
+  private Feedback feedback = Feedback.DISABLED;
+
+  public enum Feedback {
+    ENABLED, ERROR_ONLY, DISABLED;
+  }
+
 
   @Getter
   @Setter
@@ -62,8 +68,6 @@ public class TwinReflectorProxyProperties {
     @Getter
     @Setter
     public static class Hub {
-      private boolean enabled;
-
       @NotEmpty
       private String hubname;
     }
