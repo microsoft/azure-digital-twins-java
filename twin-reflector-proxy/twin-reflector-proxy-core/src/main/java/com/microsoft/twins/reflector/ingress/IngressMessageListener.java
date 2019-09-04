@@ -21,6 +21,7 @@ import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.applicationinsights.core.dependencies.google.common.collect.Maps;
 import com.microsoft.twins.CorrelationIdContext;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
+import com.microsoft.twins.reflector.TwinReflectorProxyProperties.Feedback;
 import com.microsoft.twins.reflector.error.AbstractIngressFailedException;
 import com.microsoft.twins.reflector.model.FeedbackMessage;
 import com.microsoft.twins.reflector.model.FeedbackMessage.FeedbackMessageBuilder;
@@ -76,7 +77,7 @@ public class IngressMessageListener {
         log.error("Got message with unknown messageType [{}]", messageType);
       }
 
-      if (properties.getEventHubs().getFeedback().isEnabled()) {
+      if (properties.getFeedback() == Feedback.ENABLED) {
         return response;
       }
 
@@ -148,8 +149,10 @@ public class IngressMessageListener {
   @StreamListener("errorChannel")
   @SendTo(FeedbackSource.OUTPUT)
   FeedbackMessage error(final ErrorMessage message) {
-    if (properties.getEventHubs().getFeedback().isEnabled() && message.getOriginalMessage()
-        .getHeaders().containsKey(ReflectorIngressSink.HEADER_CORRELATION_ID)) {
+    if ((properties.getFeedback() == Feedback.ENABLED
+        || properties.getFeedback() == Feedback.ERROR_ONLY)
+        && message.getOriginalMessage().getHeaders()
+            .containsKey(ReflectorIngressSink.HEADER_CORRELATION_ID)) {
 
       final UUID correlationId = UUID.fromString((String) message.getOriginalMessage().getHeaders()
           .get(ReflectorIngressSink.HEADER_CORRELATION_ID));
