@@ -45,11 +45,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Validated
 public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProxy {
-  static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
-  static final String CACHE_DEVICE_BY_ID = "deviceById";
-  static final String CACHE_DEVICE_BY_NAME = "deviceByName";
-  static final String CACHE_SPACE_BY_NAME = "spaceByName";
-  static final String CACHE_SPACE_BY_ID = "spaceById";
+  public static final String CACHE_GATEWAY_ID_BY_HARDWARE_ID = "gatewayIdByHardwareId";
+  public static final String CACHE_DEVICE_BY_ID = "deviceById";
+  public static final String CACHE_DEVICE_BY_NAME = "deviceByName";
+  public static final String CACHE_SPACE_BY_NAME = "spaceByName";
+  public static final String CACHE_SPACE_BY_ID = "spaceById";
 
   private static final String UNKOWN_TYPE = "None";
   private static final String UNKOWN_SPACE_STATUS = "None";
