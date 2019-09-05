@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.microsoft.twins.reflector.AbstractIntegrationTest;
@@ -23,12 +22,6 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
 
   @Autowired
   private TelemetryForwarder telemetryForwarderUnderTest;
-
-  @BeforeEach
-  public void clear() {
-    listToIngress.getReceivedDeviceMessages().clear();
-    listToIngress.getReceivedFeedbackMessages().clear();
-  }
 
   @Test
   public void sendTelemetryMessagesThroughIoTHub()
@@ -54,7 +47,7 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
-        .until(() -> listToIngress.getReceivedDeviceMessages().containsAll(sendMessages));
+        .until(() -> listToIngress.receivedDeviceMessagesContainsAll(sendMessages));
 
   }
 
@@ -86,7 +79,7 @@ public class TelemetryForwarderIT extends AbstractIntegrationTest {
 
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(50, TimeUnit.MILLISECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
-        .until(() -> listToIngress.getReceivedDeviceMessages().containsAll(sendMessages));
+        .until(() -> listToIngress.receivedDeviceMessagesContainsAll(sendMessages));
 
   }
 }

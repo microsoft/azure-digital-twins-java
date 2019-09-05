@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.SpacesApi;
@@ -31,11 +30,6 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   private static final String TEST_PROP_VALUE = "testValue1";
   private static final String TEST_PROP_KEY = "testName1";
 
-
-  @BeforeEach
-  public void clear() {
-    listToIngress.getReceivedFeedbackMessages().clear();
-  }
 
   @Test
   public void deleteSpace() {

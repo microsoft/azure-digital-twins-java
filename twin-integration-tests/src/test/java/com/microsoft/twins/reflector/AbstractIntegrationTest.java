@@ -127,6 +127,9 @@ public abstract class AbstractIntegrationTest {
     createTypes();
     testGateway = createGateway(testGatewayName, tenant);
     ((TestTenantResolver) tenantResolver).setGateway(testGateway);
+
+    listToIngress.clearReceivedDeviceMessages();
+    listToIngress.clearReceivedFeedbackMessages();
   }
 
   @AfterEach
@@ -146,8 +149,8 @@ public abstract class AbstractIntegrationTest {
     source.ingress().send(hubMessage);
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(100, TimeUnit.MILLISECONDS)
         .pollInterval(10, TimeUnit.MILLISECONDS)
-        .until(() -> listToIngress.getReceivedFeedbackMessages().stream()
-            .anyMatch(feedback -> feedback.getCorrelationId().equals(correlationId)
+        .until(() -> listToIngress.anyMatchOnReceivedFeedbackMessages(
+            feedback -> feedback.getCorrelationId().equals(correlationId)
                 && Status.PROCESSED == feedback.getStatus()));
   }
 
@@ -162,8 +165,8 @@ public abstract class AbstractIntegrationTest {
     source.ingress().send(hubMessage);
     Awaitility.await().atMost(1, TimeUnit.MINUTES).pollDelay(100, TimeUnit.MILLISECONDS)
         .pollInterval(10, TimeUnit.MILLISECONDS)
-        .until(() -> listToIngress.getReceivedFeedbackMessages().stream()
-            .anyMatch(feedback -> feedback.getCorrelationId().equals(correlationId)
+        .until(() -> listToIngress.anyMatchOnReceivedFeedbackMessages(
+            feedback -> feedback.getCorrelationId().equals(correlationId)
                 && Status.ERROR == feedback.getStatus() && errorCode == feedback.getErrorCode()));
   }
 
