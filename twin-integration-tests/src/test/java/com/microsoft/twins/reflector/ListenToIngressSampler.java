@@ -3,10 +3,12 @@
  */
 package com.microsoft.twins.reflector;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import org.slf4j.MDC;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
@@ -54,12 +56,29 @@ public class ListenToIngressSampler {
     }
   }
 
-  public Set<TestMessage> getReceivedDeviceMessages() {
-    return receivedDeviceMessages;
+  public boolean receivedDeviceMessagesContainsAll(final Collection<TestMessage> c) {
+    synchronized (receivedDeviceMessages) {
+      return receivedDeviceMessages.containsAll(c);
+    }
   }
 
-  public Set<FeedbackMessage> getReceivedFeedbackMessages() {
-    return receivedFeedbackMessages;
+  public boolean anyMatchOnReceivedFeedbackMessages(final Predicate<FeedbackMessage> predicate) {
+    synchronized (receivedFeedbackMessages) {
+      return receivedFeedbackMessages.stream().anyMatch(predicate);
+    }
+  }
+
+  public void clearReceivedDeviceMessages() {
+    synchronized (receivedDeviceMessages) {
+      receivedDeviceMessages.clear();
+    }
+
+  }
+
+  public void clearReceivedFeedbackMessages() {
+    synchronized (receivedFeedbackMessages) {
+      receivedFeedbackMessages.clear();
+    }
   }
 
 
