@@ -9,6 +9,34 @@
                 "description": "Name of EventHub namespace"
             }
         },
+        "topologyoperationsHubName": {
+            "type": "string",
+            "defaultValue": "topologyoperations",
+            "metadata": {
+                "description": "Azure EventHub name used for ingress of ADT TopologyOperations."
+            }
+        },
+        "proxyingressHubName": {
+            "type": "string",
+            "defaultValue": "proxyingress",
+            "metadata": {
+                "description": "Azure EventHub name used for Twin Reflector Proxy ingress messages"
+            }
+        },
+        "proxyingressGroupName": {
+            "type": "string",
+            "defaultValue": "proxyingresscg",
+            "metadata": {
+                "description": "Azure EventHub consumer group used for Twin Reflector Proxy ingress messages."
+            }
+        },
+        "proxyfeedbackHubName": {
+            "type": "string",
+            "defaultValue": "proxyfeedback",
+            "metadata": {
+                "description": "Azure EventHub name used for feedback message egress."
+            }
+        },
         "eventhubSku": {
             "type": "string",
             "allowedValues": ["Basic", "Standard"],
@@ -32,67 +60,93 @@
                 "description": "Location for all resources."
             }
         },
-        "virtualNetworkName": {
-            "type": "string",
+        "partitionCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "minValue": 2,
+            "maxValue": 32,
             "metadata": {
-                "description": "Name of an existing VNET that will contain this deployment."
+                "description": "Number of partitions chosen"
             }
         },
-        "virtualNetworkResourceGroup": {
-            "type": "string",
+        "messageRetentionInDays": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": "1",
+            "maxValue": "7",
             "metadata": {
-                "description": "Name of the existing VNET resource group"
-            }
-        },
-        "subnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Subnet name that will contain the nodes."
+                "description": "How long to retain the data in event hub"
             }
         }
     },
     "variables": {
         "defaultSASKeyName": "RootManageSharedAccessKey",
         "authRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaceName'), variables('defaultSASKeyName'))]",
-        "namespaceNetworkRuleSetName": "[concat(parameters('namespaceName'), concat('/', 'default'))]",
-        "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
     },
     "resources": [{
-            "apiVersion": "2017-04-01",
-            "name": "[parameters('namespaceName')]",
-            "type": "Microsoft.EventHub/namespaces",
-            "location": "[parameters('location')]",
-            "sku": {
-                "name": "[parameters('eventhubSku')]",
-                "tier": "[parameters('eventhubSku')]",
-                "capacity": "[parameters('skuCapacity')]"
-            },
-            "tags": {
-                "displayName": "[parameters('namespaceName')]"
-            },
-            "properties": {
-                "kafkaEnabled": true
-            }
+        "apiVersion": "2017-04-01",
+        "name": "[parameters('namespaceName')]",
+        "type": "Microsoft.EventHub/namespaces",
+        "location": "[parameters('location')]",
+        "sku": {
+            "name": "[parameters('eventhubSku')]",
+            "tier": "[parameters('eventhubSku')]",
+            "capacity": "[parameters('skuCapacity')]"
         },
-        {
-            "apiVersion": "2018-01-01-preview",
-            "name": "[variables('namespaceNetworkRuleSetName')]",
-            "type": "Microsoft.EventHub/namespaces/networkruleset",
-            "dependsOn": [
-                "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
-            ],
-            "properties": {
-                "virtualNetworkRules": [{
-                    "subnet": {
-                        "id": "[variables('vnetSubnetId')]"
-                    },
-                    "ignoreMissingVnetServiceEndpoint": false
-                }],
-                "defaultAction": "Deny"
+        "tags": {
+            "displayName": "[parameters('namespaceName')]"
+        },
+        "properties": {
+            "kafkaEnabled": true
+        },
+        "resources": [{
+                "apiVersion": "2017-04-01",
+                "name": "[parameters('proxyingressHubName')]",
+                "type": "eventhubs",
+                "dependsOn": [
+                    "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
+                ],
+                "properties": {
+                    "messageRetentionInDays": "[parameters('messageRetentionInDays')]",
+                    "partitionCount": "[parameters('partitionCount')]"
+                },
+                "resources": [{
+                    "apiVersion": "2017-04-01",
+                    "name": "[parameters('proxyingressGroupName')]",
+                    "type": "consumergroups",
+                    "dependsOn": ["[parameters('proxyingressHubName')]"],
+                    "properties": {
+                        "userMetadata": "User Metadata goes here"
+                    }
+                }]
+            },
+            {
+                "apiVersion": "2017-04-01",
+                "name": "[parameters('topologyoperationsHubName')]",
+                "type": "eventhubs",
+                "dependsOn": [
+                    "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
+                ],
+                "properties": {
+                    "messageRetentionInDays": "[parameters('messageRetentionInDays')]",
+                    "partitionCount": "[parameters('partitionCount')]"
+                }
+            },
+            {
+                "apiVersion": "2017-04-01",
+                "name": "[parameters('proxyfeedbackHubName')]",
+                "type": "eventhubs",
+                "dependsOn": [
+                    "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
+                ],
+                "properties": {
+                    "messageRetentionInDays": "[parameters('messageRetentionInDays')]",
+                    "partitionCount": "[parameters('partitionCount')]"
+                }
             }
-        }
+        ]
+    }],
 
-    ],
     "outputs": {
         "namespacePrimaryConnectionString": {
             "type": "string",

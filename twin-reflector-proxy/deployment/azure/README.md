@@ -137,7 +137,7 @@ helm upgrade twin-reflector-proxy ../helm/twin-reflector-proxy/ \
     --set adt.aad.tenant=YOUR_TENANT.onmicrosoft.com \
     --set adt.aad.clientId=CLIENT_ID \
     --set adt.aad.clientSecret=CLIENT_SECRET \
-    --set adt.tenant=YOUR_ADT_TENANT_SPACE
+    --set adt.tenant=YOUR_ADT_TENANT_SPACE \
     --set eventHubs.primaryConnectionString=$eh_prim_connection \
     --set eventHubs.secondaryConnectionString=$eh_sec_connection \
     --set eventHubs.namespace=$eh_ns \

@@ -120,15 +120,6 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
-                    },
-                    "virtualNetworkName": {
-                        "value": "[variables('vnetName')]"
-                    },
-                    "subnetName": {
-                        "value": "[variables('aksSubnetName')]"
-                    },
-                    "virtualNetworkResourceGroup": {
-                        "value": "[resourceGroup().name]"
                     }
                 }
             }
