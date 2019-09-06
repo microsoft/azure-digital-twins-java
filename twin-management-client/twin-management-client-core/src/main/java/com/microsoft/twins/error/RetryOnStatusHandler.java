@@ -31,7 +31,6 @@ public class RetryOnStatusHandler extends ErrorDecoder.Default {
         return new RetryableException(response.status(), "to many request: retry in a second",
             response.request().httpMethod(), cal.getTime());
       case 400:
-
         if (response.body() != null) {
           try (InputStream message = response.body().asInputStream()) {
             log.error("Client error. Response with Body: [{}]",

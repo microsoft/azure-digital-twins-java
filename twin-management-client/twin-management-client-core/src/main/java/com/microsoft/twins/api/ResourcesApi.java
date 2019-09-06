@@ -12,6 +12,7 @@ import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceResourceUpdate;
+import com.microsoft.twins.model.SpaceTypeEnum;
 import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
@@ -123,7 +124,7 @@ public interface ResourcesApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class ResourcesRetrieveQueryParams extends HashMap<String, Object> {
-    public ResourcesRetrieveQueryParams type(final String value) {
+    public ResourcesRetrieveQueryParams type(final SpaceTypeEnum value) {
       put("type", EncodingUtils.encode(value));
       return this;
     }

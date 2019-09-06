@@ -36,6 +36,7 @@ import com.microsoft.twins.model.CategoryEnum;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.EndpointCreate;
+import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.EventTypesEnum;
 import com.microsoft.twins.model.ExtendedTypeCreate;
 import com.microsoft.twins.model.ExtendedTypeRetrieve;
@@ -218,8 +219,8 @@ public abstract class AbstractIntegrationTest {
 
   private void createTestTenantSetup() {
     // Check for existing setup
-    final List<SpaceRetrieveWithChildren> found =
-        spacesApi.spacesRetrieve(new SpacesRetrieveQueryParams().name("TEST_TENANT"));
+    final List<SpaceRetrieveWithChildren> found = spacesApi.spacesRetrieve(
+        new SpacesRetrieveQueryParams().name(testConfigurationProperties.getTestTenantname()));
     if (!found.isEmpty()) {
       tenant = found.get(0).getId();
       ((TestTenantResolver) tenantResolver).setTenant(tenant);
@@ -227,24 +228,19 @@ public abstract class AbstractIntegrationTest {
       assertThat(resourcesApi.resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant)))
           .hasSize(1);
       assertThat(endpointsApi.endpointsRetrieve(new EndpointsRetrieveQueryParams()
-          .eventTypes(EventTypesEnum.DEVICEMESSAGE.toString()).types(TypeEnum.EVENTHUB.toString())))
+          .eventTypes(EventTypesEnum.DEVICEMESSAGE).types(TypeEnum.EVENTHUB.toString())))
               .hasSize(1);
+    } else {
+      final SpaceCreate tenantCreate = new SpaceCreate();
+      tenantCreate.setName(testConfigurationProperties.getTestTenantname());
+      tenantCreate.setFriendlyName("My auto generated test tenant");
+      tenantCreate.setDescription("Test auto generated tenant by " + this.getClass().getName());
+      tenantCreate.setType("Tenant");
 
-      return;
+      tenant = spacesApi.spacesCreate(tenantCreate);
+
+      ((TestTenantResolver) tenantResolver).setTenant(tenant);
     }
-
-    final SpaceCreate tenantCreate = new SpaceCreate();
-    tenantCreate.setName("TEST_TENANT");
-    tenantCreate.setFriendlyName("My test tenant");
-    tenantCreate.setDescription("Test tenant");
-    tenantCreate.setType("Tenant");
-
-    // TODO try to add gateway to tenant
-
-    tenant = spacesApi.spacesCreate(tenantCreate);
-
-    ((TestTenantResolver) tenantResolver).setTenant(tenant);
-
 
     createResources();
     addDeviceEventEndPoint(twinReflectorProxyProperties.getEventHubs().getPrimaryConnectionString(),
@@ -265,6 +261,19 @@ public abstract class AbstractIntegrationTest {
   private void addDeviceEventEndPoint(final String connectionString,
       final String secondaryConnectionString, final String hubName) {
 
+    final List<EndpointRetrieve> existing =
+        endpointsApi.endpointsRetrieve(new EndpointsApi.EndpointsRetrieveQueryParams()
+            .types(TypeEnum.EVENTHUB.toString()).eventTypes(EventTypesEnum.DEVICEMESSAGE));
+
+    if (!CollectionUtils.isEmpty(existing) && existing.stream()
+        .anyMatch(endpoint -> endpoint.getPath().equalsIgnoreCase(hubName)
+            && endpoint.getConnectionString()
+                .equalsIgnoreCase(connectionString + ";EntityPath=" + hubName)
+            && endpoint.getSecondaryConnectionString()
+                .equalsIgnoreCase(secondaryConnectionString + ";EntityPath=" + hubName))) {
+      return;
+    }
+
     final EndpointCreate eventHub = new EndpointCreate();
     eventHub.addEventTypesItem(EventTypesEnum.DEVICEMESSAGE);
     eventHub.setType(TypeEnum.EVENTHUB);
@@ -280,6 +289,13 @@ public abstract class AbstractIntegrationTest {
   }
 
   private void createResources() {
+    final List<SpaceResourceRetrieve> existing = resourcesApi.resourcesRetrieve(
+        new ResourcesRetrieveQueryParams().type(SpaceTypeEnum.IOTHUB).spaceId(tenant));
+
+    if (!CollectionUtils.isEmpty(existing)) {
+      return;
+    }
+
     final SpaceResourceCreate iotHub = new SpaceResourceCreate();
     iotHub.setSpaceId(tenant);
     iotHub.setType(SpaceTypeEnum.IOTHUB);

@@ -52,8 +52,8 @@ on `https://INSTANCE.REGION.azuresmartspaces.net/management/api/v1.0/roleassignm
 First create a Azure resource group if you have not done so yet.
 
 ```bash
-resourceGroupName=adttest
-az group create --name $resourceGroupName --location westeurope
+resourcegroup_name=adttest
+az group create --name $resourcegroup_name --location westeurope
 ```
 
 Now create your [Azure Event Hub's](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-about) namespace and hub. The namespace needs to be globally unique as it is used as DNS name as well.
@@ -61,39 +61,40 @@ Now create your [Azure Event Hub's](https://docs.microsoft.com/en-us/azure/event
 Note: the integration tests leverage Azure Event Hub's Kafka support as an option for consuming events.
 
 ```bash
-namespace=adttest
+eh_ns=adttest
 
-az eventhubs namespace create --name $namespace --resource-group $resourceGroupName --enable-kafka
+az eventhubs namespace create --name $eh_ns --resource-group $resourcegroup_name --enable-kafka
 
-az eventhubs eventhub create --name twinstestevents --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
-az eventhubs eventhub consumer-group create --eventhub-name twinstestevents --resource-group $resourceGroupName --namespace-name $namespace --name twinstesteventscg
+az eventhubs eventhub create --name twinstestevents --resource-group $resourcegroup_name --namespace-name $eh_ns --message-retention 1 --partition-count 3
+az eventhubs eventhub consumer-group create --eventhub-name twinstestevents --resource-group $resourcegroup_name --namespace-name $eh_ns --name twinstesteventscg
 
-az eventhubs eventhub create --name proxyingress --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
-az eventhubs eventhub consumer-group create --eventhub-name proxyingress --resource-group $resourceGroupName --namespace-name $namespace --name proxyingresscg
+az eventhubs eventhub create --name proxyingress --resource-group $resourcegroup_name --namespace-name $eh_ns --message-retention 1 --partition-count 3
+az eventhubs eventhub consumer-group create --eventhub-name proxyingress --resource-group $resourcegroup_name --namespace-name $eh_ns --name proxyingresscg
 
-az eventhubs eventhub create --name proxyfeedback --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
-az eventhubs eventhub consumer-group create --eventhub-name proxyfeedback --resource-group $resourceGroupName --namespace-name $namespace --name proxyfeedbackcg
+az eventhubs eventhub create --name proxyfeedback --resource-group $resourcegroup_name --namespace-name $eh_ns --message-retention 1 --partition-count 3
+az eventhubs eventhub consumer-group create --eventhub-name proxyfeedback --resource-group $resourcegroup_name --namespace-name $eh_ns --name proxyfeedbackcg
 
-az eventhubs eventhub create --name topologyoperations --resource-group $resourceGroupName --namespace-name $namespace --message-retention 1 --partition-count 1
+az eventhubs eventhub create --name topologyoperations --resource-group $resourcegroup_name --namespace-name $eh_ns --message-retention 1 --partition-count 3
 ```
 
 Next the connection strings for the tests:
 
 ```bash
-primary_connection_string=`az eventhubs namespace authorization-rule keys list --resource-group $resourceGroupName --namespace-name $namespace --name RootManageSharedAccessKey -o tsv --query primaryConnectionString`
-secondary_connection_string=`az eventhubs namespace authorization-rule keys list --resource-group $resourceGroupName --namespace-name $namespace --name RootManageSharedAccessKey -o tsv --query secondaryConnectionString`
+primary_connection_string=`az eventhubs namespace authorization-rule keys list --resource-group $resourcegroup_name --namespace-name $eh_ns --name RootManageSharedAccessKey -o tsv --query primaryConnectionString`
+secondary_connection_string=`az eventhubs namespace authorization-rule keys list --resource-group $resourcegroup_name --namespace-name $eh_ns --name RootManageSharedAccessKey -o tsv --query secondaryConnectionString`
 ```
 
 ### Run Integration test
 
 ```bash
-mvn test  -Dcom.microsoft.twins.aad.clientSecret=AAD_PRINCIPAL_SECRET \
+mvn verify -Pfailsafe  \
+ -Dcom.microsoft.twins.aad.clientSecret=AAD_PRINCIPAL_SECRET \
  -Dcom.microsoft.twins.aad.clientId=AAD_PRINCIPAL_ID \
  -Dcom.microsoft.twins.twinsUrl=https://INSTANCE.REGION.azuresmartspaces.net/management \
  -Dcom.microsoft.twins.aad.tenant=TENANT.onmicrosoft.com \
  -Dazure.event-hubs.test.connection-string=$primary_connection_string \
  -Dazure.event-hubs.test.secondary-connection-string=$secondary_connection_string \
- -Dazure.event-hubs.test.namespace=$namespace
+ -Dazure.event-hubs.test.namespace=$eh_ns
 ```
 
 Optionally you can add:

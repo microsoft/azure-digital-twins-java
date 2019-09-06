@@ -18,6 +18,6 @@ public class TestConfigurationProperties {
   @NotEmpty
   private String devicesHubname;
 
-
+  private String testTenantname = "TEST_TENANT";
 
 }
