@@ -3,11 +3,17 @@
  */
 package com.microsoft.twins.error;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Calendar;
+import org.apache.commons.io.IOUtils;
 import feign.Response;
 import feign.RetryableException;
 import feign.codec.ErrorDecoder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RetryOnStatusHandler extends ErrorDecoder.Default {
 
   @Override
@@ -24,6 +30,17 @@ public class RetryOnStatusHandler extends ErrorDecoder.Default {
 
         return new RetryableException(response.status(), "to many request: retry in a second",
             response.request().httpMethod(), cal.getTime());
+      case 400:
+
+        if (response.body() != null) {
+          try (InputStream message = response.body().asInputStream()) {
+            log.error("Client error. Response with Body: [{}]",
+                IOUtils.toString(message, Charset.defaultCharset()));
+          } catch (final IOException e) {
+            log.error("Could not print Client error body", e);
+          }
+        }
+        return super.decode(methodKey, response);
       default:
         return super.decode(methodKey, response);
     }
