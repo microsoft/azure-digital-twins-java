@@ -8,9 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.BlobMetadataRetrieve;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.KeyStoreRetrieve;
 import com.microsoft.twins.model.Location;
@@ -26,7 +25,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface SpacesApi extends TwinsApiClient.Api {
+public interface SpacesApi {
   /**
    * Creates a space
    *
@@ -367,8 +366,8 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces?ids={ids}&name={name}&types={types}&subtypes={subtypes}&statuses={statuses}&useParentSpace={useParentSpace}&userUpn={userUpn}&sensorDataTypes={sensorDataTypes}&includes={includes}&propertyKey={propertyKey}&propertyValue={propertyValue}&propertyValueSearchType={propertyValueSearchType}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
-  List<SpaceRetrieveWithChildren> spacesRetrieve(@Param("ids") UUID ids,
-      @Param("name") String name, @Param("types") String types, @Param("subtypes") String subtypes,
+  List<SpaceRetrieveWithChildren> spacesRetrieve(@Param("ids") UUID ids, @Param("name") String name,
+      @Param("types") String types, @Param("subtypes") String subtypes,
       @Param("statuses") String statuses, @Param("useParentSpace") Boolean useParentSpace,
       @Param("userUpn") String userUpn, @Param("sensorDataTypes") String sensorDataTypes,
       @Param("includes") String includes, @Param("propertyKey") String propertyKey,
@@ -790,8 +789,7 @@ public interface SpacesApi extends TwinsApiClient.Api {
    */
   @RequestLine("GET /api/v1.0/spaces/{id}/keystore?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") UUID id,
-      @Param("includes") String includes);
+  KeyStoreRetrieve spacesRetrieveKeyStore(@Param("id") UUID id, @Param("includes") String includes);
 
   /**
    * Gets the first keystore by walking up the spaces hierarchy

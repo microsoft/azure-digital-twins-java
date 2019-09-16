@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins;
+package com.microsoft.twins.client;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -38,9 +38,6 @@ import feign.jackson.JacksonEncoder;
 import feign.slf4j.Slf4jLogger;
 
 public class TwinsApiClient {
-  public interface Api {
-  }
-
   protected ObjectMapper objectMapper;
   private final String twinsUrl;
   private Feign.Builder feignBuilder;
@@ -105,73 +102,59 @@ public class TwinsApiClient {
   }
 
   public DevicesApi getDevicesApi() {
-    return buildClient(DevicesApi.class);
+    return feignBuilder.target(DevicesApi.class, twinsUrl);
   }
 
   public EndpointsApi getEndpointsApi() {
-    return buildClient(EndpointsApi.class);
+    return feignBuilder.target(EndpointsApi.class, twinsUrl);
   }
 
   public KeyStoresApi getKeyStoresApi() {
-    return buildClient(KeyStoresApi.class);
+    return feignBuilder.target(KeyStoresApi.class, twinsUrl);
   }
 
   public MatchersApi getMatchersApi() {
-    return buildClient(MatchersApi.class);
+    return feignBuilder.target(MatchersApi.class, twinsUrl);
   }
 
   public OntologiesApi getOntologiesApi() {
-    return buildClient(OntologiesApi.class);
+    return feignBuilder.target(OntologiesApi.class, twinsUrl);
   }
 
   public PropertyKeysApi getPropertyKeysApi() {
-    return buildClient(PropertyKeysApi.class);
+    return feignBuilder.target(PropertyKeysApi.class, twinsUrl);
   }
 
   public ResourcesApi getResourcesApi() {
-    return buildClient(ResourcesApi.class);
+    return feignBuilder.target(ResourcesApi.class, twinsUrl);
   }
 
   public RoleAssignmentsApi getRoleAssignmentsApi() {
-    return buildClient(RoleAssignmentsApi.class);
+    return feignBuilder.target(RoleAssignmentsApi.class, twinsUrl);
   }
 
   public SensorsApi getSensorsApi() {
-    return buildClient(SensorsApi.class);
+    return feignBuilder.target(SensorsApi.class, twinsUrl);
   }
 
   public SpacesApi getSpacesApi() {
-    return buildClient(SpacesApi.class);
+    return feignBuilder.target(SpacesApi.class, twinsUrl);
   }
 
   public SystemApi getSystemApi() {
-    return buildClient(SystemApi.class);
+    return feignBuilder.target(SystemApi.class, twinsUrl);
   }
 
   public TypesApi getTypesApi() {
-    return buildClient(TypesApi.class);
+    return feignBuilder.target(TypesApi.class, twinsUrl);
   }
 
   public UserDefinedFunctionsApi getUserDefinedFunctionsApi() {
-    return buildClient(UserDefinedFunctionsApi.class);
+    return feignBuilder.target(UserDefinedFunctionsApi.class, twinsUrl);
   }
 
   public UsersApi getUsersApi() {
-    return buildClient(UsersApi.class);
-  }
-
-  /**
-   * Creates a feign client for given API interface.
-   *
-   * Usage: ApiClient apiClient = new ApiClient(); apiClient.setBasePath("http://localhost:8080");
-   * XYZApi api = apiClient.buildClient(XYZApi.class); XYZResponse response = api.someMethod(...);
-   *
-   * @param <T> Type
-   * @param clientClass Client class
-   * @return The Client
-   */
-  private <T extends Api> T buildClient(final Class<T> clientClass) {
-    return feignBuilder.target(clientClass, twinsUrl);
+    return feignBuilder.target(UsersApi.class, twinsUrl);
   }
 
   private static class JacksonEncoderWithContentType extends JacksonEncoder {

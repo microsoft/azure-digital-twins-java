@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.EndpointsApi;
 import com.microsoft.twins.api.KeyStoresApi;
@@ -24,6 +23,7 @@ import com.microsoft.twins.api.SystemApi;
 import com.microsoft.twins.api.TypesApi;
 import com.microsoft.twins.api.UserDefinedFunctionsApi;
 import com.microsoft.twins.api.UsersApi;
+import com.microsoft.twins.client.TwinsApiClient;
 
 @Configuration
 @EnableConfigurationProperties(DigitalTwinsClientProperties.class)

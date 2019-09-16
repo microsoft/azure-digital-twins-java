@@ -6,8 +6,8 @@ package com.microsoft.twins.reflector;
 import java.util.Optional;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
+import com.microsoft.twins.client.TwinsApiClient;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import com.microsoft.twins.TwinsApiClient;
 import lombok.RequiredArgsConstructor;
 
 

@@ -17,6 +17,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Ingress message that may contains topology changes as well telemetry data. Contains mandatory as
+ * well as optional fields. Message are of a defined {@link MessageType}.
+ *
+ */
 @ToString
 @EqualsAndHashCode
 @Getter

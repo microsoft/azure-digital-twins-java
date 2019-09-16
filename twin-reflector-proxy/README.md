@@ -1,18 +1,22 @@
 # Twin Reflector Proxy
 
-This module aims to provide a dispatcher application that consumes Azure Event Hub event streams which contain topology changes and/or telemetry ingress. The goal is to provide cloud ingress point that serves as a bride between arbitrary IoT protocol gateways and Azure Digital Twins.
+This module aims to provide a dispatcher application that consumes [Azure Event Hubs](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-about) message streams with topology changes and/or telemetry ingress. The goal is to provide cloud ingress point that serves as a bride between arbitrary IoT protocol gateways and [Azure Digital Twins (ADT)](https://docs.microsoft.com/en-us/azure/digital-twins/about-digital-twins).
 
 Disclaimer: the module is still work in progress and implementation pieces at this point have a PoC character at best.
 
 ## Overview
 
-Twin instances (Create or update) are provided as event including properties, attributes and relationships. The events are processed from Azure Event Hub and mapped into several ADT RESTful management API calls.
+Twin instances (create or update) are provided as message including properties, attributes and relationships. The messages are processed from Azure Event Hubs and mapped into (multiple) ADT RESTful management API calls.
+
+The proxy supports the concept of a lazy topology build by means that it will not assume that every topology element nows at creation time where it is located in the overall topology. It does so by attaching the element temporarily directly to the tenant until the final position is known.
+
+Azure Digital Twin entity caching is included as well to reduce ADT calls for better performance and lower cost.
 
 ![twin-reflector_building-block-view](overview.png)
 
 ## Deployment
 
-see [deployment](deployment/azure) folder for further guidance on how to install the Twin Reflector Proxy on Microsoft Azure.
+see [deployment](deployment/azure) folder for further guidance on how to install the proxy on Microsoft Azure.
 
 ## Modules
 

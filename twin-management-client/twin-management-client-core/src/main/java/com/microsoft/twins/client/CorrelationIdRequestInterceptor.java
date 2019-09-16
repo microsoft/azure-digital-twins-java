@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Microsoft Corporation. Licensed under the MIT License.
  */
-package com.microsoft.twins;
+package com.microsoft.twins.client;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

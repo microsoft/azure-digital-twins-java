@@ -8,15 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.UserDefinedFunctionRetrieve;
 import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
+public interface UserDefinedFunctionsApi {
   /**
    * Creates a udf This is a multi-part request. For more information, see doc examples. Key value
    * pairs specified in the Content-Disposition header in the udf-chunk of the multipart request
@@ -72,10 +71,10 @@ public interface UserDefinedFunctionsApi extends TwinsApiClient.Api {
   @RequestLine("GET /api/v1.0/userdefinedfunctions?names={names}&ids={ids}&includes={includes}&spaceId={spaceId}&traverse={traverse}&minLevel={minLevel}&maxLevel={maxLevel}&minRelative={minRelative}&maxRelative={maxRelative}")
   @Headers({"Accept: */*",})
   List<UserDefinedFunctionRetrieve> userDefinedFunctionsRetrieve(@Param("names") String names,
-      @Param("ids") UUID ids, @Param("includes") String includes,
-      @Param("spaceId") String spaceId, @Param("traverse") String traverse,
-      @Param("minLevel") Integer minLevel, @Param("maxLevel") Integer maxLevel,
-      @Param("minRelative") Boolean minRelative, @Param("maxRelative") Boolean maxRelative);
+      @Param("ids") UUID ids, @Param("includes") String includes, @Param("spaceId") String spaceId,
+      @Param("traverse") String traverse, @Param("minLevel") Integer minLevel,
+      @Param("maxLevel") Integer maxLevel, @Param("minRelative") Boolean minRelative,
+      @Param("maxRelative") Boolean maxRelative);
 
   /**
    * Gets a list of udfs

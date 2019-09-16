@@ -4,13 +4,12 @@
 package com.microsoft.twins.api;
 
 import java.util.List;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.IEnumEntity;
 import com.microsoft.twins.model.RoleDefinitionRetrieve;
 import feign.Headers;
 import feign.RequestLine;
 
-public interface SystemApi extends TwinsApiClient.Api {
+public interface SystemApi {
   /**
    * Retrieve all supported device statuses
    *

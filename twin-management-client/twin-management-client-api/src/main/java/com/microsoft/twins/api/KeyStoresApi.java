@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.KeyStoreCreate;
 import com.microsoft.twins.model.KeyStoreRetrieve;
 import com.microsoft.twins.model.KeyStoreUpdate;
@@ -19,7 +18,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface KeyStoresApi extends TwinsApiClient.Api {
+public interface KeyStoresApi {
   /**
    * Creates a key store
    *
@@ -33,9 +32,9 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Creates a key store
    *
-   * @param name        (optional)
+   * @param name (optional)
    * @param description (optional)
-   * @param spaceId     (optional)
+   * @param spaceId (optional)
    * @return UUID
    */
   @RequestLine("POST /api/v1.0/keystores")
@@ -65,7 +64,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Deletes the given key
    *
-   * @param id  The store identifier (required)
+   * @param id The store identifier (required)
    * @param key The key identifier (required)
    */
   @RequestLine("DELETE /api/v1.0/keystores/{id}/keys/{key}")
@@ -75,8 +74,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Gets a token for the specified device using the specified key
    *
-   * @param id        The key store identifier (required)
-   * @param key       The key identifier (required)
+   * @param id The key store identifier (required)
+   * @param key The key identifier (required)
    * @param deviceMac The device to generate the token for (required)
    * @return String
    */
@@ -94,15 +93,15 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * {@link KeyStoresGenerateTokenFromKeyByIdQueryParams} class that allows for building up this map
    * in a fluent style.
    *
-   * @param id          The key store identifier (required)
-   * @param key         The key identifier (required)
+   * @param id The key store identifier (required)
+   * @param key The key identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>deviceMac - The device to generate the token for (required)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>deviceMac - The device to generate the token for (required)</li>
+   *        </ul>
    * @return String
    *
    */
@@ -127,7 +126,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Gets a token for the specified device for the last valid key.
    *
-   * @param id        The identifier (required)
+   * @param id The identifier (required)
    * @param deviceMac The device to generate the token for (required)
    * @return String
    */
@@ -145,14 +144,14 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * {@link KeyStoresGenerateTokenFromLastKeyQueryParams} class that allows for building up this map
    * in a fluent style.
    *
-   * @param id          The identifier (required)
+   * @param id The identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>deviceMac - The device to generate the token for (required)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>deviceMac - The device to generate the token for (required)</li>
+   *        </ul>
    * @return String
    *
    */
@@ -177,9 +176,9 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Retrieves key stores
    *
-   * @param spaceId  Optional filter on parent space id (optional)
+   * @param spaceId Optional filter on parent space id (optional)
    * @param includes Comma separated list of what to include, for example \&quot;Space,Keys\&quot;.
-   *                 Defaults to None (optional)
+   *        Defaults to None (optional)
    * @return java.util.List&lt;KeyStoreRetrieve&gt;
    */
   @RequestLine("GET /api/v1.0/keystores?spaceId={spaceId}&includes={includes}")
@@ -196,14 +195,14 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * allows for building up this map in a fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>spaceId - Optional filter on parent space id (optional)</li>
-   *                    <li>includes - Comma separated list of what to include, for example
-   *                    \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>spaceId - Optional filter on parent space id (optional)</li>
+   *        <li>includes - Comma separated list of what to include, for example
+   *        \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
+   *        </ul>
    * @return java.util.List&lt;KeyStoreRetrieve&gt;
    *
    */
@@ -233,15 +232,14 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Retrieves a key store
    *
-   * @param id       The identifier (required)
+   * @param id The identifier (required)
    * @param includes Comma separated list of what to include, for example \&quot;Space,Keys\&quot;.
-   *                 Defaults to None (optional)
+   *        Defaults to None (optional)
    * @return KeyStoreRetrieve
    */
   @RequestLine("GET /api/v1.0/keystores/{id}?includes={includes}")
   @Headers({"Accept: */*",})
-  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") UUID id,
-      @Param("includes") String includes);
+  KeyStoreRetrieve keyStoresRetrieveById(@Param("id") UUID id, @Param("includes") String includes);
 
   /**
    * Retrieves a key store
@@ -252,15 +250,15 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * {@link KeyStoresRetrieveByIdQueryParams} class that allows for building up this map in a fluent
    * style.
    *
-   * @param id          The identifier (required)
+   * @param id The identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>includes - Comma separated list of what to include, for example
-   *                    \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>includes - Comma separated list of what to include, for example
+   *        \&quot;Space,Keys\&quot;. Defaults to None (optional)</li>
+   *        </ul>
    * @return KeyStoreRetrieve
    *
    */
@@ -285,7 +283,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Retrieves the given key
    *
-   * @param id  The key store identifier (required)
+   * @param id The key store identifier (required)
    * @param key The key identifier (required)
    * @return SecurityKeyRetrieve
    */
@@ -317,7 +315,7 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * Updates a key store
    *
    * @param body The store information (required)
-   * @param id   The identifier (required)
+   * @param id The identifier (required)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
   @Headers({"Accept: */*",})
@@ -326,8 +324,8 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
   /**
    * Updates a key store
    *
-   * @param id          The identifier (required)
-   * @param name        (optional)
+   * @param id The identifier (required)
+   * @param name (optional)
    * @param description (optional)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}")
@@ -339,19 +337,18 @@ public interface KeyStoresApi extends TwinsApiClient.Api {
    * Updates the given key
    *
    * @param body The key data (required)
-   * @param id   The store identifier (required)
-   * @param key  The key identifier (required)
+   * @param id The store identifier (required)
+   * @param key The key identifier (required)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")
   @Headers({"Accept: */*",})
-  void keyStoresUpdateKey(SecurityKeyUpdate body, @Param("id") UUID id,
-      @Param("key") Integer key);
+  void keyStoresUpdateKey(SecurityKeyUpdate body, @Param("id") UUID id, @Param("key") Integer key);
 
   /**
    * Updates the given key
    *
-   * @param id     The store identifier (required)
-   * @param key    The key identifier (required)
+   * @param id The store identifier (required)
+   * @param key The key identifier (required)
    * @param status (optional)
    */
   @RequestLine("PATCH /api/v1.0/keystores/{id}/keys/{key}")

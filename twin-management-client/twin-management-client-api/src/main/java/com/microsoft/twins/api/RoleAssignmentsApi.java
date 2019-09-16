@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.RoleAssignmentCreate;
 import com.microsoft.twins.model.RoleAssignmentRetrieve;
 import feign.Headers;
@@ -16,7 +15,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface RoleAssignmentsApi extends TwinsApiClient.Api {
+public interface RoleAssignmentsApi {
   /**
    * Checks permissions for a given path, user, domain, tenant id, accessType and resource type
    *

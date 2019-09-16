@@ -18,17 +18,18 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import com.microsoft.twins.CorrelationIdContext;
 import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.DevicesApi.DevicesRetrieveQueryParams;
 import com.microsoft.twins.api.SensorsApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
+import com.microsoft.twins.client.CorrelationIdContext;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
 import com.microsoft.twins.model.DeviceUpdate;
 import com.microsoft.twins.model.DeviceUpdate.StatusEnum;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
+import com.microsoft.twins.model.ScopeEnum;
 import com.microsoft.twins.model.SensorRetrieve;
 import com.microsoft.twins.model.SpaceCreate;
 import com.microsoft.twins.model.SpaceRetrieve;
@@ -53,8 +54,6 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
 
   private static final String UNKOWN_TYPE = "None";
   private static final String UNKOWN_SPACE_STATUS = "None";
-  private static final String ENTITY_TYPE_SPACE = "spaces";
-  private static final String ENTITY_TYPE_DEVICE = "devices";
 
 
   private final DigitalTwinMetadataProxy metadataProxy;
@@ -76,7 +75,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (!CollectionUtils.isEmpty(properties)) {
       properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_DEVICE))
+              .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.DEVICES))
               .value(p.getValue()))
           .forEach(device::addPropertiesItem);
     }
@@ -99,7 +98,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (!CollectionUtils.isEmpty(properties)) {
       devicesApi.devicesUpdateProperties(properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_DEVICE))
+              .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.DEVICES))
               .value(p.getValue()))
           .collect(Collectors.toList()), id);
     }
@@ -174,7 +173,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (!CollectionUtils.isEmpty(properties)) {
       devicesApi.devicesUpdateProperties(properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_DEVICE))
+              .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.DEVICES))
               .value(p.getValue()))
           .collect(Collectors.toList()), id);
     }
@@ -200,7 +199,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (!CollectionUtils.isEmpty(properties)) {
       properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_SPACE))
+              .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.SPACES))
               .value(p.getValue()))
           .forEach(space::addPropertiesItem);
     }
@@ -224,7 +223,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (!CollectionUtils.isEmpty(properties)) {
       spacesApi.spacesUpdateProperties(properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_SPACE))
+              .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.SPACES))
               .value(p.getValue()))
           .collect(Collectors.toList()), id);
     }
@@ -248,7 +247,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (!CollectionUtils.isEmpty(properties)) {
       spacesApi.spacesUpdateProperties(properties.stream()
           .map(p -> new ExtendedPropertyCreate()
-              .name(metadataProxy.getPropertykey(p.getName(), ENTITY_TYPE_SPACE))
+              .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.SPACES))
               .value(p.getValue()))
           .collect(Collectors.toList()), id);
     }
