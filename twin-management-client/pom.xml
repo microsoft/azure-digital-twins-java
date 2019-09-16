@@ -17,8 +17,9 @@
   <packaging>pom</packaging>
 
   <modules>
+      <module>twin-management-client-api</module>
       <module>twin-management-client-core</module>
       <module>twin-management-client-autoconfigure</module>
-      <module>twin-management-client-starter</module>
-   </modules>
+      <module>twin-management-client-starter</module>      
+  </modules>
 </project>

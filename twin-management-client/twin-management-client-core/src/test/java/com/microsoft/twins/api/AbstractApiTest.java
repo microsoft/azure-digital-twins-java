@@ -3,7 +3,7 @@
  */
 package com.microsoft.twins.api;
 
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.client.TwinsApiClient;
 
 public abstract class AbstractApiTest {
 

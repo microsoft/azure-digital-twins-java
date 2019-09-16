@@ -14,6 +14,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * ADT properties. The name field is the ExtendedPropertyKey.
+ *
+ */
 @ToString
 @EqualsAndHashCode
 @Getter

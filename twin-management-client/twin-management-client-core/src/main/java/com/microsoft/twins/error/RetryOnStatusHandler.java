@@ -31,17 +31,21 @@ public class RetryOnStatusHandler extends ErrorDecoder.Default {
         return new RetryableException(response.status(), "to many request: retry in a second",
             response.request().httpMethod(), cal.getTime());
       case 400:
-        if (response.body() != null) {
-          try (InputStream message = response.body().asInputStream()) {
-            log.error("Client error. Response with Body: [{}]",
-                IOUtils.toString(message, Charset.defaultCharset()));
-          } catch (final IOException e) {
-            log.error("Could not print Client error body", e);
-          }
-        }
+        logResponseBody(response);
         return super.decode(methodKey, response);
       default:
         return super.decode(methodKey, response);
+    }
+  }
+
+  private static void logResponseBody(final Response response) {
+    if (response.body() != null) {
+      try (InputStream message = response.body().asInputStream()) {
+        log.error("Client error. Response with Body: [{}]",
+            IOUtils.toString(message, Charset.defaultCharset()));
+      } catch (final IOException e) {
+        log.error("Could not print Client error body", e);
+      }
     }
   }
 

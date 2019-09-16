@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.EventTypesEnum;
@@ -17,7 +16,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface EndpointsApi extends TwinsApiClient.Api {
+public interface EndpointsApi {
   /**
    * Creates an endpoint
    *

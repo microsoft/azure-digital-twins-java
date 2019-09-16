@@ -8,9 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.BlobMetadataRetrieve;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.Location;
 import com.microsoft.twins.model.UserCreateWithSpace;
@@ -21,7 +20,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface UsersApi extends TwinsApiClient.Api {
+public interface UsersApi {
   /**
    * Creates a blob This is a multi-part request. For more information, see sample app or doc
    * examples. Key value pairs specified in the Content-Disposition header in the blob-chunk of the

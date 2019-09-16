@@ -7,17 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.ExtendedPropertyKeyCreate;
 import com.microsoft.twins.model.ExtendedPropertyKeyRetrieve;
 import com.microsoft.twins.model.ExtendedPropertyKeyUpdate;
+import com.microsoft.twins.model.ScopeEnum;
 import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface PropertyKeysApi extends TwinsApiClient.Api {
+public interface PropertyKeysApi {
   /**
    * Creates a property key
    *
@@ -138,7 +138,7 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
       return this;
     }
 
-    public PropertyKeysDeleteBySpaceQueryParams scope(final String value) {
+    public PropertyKeysDeleteBySpaceQueryParams scope(final ScopeEnum value) {
       put("scope", EncodingUtils.encode(value));
       return this;
     }
@@ -214,7 +214,7 @@ public interface PropertyKeysApi extends TwinsApiClient.Api {
    * method in a fluent style.
    */
   public static class PropertyKeysRetrieveQueryParams extends HashMap<String, Object> {
-    public PropertyKeysRetrieveQueryParams scope(final String value) {
+    public PropertyKeysRetrieveQueryParams scope(final ScopeEnum value) {
       put("scope", EncodingUtils.encode(value));
       return this;
     }

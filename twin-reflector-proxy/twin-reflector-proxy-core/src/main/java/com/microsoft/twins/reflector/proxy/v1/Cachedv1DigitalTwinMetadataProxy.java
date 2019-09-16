@@ -41,7 +41,7 @@ public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProx
 
   @Override
   @Cacheable(CACHE_PROPERTY_KEY_BY_NAME_AND_SCOPE)
-  public String getPropertykey(final String name, final String scope) {
+  public String getOrCreatePropertykey(final String name, final ScopeEnum scope) {
     final Optional<ExtendedPropertyKeyRetrieve> found = propertyKeysApi
         .propertyKeysRetrieve(new PropertyKeysApi.PropertyKeysRetrieveQueryParams()
             .spaceId(tenantResolver.getTenant()).scope(scope))
@@ -51,7 +51,7 @@ public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProx
       log.debug("PropertyKey [{}] in scope [{}] not found. I will create one", name, scope);
       propertyKeysApi.propertyKeysCreate(
           new ExtendedPropertyKeyCreate().name(name).spaceId(tenantResolver.getTenant())
-              .scope(ScopeEnum.fromValue(scope)).primitiveDataType(PrimitiveDataTypeEnum.STRING));
+              .scope(scope).primitiveDataType(PrimitiveDataTypeEnum.STRING));
     }
 
     return name;
@@ -60,7 +60,7 @@ public class Cachedv1DigitalTwinMetadataProxy implements DigitalTwinMetadataProx
 
   @Override
   @Cacheable(CACHE_TYPE_BY_NAME_AND_CATEGORY)
-  public int getType(final String name, final CategoryEnum category) {
+  public int getOrCreateType(final String name, final CategoryEnum category) {
     final List<ExtendedTypeRetrieve> found =
         typesApi.typesRetrieve(new TypesRetrieveQueryParams().spaceId(tenantResolver.getTenant())
             .names(WHITE_SPACE.matcher(name).replaceAll("")).categories(category));

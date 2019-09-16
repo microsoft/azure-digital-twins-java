@@ -19,7 +19,7 @@ import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.validation.annotation.Validated;
 import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.applicationinsights.core.dependencies.google.common.collect.Maps;
-import com.microsoft.twins.CorrelationIdContext;
+import com.microsoft.twins.client.CorrelationIdContext;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties;
 import com.microsoft.twins.reflector.TwinReflectorProxyProperties.Feedback;
 import com.microsoft.twins.reflector.error.AbstractIngressFailedException;

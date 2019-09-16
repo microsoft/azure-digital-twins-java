@@ -8,7 +8,7 @@ import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.util.CollectionUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.client.TwinsApiClient;
 import com.microsoft.twins.model.RoleDefinitionRetrieve;
 import lombok.RequiredArgsConstructor;
 

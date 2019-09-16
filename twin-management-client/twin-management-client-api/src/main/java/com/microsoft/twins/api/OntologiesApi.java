@@ -6,8 +6,7 @@ package com.microsoft.twins.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.OntologyRetrieve;
 import com.microsoft.twins.model.OntologyUpdate;
 import feign.Headers;
@@ -15,7 +14,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface OntologiesApi extends TwinsApiClient.Api {
+public interface OntologiesApi {
   /**
    * Gets a list of ontologies
    *

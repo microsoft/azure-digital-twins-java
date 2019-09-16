@@ -7,9 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.CategoryEnum;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.ExtendedTypeCreate;
 import com.microsoft.twins.model.ExtendedTypeRetrieve;
 import com.microsoft.twins.model.ExtendedTypeUpdate;
@@ -18,7 +17,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface TypesApi extends TwinsApiClient.Api {
+public interface TypesApi {
   /**
    * Creates an extended type
    *

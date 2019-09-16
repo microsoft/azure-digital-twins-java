@@ -7,10 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
 import com.microsoft.twins.model.ConditionCreate;
 import com.microsoft.twins.model.ConditionUpdate;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.MatcherCreate;
 import com.microsoft.twins.model.MatcherEvaluationResults;
 import com.microsoft.twins.model.MatcherRetrieve;
@@ -20,7 +19,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface MatchersApi extends TwinsApiClient.Api {
+public interface MatchersApi {
   /**
    * Creates a matcher
    *
@@ -34,11 +33,11 @@ public interface MatchersApi extends TwinsApiClient.Api {
   /**
    * Creates a matcher
    *
-   * @param name         (optional)
-   * @param description  (optional)
+   * @param name (optional)
+   * @param description (optional)
    * @param friendlyName (optional)
-   * @param conditions   (optional)
-   * @param spaceId      (optional)
+   * @param conditions (optional)
+   * @param spaceId (optional)
    * @return UUID
    */
   @RequestLine("POST /api/v1.0/matchers")
@@ -59,8 +58,8 @@ public interface MatchersApi extends TwinsApiClient.Api {
   /**
    * Evaluates the matcher for a sensor
    *
-   * @param id            Matcher identifier (required)
-   * @param sensorId      Sensor identifier (required)
+   * @param id Matcher identifier (required)
+   * @param sensorId Sensor identifier (required)
    * @param enableLogging If true, return verbose logs for the evaluation (optional)
    * @return MatcherEvaluationResults
    */
@@ -77,16 +76,15 @@ public interface MatchersApi extends TwinsApiClient.Api {
    * query parameters, especially when used with the {@link MatchersEvaluateQueryParams} class that
    * allows for building up this map in a fluent style.
    *
-   * @param id          Matcher identifier (required)
-   * @param sensorId    Sensor identifier (required)
+   * @param id Matcher identifier (required)
+   * @param sensorId Sensor identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>enableLogging - If true, return verbose logs for the evaluation
-   *                    (optional)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>enableLogging - If true, return verbose logs for the evaluation (optional)</li>
+   *        </ul>
    * @return MatcherEvaluationResults
    *
    */
@@ -112,16 +110,16 @@ public interface MatchersApi extends TwinsApiClient.Api {
   /**
    * Retrieves matchers
    *
-   * @param ids         Optional &#x27;;&#x27; delimited list of ids (optional)
-   * @param names       Optional &#x27;;&#x27; delimited list of names (optional)
-   * @param includes    Comma separated list of what to include, for example
-   *                    \&quot;Space,Condition\&quot;. Defaults to None (optional)
-   * @param spaceId     Optionally filter on objects based on their location in the topology
-   *                    relative to the specified spaceId (optional)
-   * @param traverse    None (the default) for the specified spaceId only, Down for space and
-   *                    descendants, Up for spaceId and ancestors, Any for both (optional)
-   * @param minLevel    Optional filter on minimum level, inclusive (optional)
-   * @param maxLevel    Optional filter on maximum level, inclusive (optional)
+   * @param ids Optional &#x27;;&#x27; delimited list of ids (optional)
+   * @param names Optional &#x27;;&#x27; delimited list of names (optional)
+   * @param includes Comma separated list of what to include, for example
+   *        \&quot;Space,Condition\&quot;. Defaults to None (optional)
+   * @param spaceId Optionally filter on objects based on their location in the topology relative to
+   *        the specified spaceId (optional)
+   * @param traverse None (the default) for the specified spaceId only, Down for space and
+   *        descendants, Up for spaceId and ancestors, Any for both (optional)
+   * @param minLevel Optional filter on minimum level, inclusive (optional)
+   * @param maxLevel Optional filter on maximum level, inclusive (optional)
    * @param minRelative Specify if min level is absolute or relative (optional)
    * @param maxRelative Specify if max level is absolute or relative (optional)
    * @return java.util.List&lt;MatcherRetrieve&gt;
@@ -143,26 +141,23 @@ public interface MatchersApi extends TwinsApiClient.Api {
    * allows for building up this map in a fluent style.
    *
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>ids - Optional &#x27;;&#x27; delimited list of ids (optional)</li>
-   *                    <li>names - Optional &#x27;;&#x27; delimited list of names (optional)</li>
-   *                    <li>includes - Comma separated list of what to include, for example
-   *                    \&quot;Space,Condition\&quot;. Defaults to None (optional)</li>
-   *                    <li>spaceId - Optionally filter on objects based on their location in the
-   *                    topology relative to the specified spaceId (optional)</li>
-   *                    <li>traverse - None (the default) for the specified spaceId only, Down for
-   *                    space and descendants, Up for spaceId and ancestors, Any for both
-   *                    (optional)</li>
-   *                    <li>minLevel - Optional filter on minimum level, inclusive (optional)</li>
-   *                    <li>maxLevel - Optional filter on maximum level, inclusive (optional)</li>
-   *                    <li>minRelative - Specify if min level is absolute or relative
-   *                    (optional)</li>
-   *                    <li>maxRelative - Specify if max level is absolute or relative
-   *                    (optional)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>ids - Optional &#x27;;&#x27; delimited list of ids (optional)</li>
+   *        <li>names - Optional &#x27;;&#x27; delimited list of names (optional)</li>
+   *        <li>includes - Comma separated list of what to include, for example
+   *        \&quot;Space,Condition\&quot;. Defaults to None (optional)</li>
+   *        <li>spaceId - Optionally filter on objects based on their location in the topology
+   *        relative to the specified spaceId (optional)</li>
+   *        <li>traverse - None (the default) for the specified spaceId only, Down for space and
+   *        descendants, Up for spaceId and ancestors, Any for both (optional)</li>
+   *        <li>minLevel - Optional filter on minimum level, inclusive (optional)</li>
+   *        <li>maxLevel - Optional filter on maximum level, inclusive (optional)</li>
+   *        <li>minRelative - Specify if min level is absolute or relative (optional)</li>
+   *        <li>maxRelative - Specify if max level is absolute or relative (optional)</li>
+   *        </ul>
    * @return java.util.List&lt;MatcherRetrieve&gt;
    *
    */
@@ -224,7 +219,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
   /**
    * Retrieves a matcher
    *
-   * @param id       Matcher identifier (required)
+   * @param id Matcher identifier (required)
    * @param includes Comma separated list of what to include (optional)
    * @return MatcherRetrieve
    */
@@ -241,14 +236,14 @@ public interface MatchersApi extends TwinsApiClient.Api {
    * {@link MatchersRetrieveByIdQueryParams} class that allows for building up this map in a fluent
    * style.
    *
-   * @param id          Matcher identifier (required)
+   * @param id Matcher identifier (required)
    * @param queryParams Map of query parameters as name-value pairs
-   *                    <p>
-   *                    The following elements may be specified in the query map:
-   *                    </p>
-   *                    <ul>
-   *                    <li>includes - Comma separated list of what to include (optional)</li>
-   *                    </ul>
+   *        <p>
+   *        The following elements may be specified in the query map:
+   *        </p>
+   *        <ul>
+   *        <li>includes - Comma separated list of what to include (optional)</li>
+   *        </ul>
    * @return MatcherRetrieve
    *
    */
@@ -272,7 +267,7 @@ public interface MatchersApi extends TwinsApiClient.Api {
    * Update a matcher
    *
    * @param body The matcher information (required)
-   * @param id   Matcher identifier (required)
+   * @param id Matcher identifier (required)
    */
   @RequestLine("PATCH /api/v1.0/matchers/{id}")
   @Headers({"Accept: */*",})
@@ -281,11 +276,11 @@ public interface MatchersApi extends TwinsApiClient.Api {
   /**
    * Update a matcher
    *
-   * @param id           Matcher identifier (required)
-   * @param name         (optional)
-   * @param description  (optional)
+   * @param id Matcher identifier (required)
+   * @param name (optional)
+   * @param description (optional)
    * @param friendlyName (optional)
-   * @param conditions   (optional)
+   * @param conditions (optional)
    */
   @RequestLine("PATCH /api/v1.0/matchers/{id}")
   @Headers({"Accept: */*",})

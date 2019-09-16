@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.microsoft.twins.EncodingUtils;
-import com.microsoft.twins.TwinsApiClient;
+import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.SpaceResourceCreate;
 import com.microsoft.twins.model.SpaceResourceRetrieve;
 import com.microsoft.twins.model.SpaceResourceUpdate;
@@ -18,7 +17,7 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 
-public interface ResourcesApi extends TwinsApiClient.Api {
+public interface ResourcesApi {
   /**
    * Creates a resource
    *

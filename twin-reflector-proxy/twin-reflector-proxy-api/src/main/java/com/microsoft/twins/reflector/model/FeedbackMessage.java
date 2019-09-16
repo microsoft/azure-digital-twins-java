@@ -14,6 +14,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Message send out by the proxy as feedback or asynchronous response after an
+ * {@link IngressMessage} has been processed.
+ *
+ */
 @ToString
 @EqualsAndHashCode
 @Getter
