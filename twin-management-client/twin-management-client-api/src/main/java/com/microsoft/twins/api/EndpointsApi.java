@@ -11,6 +11,7 @@ import com.microsoft.twins.model.EncodingUtils;
 import com.microsoft.twins.model.EndpointCreate;
 import com.microsoft.twins.model.EndpointRetrieve;
 import com.microsoft.twins.model.EventTypesEnum;
+import com.microsoft.twins.model.TypeEnum;
 import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
@@ -133,7 +134,7 @@ public interface EndpointsApi {
       return this;
     }
 
-    public EndpointsRetrieveQueryParams types(final String value) {
+    public EndpointsRetrieveQueryParams types(final TypeEnum value) {
       put("types", EncodingUtils.encode(value));
       return this;
     }

@@ -3,11 +3,16 @@
  */
 package com.microsoft.twins.reflector.ingress;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.apache.qpid.proton.codec.AMQPDefinedTypes;
+import org.apache.qpid.proton.codec.DecoderImpl;
+import org.apache.qpid.proton.codec.EncoderImpl;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -50,10 +55,20 @@ public class IngressMessageListener {
   @StreamListener(ReflectorIngressSink.INPUT)
   @SendTo(FeedbackSource.OUTPUT)
   FeedbackMessage getIngress(@NotNull @Valid @Payload final IngressMessage message,
-      @Header(name = ReflectorIngressSink.HEADER_MESSAGE_TYPE,
-          required = true) final String messageType,
+      @Header(name = ReflectorIngressSink.HEADER_MESSAGE_TYPE, required = true) final String type,
       @Header(name = ReflectorIngressSink.HEADER_CORRELATION_ID,
-          required = false) final UUID correlationId) {
+          required = false) final Optional<String> correl) {
+
+    String messageType;
+    UUID correlationId;
+    if (properties.getEventHubs().isAmqpHeaderDecodeEnabled()) {
+      messageType = decodeMessageHeader(type);
+      correlationId = correl.map(IngressMessageListener::decodeMessageHeader).map(UUID::fromString)
+          .orElse(null);
+    } else {
+      messageType = type;
+      correlationId = correl.map(UUID::fromString).orElse(null);
+    }
 
     trackIngress(messageType, correlationId, message.getId());
 
@@ -87,6 +102,20 @@ public class IngressMessageListener {
     }
 
     return null;
+  }
+
+  private static String decodeMessageHeader(final String header) {
+    if (header == null) {
+      return null;
+    }
+
+    final DecoderImpl decoder = new DecoderImpl();
+    final EncoderImpl encoder = new EncoderImpl(decoder);
+    AMQPDefinedTypes.registerAllTypes(decoder, encoder);
+
+    decoder.setByteBuffer(ByteBuffer.wrap(header.getBytes()));
+    final Object obj = decoder.readObject();
+    return obj.toString();
   }
 
   private void trackIngress(final String messageType, final UUID correlationId,
