@@ -66,7 +66,6 @@ public class TwinReflectorProxyProperties {
     @Getter
     @Setter
     public static class HubWithConsumer extends Hub {
-      @NotEmpty
       private String consumerGroup;
     }
 
