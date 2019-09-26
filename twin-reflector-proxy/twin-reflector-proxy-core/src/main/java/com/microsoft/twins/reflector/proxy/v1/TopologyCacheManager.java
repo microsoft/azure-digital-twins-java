@@ -81,7 +81,7 @@ public class TopologyCacheManager {
   void registerForTopologyChanges() {
     final List<EndpointRetrieve> existing =
         endpointsApi.endpointsRetrieve(new EndpointsApi.EndpointsRetrieveQueryParams()
-            .types(TypeEnum.EVENTHUB.toString()).eventTypes(EventTypesEnum.TOPOLOGYOPERATION));
+            .types(TypeEnum.EVENTHUB).eventTypes(EventTypesEnum.TOPOLOGYOPERATION));
 
     final String connectionString = properties.getEventHubs().getPrimaryConnectionString()
         + ";EntityPath=" + properties.getEventHubs().getTopologyOperations().getHubname();

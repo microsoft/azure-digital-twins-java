@@ -228,8 +228,7 @@ public abstract class AbstractIntegrationTest {
       assertThat(resourcesApi.resourcesRetrieve(new ResourcesRetrieveQueryParams().spaceId(tenant)))
           .hasSize(1);
       assertThat(endpointsApi.endpointsRetrieve(new EndpointsRetrieveQueryParams()
-          .eventTypes(EventTypesEnum.DEVICEMESSAGE).types(TypeEnum.EVENTHUB.toString())))
-              .hasSize(1);
+          .eventTypes(EventTypesEnum.DEVICEMESSAGE).types(TypeEnum.EVENTHUB))).hasSize(1);
     } else {
       final SpaceCreate tenantCreate = new SpaceCreate();
       tenantCreate.setName(testConfigurationProperties.getTestTenantname());
@@ -263,7 +262,7 @@ public abstract class AbstractIntegrationTest {
 
     final List<EndpointRetrieve> existing =
         endpointsApi.endpointsRetrieve(new EndpointsApi.EndpointsRetrieveQueryParams()
-            .types(TypeEnum.EVENTHUB.toString()).eventTypes(EventTypesEnum.DEVICEMESSAGE));
+            .types(TypeEnum.EVENTHUB).eventTypes(EventTypesEnum.DEVICEMESSAGE));
 
     if (!CollectionUtils.isEmpty(existing) && existing.stream()
         .anyMatch(endpoint -> endpoint.getPath().equalsIgnoreCase(hubName)

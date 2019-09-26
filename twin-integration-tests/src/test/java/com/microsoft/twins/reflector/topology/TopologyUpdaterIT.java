@@ -922,7 +922,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   private void testSpaceCreationWithParent(final String parentSpaceName, final UUID parentSpaceId) {
 
     final String spaceId = RandomStringUtils.randomAlphanumeric(20);
-    final String friendlyName = "a test device";
+    final String friendlyName = "a test space";
     final String description = "a test descrption";
 
     final IngressMessage testMessage = new IngressMessage();

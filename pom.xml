@@ -65,6 +65,7 @@
 
       <jupiter.version>5.5.1</jupiter.version>
       <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
+      <proton-j.version>0.33.2</proton-j.version>
 
       <!-- ************************ -->
       <!-- Maven Surefire settings -->
@@ -191,6 +192,11 @@
              <groupId>commons-io</groupId>
              <artifactId>commons-io</artifactId>
              <version>2.6</version>
+         </dependency> 
+         <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>proton-j</artifactId>
+            <version>${proton-j.version}</version>
          </dependency>
 
          <!-- test dependencies -->

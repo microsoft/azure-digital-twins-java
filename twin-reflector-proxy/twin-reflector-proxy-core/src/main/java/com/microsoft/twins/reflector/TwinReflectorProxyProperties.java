@@ -47,6 +47,11 @@ public class TwinReflectorProxyProperties {
     private String namespace;
 
     /**
+     * Set to true to treat ingress message headers as AMQP encoded.
+     */
+    private boolean amqpHeaderDecodeEnabled = false;
+
+    /**
      * Azure EventHub name used for ingress of ADT TopologyOperation events. Anonymous access.
      */
     @Valid
