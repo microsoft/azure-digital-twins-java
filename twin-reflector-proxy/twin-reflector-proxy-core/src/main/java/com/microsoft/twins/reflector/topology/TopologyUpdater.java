@@ -70,14 +70,14 @@ public class TopologyUpdater {
 
     if (existing.isPresent()) {
       cachedDigitalTwinProxy.updateSpaceComplete(existing.get().getId(),
-          getParent(update.getRelationships(), correlationId).orElseGet(tenantResolver::getTenant),
+          getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           update.getProperties(), update.getAttributes());
 
       updateChildSpaces(existing.get().getId(), update.getRelationships(), correlationId, true);
       updateChildDevices(existing.get().getId(), update.getRelationships(), correlationId, true);
     } else {
       final UUID created = cachedDigitalTwinProxy.createSpace(update.getId(),
-          getParent(update.getRelationships(), correlationId).orElseGet(tenantResolver::getTenant),
+          getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           update.getProperties(), update.getAttributes());
 
       updateChildSpaces(created, update.getRelationships(), correlationId, false);
@@ -91,14 +91,14 @@ public class TopologyUpdater {
 
     if (existing.isPresent()) {
       cachedDigitalTwinProxy.updateSpacePartial(existing.get().getId(),
-          getParent(update.getRelationships(), correlationId).orElse(null), update.getProperties(),
+          getParent(update.getRelationships()).orElse(null), update.getProperties(),
           update.getAttributes());
 
       updateChildSpaces(existing.get().getId(), update.getRelationships(), correlationId, false);
       updateChildDevices(existing.get().getId(), update.getRelationships(), correlationId, false);
     } else {
       final UUID created = cachedDigitalTwinProxy.createSpace(update.getId(),
-          getParent(update.getRelationships(), correlationId).orElseGet(tenantResolver::getTenant),
+          getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           update.getProperties(), update.getAttributes());
 
       updateChildSpaces(created, update.getRelationships(), correlationId, false);
@@ -113,12 +113,12 @@ public class TopologyUpdater {
 
     if (existing.isPresent()) {
       cachedDigitalTwinProxy.updateDevicePartial(existing.get().getId(),
-          getParent(update.getRelationships(), correlationId).orElse(null),
+          getParent(update.getRelationships()).orElse(null),
           getGateway(update.getRelationships(), correlationId).orElse(null), update.getProperties(),
           update.getAttributes());
     } else {
       cachedDigitalTwinProxy.createDevice(update.getId(),
-          getParent(update.getRelationships(), correlationId).orElseGet(tenantResolver::getTenant),
+          getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           getGateway(update.getRelationships(), correlationId).orElseGet(
               tenantResolver::getGateway),
           update.getProperties(), update.getAttributes());
@@ -131,13 +131,13 @@ public class TopologyUpdater {
 
     if (existing.isPresent()) {
       cachedDigitalTwinProxy.updateDeviceComplete(existing.get().getId(),
-          getParent(update.getRelationships(), correlationId).orElseGet(tenantResolver::getTenant),
+          getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           getGateway(update.getRelationships(), correlationId).orElseGet(
               tenantResolver::getGateway),
           update.getProperties(), update.getAttributes());
     } else {
       cachedDigitalTwinProxy.createDevice(update.getId(),
-          getParent(update.getRelationships(), correlationId).orElseGet(tenantResolver::getTenant),
+          getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           getGateway(update.getRelationships(), correlationId).orElseGet(
               tenantResolver::getGateway),
           update.getProperties(), update.getAttributes());
@@ -159,8 +159,7 @@ public class TopologyUpdater {
   }
 
 
-  private Optional<UUID> getParent(final Collection<Relationship> relationShips,
-      final UUID correlationId) {
+  private Optional<UUID> getParent(final Collection<Relationship> relationShips) {
     if (CollectionUtils.isEmpty(relationShips)) {
       return Optional.empty();
     }
@@ -170,11 +169,8 @@ public class TopologyUpdater {
             .equalsIgnoreCase(relationShip.getEntityType()))
         .filter(relationShip -> Relationship.RELATIONSHIP_PARENT
             .equalsIgnoreCase(relationShip.getName()))
-        .findAny()
-        .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
-            .orElseThrow(() -> new TopologyElementDoesNotExistException(relationShip.getTargetId(),
-                correlationId))
-            .getId());
+        .findAny().map(relationShip -> cachedDigitalTwinProxy
+            .getSpaceByName(relationShip.getTargetId()).map(SpaceRetrieve::getId).orElse(null));
   }
 
   private void updateChildSpaces(final UUID parent, final Collection<Relationship> relationShips,
@@ -188,16 +184,14 @@ public class TopologyUpdater {
       return;
     }
 
-    final List<SpaceRetrieve> children =
-        relationShips.stream()
-            .filter(relationShip -> IngressMessage.ENTITY_V1_SPACE
-                .equalsIgnoreCase(relationShip.getEntityType()))
-            .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
-                .equalsIgnoreCase(relationShip.getName()))
-            .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
-                .orElseThrow(() -> new TopologyElementDoesNotExistException(
-                    relationShip.getTargetId(), correlationId)))
-            .collect(Collectors.toList());
+    final List<SpaceRetrieve> children = relationShips.stream()
+        .filter(relationShip -> IngressMessage.ENTITY_V1_SPACE
+            .equalsIgnoreCase(relationShip.getEntityType()))
+        .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
+            .equalsIgnoreCase(relationShip.getName()))
+        .map(relationShip -> cachedDigitalTwinProxy.getSpaceByName(relationShip.getTargetId())
+            .orElse(null))
+        .collect(Collectors.toList());
 
     if (removeOrphans) {
       final List<SpaceRetrieve> existing = cachedDigitalTwinProxy.getSpaceChildrenOf(parent);
@@ -225,16 +219,14 @@ public class TopologyUpdater {
       return;
     }
 
-    final List<DeviceRetrieve> children =
-        relationShips.stream()
-            .filter(relationShip -> IngressMessage.ENTITY_V1_DEVICE
-                .equalsIgnoreCase(relationShip.getEntityType()))
-            .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
-                .equalsIgnoreCase(relationShip.getName()))
-            .map(relationShip -> cachedDigitalTwinProxy.getDeviceByName(relationShip.getTargetId())
-                .orElseThrow(() -> new TopologyElementDoesNotExistException(
-                    relationShip.getTargetId(), correlationId)))
-            .collect(Collectors.toList());
+    final List<DeviceRetrieve> children = relationShips.stream()
+        .filter(relationShip -> IngressMessage.ENTITY_V1_DEVICE
+            .equalsIgnoreCase(relationShip.getEntityType()))
+        .filter(relationShip -> Relationship.RELATIONSHIP_CHILD
+            .equalsIgnoreCase(relationShip.getName()))
+        .map(relationShip -> cachedDigitalTwinProxy.getDeviceByName(relationShip.getTargetId())
+            .orElse(null))
+        .collect(Collectors.toList());
 
     if (removeOrphans) {
       final List<DeviceRetrieve> existing = cachedDigitalTwinProxy.getDeviceChildrenOf(parent);
