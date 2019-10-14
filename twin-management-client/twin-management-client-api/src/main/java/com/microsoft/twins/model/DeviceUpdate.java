@@ -126,9 +126,7 @@ package com.microsoft.twins.model;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -151,40 +149,8 @@ public class DeviceUpdate {
   @JsonProperty("spaceId")
   private UUID spaceId;
 
-  /**
-   * The status
-   */
-  public enum StatusEnum {
-    PROVISIONED("Provisioned"), ACTIVE("Active"), OFFLINE("Offline"), DISABLED("Disabled");
-    private final String value;
-
-    StatusEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(final String text) {
-      for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("status")
-  private StatusEnum status;
+  private DeviceStatusEnum status;
   @JsonProperty("location")
   private Location location;
   @JsonProperty("type")
@@ -310,7 +276,7 @@ public class DeviceUpdate {
     this.spaceId = spaceId;
   }
 
-  public DeviceUpdate status(final StatusEnum status) {
+  public DeviceUpdate status(final DeviceStatusEnum status) {
     this.status = status;
     return this;
   }
@@ -320,11 +286,11 @@ public class DeviceUpdate {
    *
    * @return status
    **/
-  public StatusEnum getStatus() {
+  public DeviceStatusEnum getStatus() {
     return status;
   }
 
-  public void setStatus(final StatusEnum status) {
+  public void setStatus(final DeviceStatusEnum status) {
     this.status = status;
   }
 

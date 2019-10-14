@@ -112,7 +112,7 @@ public class TopologyUpdater {
         cachedDigitalTwinProxy.getDeviceByName(update.getId());
 
     if (existing.isPresent()) {
-      cachedDigitalTwinProxy.updateDevicePartial(existing.get().getId(),
+      cachedDigitalTwinProxy.updateDevicePartial(existing.get(),
           getParent(update.getRelationships()).orElse(null),
           getGateway(update.getRelationships(), correlationId).orElse(null), update.getProperties(),
           update.getAttributes());
@@ -130,7 +130,7 @@ public class TopologyUpdater {
         cachedDigitalTwinProxy.getDeviceByName(update.getId());
 
     if (existing.isPresent()) {
-      cachedDigitalTwinProxy.updateDeviceComplete(existing.get().getId(),
+      cachedDigitalTwinProxy.updateDeviceComplete(existing.get(),
           getParent(update.getRelationships()).orElseGet(tenantResolver::getTenant),
           getGateway(update.getRelationships(), correlationId).orElseGet(
               tenantResolver::getGateway),
@@ -213,7 +213,7 @@ public class TopologyUpdater {
     if (CollectionUtils.isEmpty(relationShips)) {
       if (removeOrphans) {
         cachedDigitalTwinProxy.getDeviceChildrenOf(parent).forEach(orphan -> cachedDigitalTwinProxy
-            .updateDeviceParent(orphan.getId(), tenantResolver.getTenant()));
+            .updateDeviceParent(orphan, tenantResolver.getTenant()));
       }
 
       return;
@@ -235,12 +235,12 @@ public class TopologyUpdater {
       existing.removeIf(child -> childIds.contains(child.getId()));
 
       if (!CollectionUtils.isEmpty(existing)) {
-        existing.forEach(orphan -> cachedDigitalTwinProxy.updateDeviceParent(orphan.getId(),
+        existing.forEach(orphan -> cachedDigitalTwinProxy.updateDeviceParent(orphan,
             tenantResolver.getTenant()));
       }
     }
 
-    children.forEach(child -> cachedDigitalTwinProxy.updateDeviceParent(child.getId(), parent));
+    children.forEach(child -> cachedDigitalTwinProxy.updateDeviceParent(child, parent));
 
 
 
