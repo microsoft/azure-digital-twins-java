@@ -160,41 +160,8 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
   private UUID gatewayId;
   @JsonProperty("spaceId")
   private UUID spaceId;
-
-  /**
-   * The status
-   */
-  public enum StatusEnum {
-    PROVISIONED("Provisioned"), ACTIVE("Active"), OFFLINE("Offline"), DISABLED("Disabled");
-    private final String value;
-
-    StatusEnum(final String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(final String text) {
-      for (final StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("status")
-  private StatusEnum status;
+  private DeviceStatusEnum status;
   @JsonProperty("location")
   private Location location;
 
@@ -446,7 +413,7 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
     this.spaceId = spaceId;
   }
 
-  public DeviceRetrieve status(final StatusEnum status) {
+  public DeviceRetrieve status(final DeviceStatusEnum status) {
     this.status = status;
     return this;
   }
@@ -457,11 +424,11 @@ public class DeviceRetrieve extends AbstractRetrieve<DeviceRetrieve> {
    * @return status
    **/
   @NotNull
-  public StatusEnum getStatus() {
+  public DeviceStatusEnum getStatus() {
     return status;
   }
 
-  public void setStatus(final StatusEnum status) {
+  public void setStatus(final DeviceStatusEnum status) {
     this.status = status;
   }
 

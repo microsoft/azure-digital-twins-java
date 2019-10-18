@@ -16,6 +16,7 @@ import com.microsoft.twins.api.DevicesApi;
 import com.microsoft.twins.api.SpacesApi;
 import com.microsoft.twins.model.CategoryEnum;
 import com.microsoft.twins.model.DeviceRetrieve;
+import com.microsoft.twins.model.DeviceStatusEnum;
 import com.microsoft.twins.model.ExtendedPropertyRetrieve;
 import com.microsoft.twins.model.SpaceRetrieve;
 import com.microsoft.twins.reflector.AbstractIntegrationTest;
@@ -105,7 +106,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(created.getProperties()).isEmpty();
     assertThat(created.getFriendlyName()).isNullOrEmpty();
     assertThat(created.getDescription()).isNullOrEmpty();
-    assertThat(created.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(created.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
   }
 
   @Test
@@ -168,7 +169,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
         .name(TEST_PROP_KEY).value(TEST_PROP_VALUE).dataType("string"));
     assertThat(created.getFriendlyName()).isEqualTo(friendlyName);
     assertThat(created.getDescription()).isEqualTo(description);
-    assertThat(created.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(created.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
   }
 
   @Test
@@ -218,7 +219,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
         .name(TEST_PROP_KEY).value("updatedValue").dataType("string"));
     assertThat(updated.getFriendlyName()).isEqualTo(friendlyName);
     assertThat(updated.getDescription()).isEqualTo(description);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.ACTIVE);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.ACTIVE);
   }
 
   @Test
@@ -246,7 +247,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isNullOrEmpty();
     assertThat(updated.getDescription()).isNullOrEmpty();
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
   }
 
 
@@ -279,7 +280,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getConnectionString()).isNullOrEmpty();
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
     assertThat(updated.getDescription()).isEqualTo(deviceId);
   }
 
@@ -308,7 +309,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getConnectionString()).isNullOrEmpty();
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
     assertThat(updated.getDescription()).isEqualTo(deviceId);
   }
 
@@ -339,7 +340,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getProperties()).containsOnly(
         new ExtendedPropertyRetrieve().name(TEST_PROP_KEY).value("newValue").dataType("string"));
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
     assertThat(updated.getDescription()).isEqualTo(deviceId);
 
     // Update same property
@@ -400,7 +401,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getConnectionString()).isNullOrEmpty();
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
     assertThat(updated.getDescription()).isEqualTo(deviceId);
   }
 
@@ -432,7 +433,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getConnectionString()).isNullOrEmpty();
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
     assertThat(updated.getDescription()).isEqualTo(description);
   }
 
@@ -478,7 +479,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getConnectionString()).isNullOrEmpty();
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
   }
 
   @Test
@@ -509,7 +510,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     assertThat(updated.getConnectionString()).isNullOrEmpty();
     assertThat(updated.getProperties()).isEmpty();
     assertThat(updated.getFriendlyName()).isEqualTo(deviceId);
-    assertThat(updated.getStatus()).isEqualTo(DeviceRetrieve.StatusEnum.PROVISIONED);
+    assertThat(updated.getStatus()).isEqualTo(DeviceStatusEnum.PROVISIONED);
   }
 
 
@@ -884,7 +885,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
   }
 
   @Test
-  public void updateSpaceParentFailsIfParentIdDoesNotExist() {
+  public void updateSpaceParentChangesToTenantIfParentIdDoesNotExist() {
     final String spaceId = RandomStringUtils.randomAlphanumeric(20);
     final UUID space = createSpace(spaceId);
 
@@ -894,7 +895,7 @@ public class TopologyUpdaterIT extends AbstractIntegrationTest {
     testMessage.setRelationships(List.of(Relationship.builder().entityType("spaces").name("parent")
         .targetId("DoesNotExist").build()));
 
-    sendAndAwaitErrorFeedback(testMessage, MessageType.PARTIAL, ErrorCode.ELEMENT_DOES_NOT_EXIST);
+    sendAndAwaitFeedback(testMessage, MessageType.PARTIAL);
 
     final SpaceRetrieve updated = spacesApi
         .spacesRetrieve(

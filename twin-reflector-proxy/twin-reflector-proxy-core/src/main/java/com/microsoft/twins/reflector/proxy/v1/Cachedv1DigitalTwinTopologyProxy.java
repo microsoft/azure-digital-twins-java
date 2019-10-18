@@ -6,6 +6,7 @@ package com.microsoft.twins.reflector.proxy.v1;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,8 +27,8 @@ import com.microsoft.twins.api.SpacesApi.SpacesRetrieveQueryParams;
 import com.microsoft.twins.client.CorrelationIdContext;
 import com.microsoft.twins.model.DeviceCreate;
 import com.microsoft.twins.model.DeviceRetrieve;
+import com.microsoft.twins.model.DeviceStatusEnum;
 import com.microsoft.twins.model.DeviceUpdate;
-import com.microsoft.twins.model.DeviceUpdate.StatusEnum;
 import com.microsoft.twins.model.ExtendedPropertyCreate;
 import com.microsoft.twins.model.ScopeEnum;
 import com.microsoft.twins.model.SensorRetrieve;
@@ -89,8 +90,9 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
   }
 
   @Override
-  public void updateDeviceComplete(final UUID id, final UUID parent, final UUID gateway,
-      final Collection<Property> properties, final Map<String, String> attributes) {
+  public void updateDeviceComplete(final DeviceRetrieve existing, final UUID parent,
+      final UUID gateway, final Collection<Property> properties,
+      final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
     device.setSpaceId(parent);
     device.setGatewayId(gateway);
@@ -100,14 +102,27 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
           .map(p -> new ExtendedPropertyCreate()
               .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.DEVICES))
               .value(p.getValue()))
-          .collect(Collectors.toList()), id);
+          .collect(Collectors.toList()), existing.getId());
     }
 
     setAllDeviceAttributes(device, attributes);
 
+    if (deviceEquals(existing, device)) {
+      log.debug("Device [{}] needs no change to comply with [{}]. Skipping update", existing.getId(), device);
+    } else {
+      log.debug("I will update device with [{}]", device);
+      devicesApi.devicesUpdate(device, existing.getId());
+    }
+  }
 
-    log.debug("I will update device with [{}]", device);
-    devicesApi.devicesUpdate(device, id);
+  boolean deviceEquals(final DeviceRetrieve existing, final DeviceUpdate update) {
+    return Objects.equals(update.getSpaceId(), existing.getSpaceId())
+        && Objects.equals(update.getGatewayId(), existing.getGatewayId())
+        && Objects.equals(update.getDescription(), existing.getDescription())
+        && Objects.equals(update.getFriendlyName(), existing.getFriendlyName())
+        && Objects.equals(update.getTypeId(), existing.getTypeId())
+        && Objects.equals(update.getSubtypeId(), existing.getSubtypeId())
+        && Objects.equals(update.getStatus(), existing.getStatus());
   }
 
   private void setAllDeviceAttributes(final DeviceUpdate device,
@@ -116,7 +131,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     if (CollectionUtils.isEmpty(attributes)) {
       device.setDescription("");
       device.setFriendlyName("");
-      device.setStatus(StatusEnum.PROVISIONED);
+      device.setStatus(DeviceStatusEnum.PROVISIONED);
       device.setTypeId(metadataProxy.getDeviceType(UNKOWN_TYPE));
       device.setSubtypeId(metadataProxy.getDeviceSubType(UNKOWN_TYPE));
       return;
@@ -130,8 +145,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     device.setSubtypeId(metadataProxy.getDeviceSubType(
         attributes.getOrDefault(IngressMessage.ATTRIBUTE_V1_SUB_TYPE, UNKOWN_TYPE)));
 
-    final StatusEnum status =
-        StatusEnum.fromValue(attributes.get(IngressMessage.ATTRIBUTE_V1_STATUS));
+    final DeviceStatusEnum status =
+        DeviceStatusEnum.fromValue(attributes.get(IngressMessage.ATTRIBUTE_V1_STATUS));
     device.setStatus(status);
   }
 
@@ -158,8 +173,9 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
   }
 
   @Override
-  public void updateDevicePartial(final UUID id, final UUID parent, final UUID gateway,
-      final Collection<Property> properties, final Map<String, String> attributes) {
+  public void updateDevicePartial(final DeviceRetrieve existing, final UUID parent,
+      final UUID gateway, final Collection<Property> properties,
+      final Map<String, String> attributes) {
     final DeviceUpdate device = new DeviceUpdate();
 
     if (parent != null) {
@@ -175,7 +191,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
           .map(p -> new ExtendedPropertyCreate()
               .name(metadataProxy.getOrCreatePropertykey(p.getName(), ScopeEnum.DEVICES))
               .value(p.getValue()))
-          .collect(Collectors.toList()), id);
+          .collect(Collectors.toList()), existing.getId());
     }
 
     if (!CollectionUtils.isEmpty(attributes)) {
@@ -183,7 +199,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
     }
 
     log.debug("I will update device with [{}]", device);
-    devicesApi.devicesUpdate(device, id);
+    devicesApi.devicesUpdate(device, existing.getId());
   }
 
 
@@ -272,7 +288,7 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
         device.setFriendlyName(attribute.getValue());
         break;
       case IngressMessage.ATTRIBUTE_V1_STATUS:
-        device.setStatus(StatusEnum.fromValue(attribute.getValue()));
+        device.setStatus(DeviceStatusEnum.fromValue(attribute.getValue()));
         break;
       case IngressMessage.ATTRIBUTE_V1_TYPE:
         device.setTypeId(metadataProxy.getDeviceType(attribute.getValue()));
@@ -319,9 +335,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_ID, key = "#result.id",
           condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByName(final String name) {
-    return devicesApi
-        .devicesRetrieve(new DevicesRetrieveQueryParams().names(name).includes("ConnectionString"))
-        .stream().findAny();
+    return devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().names(name)
+        .includes("ConnectionString,properties,description")).stream().findAny();
   }
 
   @Override
@@ -337,10 +352,8 @@ public class Cachedv1DigitalTwinTopologyProxy implements DigitalTwinTopologyProx
       put = {@CachePut(cacheNames = CACHE_DEVICE_BY_NAME, key = "#result.name",
           condition = "#result != null")})
   public Optional<DeviceRetrieve> getDeviceByDeviceId(final UUID deviceId) {
-    return devicesApi
-        .devicesRetrieve(
-            new DevicesRetrieveQueryParams().ids(deviceId).includes("ConnectionString"))
-        .stream().findAny();
+    return devicesApi.devicesRetrieve(new DevicesRetrieveQueryParams().ids(deviceId)
+        .includes("ConnectionString,properties,description")).stream().findAny();
   }
 
   @Override

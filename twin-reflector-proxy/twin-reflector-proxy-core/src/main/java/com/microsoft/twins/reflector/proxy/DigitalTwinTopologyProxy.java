@@ -39,7 +39,7 @@ public interface DigitalTwinTopologyProxy {
    * Updates device complete, i.e. all properties or attributes not provided by the caller are
    * removed from the device.
    *
-   * @param id of the device
+   * @param existing device element to update
    * @param parent of the device, e.g. space.
    * @param gateway of the device for Azure IoT Hub operations.
    * @param properties of the device
@@ -47,14 +47,14 @@ public interface DigitalTwinTopologyProxy {
    *
    * @see MessageType#FULL
    */
-  void updateDeviceComplete(@NotNull UUID id, @NotNull UUID parent, @NotNull UUID gateway,
+  void updateDeviceComplete(@NotNull DeviceRetrieve existing, @NotNull UUID parent, @NotNull UUID gateway,
       Collection<Property> properties, Map<String, String> attributes);
 
   /**
    * Updates device partial, i.e. all properties or attributes not provided by the caller are kept
    * on the device and only the provided ones are set.
    *
-   * @param id of the device
+   * @param existing device element to update
    * @param parent of the device, e.g. space.
    * @param gateway of the device for Azure IoT Hub operations.
    * @param properties of the device
@@ -62,11 +62,11 @@ public interface DigitalTwinTopologyProxy {
    *
    * @see MessageType#PARTIAL
    */
-  void updateDevicePartial(@NotNull UUID id, UUID parent, UUID gateway,
+  void updateDevicePartial(@NotNull DeviceRetrieve existing, UUID parent, UUID gateway,
       Collection<Property> properties, Map<String, String> attributes);
 
-  default void updateDeviceParent(@NotNull final UUID id, @NotNull final UUID parent) {
-    updateDevicePartial(id, parent, null, null, null);
+  default void updateDeviceParent(@NotNull final DeviceRetrieve existing, @NotNull final UUID parent) {
+    updateDevicePartial(existing, parent, null, null, null);
   }
 
   /**
